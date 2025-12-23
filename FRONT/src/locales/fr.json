@@ -1,0 +1,847 @@
+{
+  "topbar": {
+    "newsletter": "Newsletter",
+    "contact": "Contact",
+    "faqs": "FAQs",
+    "btp": "BTP & Matériaux",
+    "language": "Langue",
+    "french": "Français",
+    "arabic": "Arabe"
+  },
+  "header": {
+    "searchPlaceholder": "Rechercher un produit, une catégorie ou un article...",
+    "login": "Se connecter / S'inscrire"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "shop": "Boutique",
+    "rent": "Location",
+    "blog": "Blog",
+    "about": "À propos",
+    "browseCategories": "Parcourir les catégories",
+    "address": "Complexe Bayt Laatik, Tanger",
+    "phone": "+212 666565325"
+  },
+  "heroGrid": {
+    "specialOffer": "OFFRE SPÉCIALE",
+    "circularSawTitle": "Scie Circulaire",
+    "circularSawDescription": "La scie circulaire est l’outil indispensable pour tous vos travaux de découpe rapide et nette du bois, contreplaqué, panneaux et autres matériaux.\nGrâce à sa lame rotative à grande vitesse, elle garantit un travail efficace avec une finition professionnelle.",
+    "discoverCatalog": "Découvrir notre catalogue",
+    "safetyEquipmentTitle": "Pensez à votre sécurité",
+    "safetyEquipmentDescription": "COMBINAISON DE PROTECTION",
+    "buyNow": "ACHETEZ MAINTENANT",
+    "vacuumCleanerTitle": "Nettoyer dans la zone de travail",
+    "vacuumCleanerDescription": "Le souffleur est l’outil idéal pour nettoyer rapidement feuilles, poussières et débris. Léger, puissant et ergonomique, il garantit un travail propre et sans effort.",
+    "newItems": "NOUVEAUX ARTICLES",
+    "cordlessDrillTitle": "Perceuse Visseuse",
+    "cordlessDrillDescription": "La perceuse visseuse sans fil Kenmax PV227-LX est un outil polyvalent et puissant, idéal pour les travaux de perçage et de vissage dans le bois, le métal et le plastique. Alimentée par une batterie 20V Lithium-ion Super Endurance, elle combine autonomie, performance et confort d’utilisation.",
+    "safetyEquipmentTitle": "Pensez à votre sécurité",
+    "safetyEquipmentDescription": "COMBINAISON DE PROTECTION",
+    "buyNow": "ACHETEZ MAINTENANT",
+    "vacuumCleanerTitle": "Nettoyer dans la zone de travail",
+    "vacuumCleanerDescription": "Le souffleur est l’outil idéal pour nettoyer rapidement feuilles, poussières et débris. Léger, puissant et ergonomique, il garantit un travail propre et sans effort.",
+    "newItems": "NOUVEAUX ARTICLES",
+    "cordlessDrillTitle": "Perceuse Visseuse",
+    "cordlessDrillDescription": "La perceuse visseuse sans fil Kenmax PV227-LX est un outil polyvalent et puissant, idéal pour les travaux de perçage et de vissage dans le bois, le métal et le plastique. Alimentée par une batterie 20V Lithium-ion Super Endurance, elle combine autonomie, performance et confort d’utilisation. Livrée avec mandrin interchangeable et accessoires, elle est parfaite pour les professionnels comme pour les bricoleurs exigeants.",
+    "discoverCatalog": "Découvrir notre catalogue"
+  },
+  "advantages": {
+    "onlinePayment": {
+      "title": "Paiement en ligne",
+      "description": "Payez en toute sécurité via carte bancaire ou portefeuille digital."
+    },
+    "support": {
+      "title": "Support 24/7",
+      "description": "Notre équipe est disponible à toute heure pour répondre à vos besoins."
+    },
+    "freeDelivery": {
+      "title": "Livraison gratuite",
+      "description": "Offerte à partir d’un certain montant selon votre zone."
+    }
+  },
+  "bestseller": {
+    "sectionTitle": "Produits Bestseller",
+    "sectionSubtitle": "Découvrez nos derniers ajouts au catalogue.",
+    "viewAll": "Afficher tous les produits",
+    "viewAllBottom": "Voir tous les produits",
+    "addToCartSuccess": "Ajouté au panier !",
+    "addToWishlistSuccess": "Ajouté à votre liste de souhaits !",
+    "loading": "Chargement...",
+    "popupTitle": "Recevez nos offres exclusives",
+    "newsletter": {
+      "emailPlaceholder": "Votre adresse email (optionnelle)",
+      "or": "ou",
+      "phonePlaceholder": "Votre numéro de téléphone (optionnel)",
+      "submit": "S’inscrire",
+      "privacyText": "Vos données seront utilisées selon notre",
+      "privacyPolicy": "politique de confidentialité"
+    },
+    "errors": {
+      "fetchFailed": "Impossible de charger les produits",
+      "required": "Veuillez renseigner au moins une adresse email ou un numéro de téléphone.",
+      "invalidEmail": "Veuillez entrer une adresse Gmail valide.",
+      "submitFailed": "Une erreur est survenue. Veuillez réessayer.",
+      "submitSuccess": "Merci pour votre inscription !"
+    }
+  },
+  "guide": {
+    "sectionTitle": "COMMENT CHOISIR VOTRE ÉQUIPEMENT & OUTILS",
+    "sectionSubtitle": "Des conseils d’experts pour vous aider à faire le bon choix",
+
+    "items": {
+      "tool": {
+        "title": "Choisir le bon outil",
+        "description": "Identifiez vos besoins et sélectionnez l'équipement adapté à vos projets"
+      },
+      "safety": {
+        "title": "Sécurité avant tout",
+        "description": "Équipements de protection individuelle essentiels pour chaque travail"
+      },
+      "quality": {
+        "title": "Qualité garantie",
+        "description": "Tous nos produits sont testés et certifiés selon les normes européennes"
+      },
+      "expert": {
+        "title": "Service expert",
+        "description": "Nos conseillers sont là pour vous guider dans vos choix"
+      }
+    },
+
+    "cta": {
+      "title": "Besoin de conseils personnalisés ?",
+      "description": "Notre équipe d'experts est disponible pour vous accompagner dans le choix de vos équipements. Que vous soyez professionnel ou particulier, nous avons la solution adaptée à vos besoins.",
+      "benefits": {
+        "consultation": "Consultation gratuite",
+        "quote": "Devis personnalisé sous 24h",
+        "support": "Service après-vente réactif"
+      }
+    }
+  },
+  "articles": {
+    "sectionTitle": "NOS ARTICLES",
+    "sectionSubtitle": "Conseils d'experts, guides et dernières actualités de notre blog",
+    "seeAll": "VOIR TOUS LES ARTICLES",
+    "readMore": "Lire la suite"
+  },
+  "newsletter": {
+    "title": "Envie d’en savoir plus sur Sinmat ?",
+    "subtitle": "Découvrez nos services et actualités !",
+    "placeholder": "Votre adresse Gmail",
+    "button": "S’INSCRIRE",
+    "sending": "Envoi...",
+    "success": "Merci pour votre inscription !",
+    "error": "Veuillez entrer une adresse Gmail valide (ex: nom@gmail.com)",
+    "privacy": "Vos données seront utilisées selon notre",
+    "privacyLink": "politique de confidentialité"
+  },
+  "footer": {
+    "description": "Spécialisés dans la vente et la location de matériel de construction, nous accompagnons professionnels et particuliers partout au Maroc.",
+    "contact": {
+      "title": "Contact",
+      "address": "Complexe Bayti Laatik, Immeuble 17 N°9, Beni Touzine – Médina, Tanger",
+      "hours": "Lun - Dim : 09h00 - 20h00"
+    },
+    "links": {
+      "title": "Liens utiles",
+      "home": "Accueil",
+      "products": "Produits",
+      "about": "À propos",
+      "contact": "Contact"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Recevez nos offres et nouveautés par email.",
+      "placeholder": "Votre adresse Gmail",
+      "subscribe": "S’inscrire",
+      "sending": "Envoi...",
+      "success": "Merci pour votre inscription !",
+      "error": "Erreur lors de l'inscription.",
+      "invalidEmail": "Veuillez saisir une adresse Gmail valide."
+    },
+    "legal": "Mentions légales",
+    "cgv": "CGV",
+    "privacy": "Politique de confidentialité",
+    "cookies": "Cookies",
+    "rights": "Tous droits réservés."
+  },
+   "shop": {
+    "show": "Afficher :",
+    "all": "Tout",
+    "stock": "Stock",
+    "category": "Catégorie",
+    "uncategorized": "Non classé",
+    "noDescription": "Aucun descriptif n'est fourni pour ce produit.",
+    "errors": {
+      "products": "Impossible de charger les produits",
+      "categories": "Erreur lors du chargement des catégories"
+    }
+  },
+  "location": {
+    "priceFilter": "Filtre par prix",
+    "priceLabel": "Prix : {{min}}MAD — {{max}}MAD / jour",
+    "applyFilters": "Appliquer les filtres",
+    "categories": "Catégories",
+    "resetCategory": "Réinitialiser catégorie",
+    "showing": "Afficher : {{count}} produits",
+    "sort": {
+      "default": "Tri par défaut",
+      "priceAsc": "Prix croissant",
+      "priceDesc": "Prix décroissant",
+      "name": "Nom"
+    },
+    "status": {
+      "disponible": "Disponible",
+      "sur_commande": "Sur commande",
+      "non_disponible": "Non disponible"
+    },
+    "rentNow": "Louer maintenant",
+    "priceFrom": "À partir de",
+    "perDay": "/ jour",
+    "whyRentTitle": "Pourquoi louer chez SINMAT ?",
+    "whyRent": {
+      "certified": "Matériel pro certifié",
+      "certifiedDesc": "Équipements professionnels entretenus et certifiés",
+      "delivery": "Livraison rapide",
+      "deliveryDesc": "Livraison directe sur votre chantier à Tanger",
+      "support": "Assistance technique",
+      "supportDesc": "Support technique disponible pendant la location",
+      "pricing": "Prix adaptés",
+      "pricingDesc": "Tarifs compétitifs adaptés aux chantiers marocains"
+    },
+    "howItWorksTitle": "Comment fonctionne la location ?",
+    "steps": {
+      "1": {
+        "title": "Choisissez votre matériel",
+        "desc": "Parcourez notre catalogue et sélectionnez l'équipement dont vous avez besoin"
+      },
+      "2": {
+        "title": "Sélectionnez la durée",
+        "desc": "Choisissez la période de location adaptée à votre chantier"
+      },
+      "3": {
+        "title": "Recevez votre devis",
+        "desc": "Obtenez rapidement un devis détaillé par téléphone ou email"
+      },
+      "4": {
+        "title": "Livraison sur chantier",
+        "desc": "Nous livrons le matériel directement sur votre lieu de travail"
+      }
+    },
+      "quoteTitle": "Besoin d'un devis rapide ?",
+    "quoteSubtitle": "Remplissez le formulaire ci-dessous et nous vous contacterons dans les plus brefs délais",
+
+    "form": {
+      "name": "Nom complet",
+      "phone": "Téléphone",
+      "site": "Chantier / Localisation",
+      "equipment": "Matériel souhaité",
+      "duration": "Durée souhaitée",
+      "selectDuration": "Sélectionnez une durée",
+      "message": "Message (optionnel)",
+      "send": "Envoyer ma demande"
+    },
+
+    "durations": {
+      "1day": "1 jour",
+      "3days": "3 jours",
+      "1week": "1 semaine",
+      "1month": "1 mois",
+      "custom": "Autre durée"
+    },
+
+    "faqTitle": "FAQ Location",
+    "faq": {
+      "q1": "Comment se calcule la durée de location ?",
+      "a1": "La durée est calculée en jours calendaires à partir de la livraison du matériel.",
+      "q2": "La livraison est-elle possible sur chantier ?",
+      "a2": "Oui, livraison possible sur Tanger et alentours avec frais selon la distance.",
+      "q3": "Quel matériel est disponible immédiatement ?",
+      "a3": "Les équipements marqués « Disponible » sont livrables sous 24h.",
+      "q4": "Faut-il une caution ?",
+      "a4": "Oui, une caution est requise selon le matériel loué, remboursée au retour.",
+      "q5": "Comment fonctionne l'assurance casse ?",
+      "a5": "Une assurance optionnelle couvre les dommages accidentels. Recommandée."
+    },
+     "durations": {
+      "1day": "1 jour",
+      "3days": "3 jours",
+      "1week": "1 semaine",
+      "1month": "1 mois",
+      "custom": "Autre durée"
+    }
+    },
+"blog": {
+  "title": "Blog & Conseils BTP",
+  "subtitle": "Retrouvez nos guides, conseils et actualités du secteur de la construction au Maroc",
+  "categories": {
+    "material": "Matériel BTP",
+    "safety": "Chantier & Sécurité",
+    "structure": "Construction & Gros œuvre",
+    "guides": "Guides & Conseil Pro",
+    "products": "Nouveaux produits",
+    "pricing": "Études de prix",
+    "loading": "Chargement de l'article...",
+    "notFound": "Article non trouvé",
+    "backToList": "Retour au blog",
+    "minutes": "min",
+    "share": "Partager",
+    "cta": {
+      "title": "Besoin d'un devis ?",
+      "subtitle": "Contactez nos experts pour un devis personnalisé",
+      "button": "Demander un devis"
+    },
+    "related": "Articles similaires"
+  },
+   "sidebar": {
+    "searchTitle": "Rechercher",
+    "searchInput": "Rechercher un article...",
+    "categories": "Catégories",
+    "latest": "Derniers articles",
+    "ctaTitle": "Besoin d'un devis ?",
+    "ctaDescription": "Contactez-nous pour obtenir un devis personnalisé pour votre chantier",
+    "ctaButton": "Demander un devis"
+  },
+   "readArticle": "Lire l'article"
+},
+"about": {
+  "heroTitle": "À PROPOS DE SINMAT",
+  "heroBreadcrumb": "Accueil / À propos",
+  "sectionTitle": "Depuis plus de 5 ans",
+  "p1": "Sinmat s’impose comme une référence incontournable dans le secteur du BTP, de la droguerie professionnelle et de l’outillage de qualité. Animés par la passion du bâtiment et le souci d’excellence, nous accompagnons au quotidien artisans, entreprises du bâtiment et particuliers dans tous leurs projets de construction et rénovation.",
+  "p2": "Notre force réside dans une expertise pointue des matériaux de construction, des normes de sécurité, et des contraintes propres aux chantiers professionnels. Chaque produit proposé est issu d’une sélection rigoureuse de fournisseurs reconnus, afin de garantir fiabilité, durabilité et performance.",
+  "p3": "Implantés au cœur de la région, nous mettons un point d’honneur à offrir un service de proximité, réactif et personnalisé. Nos conseillers techniques spécialisés sont à votre écoute pour vous orienter vers les solutions les plus adaptées, que ce soit en peinture, visserie, outillage électroportatif, quincaillerie ou produits de droguerie industrielle.",
+  "infoText": "Vous trouverez sur Sinmat.ma tout ce dont votre maison à besoin ! Le tout à des prix défiants toute concurrence !",
+  "catalogueCta": "Découvrez notre catalogue !",
+  "mapTitle": "Où nous trouver",
+  "catalogueCtaPrefix": "Découvrez",
+  "catalogueCtaLink": "notre catalogue"
+},
+"newsletterModal": {
+  "title": "INSCRIVEZ-VOUS ET\nCONNECTEZ-VOUS À SINMAT !",
+  "description": "Soyez le premier à découvrir nos dernières tendances et à recevoir des offres exclusives",
+  "placeholder": "Votre adresse e-mail",
+  "submit": "S'INSCRIRE",
+  "error": "Adresse e-mail invalide",
+  "privacyText": "Sera utilisé conformément à notre",
+  "privacyLink": "Politique de confidentialité"
+},
+"contact": {
+  "title": "CONTACTEZ-NOUS",
+  "breadcrumb": {
+    "home": "Accueil",
+    "contact": "Contact"
+  },
+  "contactTitle": "Entrer en contact",
+  "contactText": "Nous aimerions avoir de vos nouvelles. Que vous ayez une question sur les produits, prix, ou toute autre chose, notre équipe est prête à répondre à toutes vos questions.",
+  "addressTitle": "Adresse",
+  "address": "Complexe Bayti Laatik, Immeuble 17 N°9, Beni Touzine – Médina, Tanger",
+  "phoneTitle": "Téléphone",
+  "emailTitle": "Email",
+
+  "form": {
+    "title": "Envoyez-nous un message",
+    "name": "Votre nom",
+    "phone": "Téléphone",
+    "email": "Votre e-mail",
+    "subject": "Sujet",
+    "subjectPlaceholder": "Comment pouvons-nous vous aider ?",
+    "message": "Votre message",
+    "messagePlaceholder": "Dites-nous en plus sur votre demande...",
+    "send": "Envoyer un message",
+    "invalidEmail": "Veuillez utiliser une adresse Gmail (@gmail.com).",
+    "success": "Message envoyé avec succès !",
+    "error": "Erreur lors de l’envoi du message."
+  }
+},
+"faqs": {
+  "title": "FAQs",
+  "breadcrumb": {
+    "home": "Accueil",
+    "faqs": "FAQs"
+  },
+  "shoppingTitle": "INFORMATIONS D'ACHAT",
+  "paymentTitle": "INFORMATIONS DE PAIEMENT",
+
+  "shopping": [
+    {
+      "q": "Quels types de produits propose SINMAT ?",
+      "a": "SINMAT propose une large gamme de produits pour le bâtiment et le BTP : outillage, équipements de protection, quincaillerie, plomberie, électricité, peinture et matériel de chantier."
+    },
+    {
+      "q": "SINMAT vend-elle uniquement aux professionnels ?",
+      "a": "Non. Nos produits sont également disponibles pour les particuliers."
+    },
+    {
+      "q": "Livrez-vous partout au Maroc ?",
+      "a": "Oui ✅ Livraison dans tout le Maroc sous 24 à 72h selon la ville."
+    },
+    {
+      "q": "Puis-je retourner ou échanger un produit ?",
+      "a": "Oui, sous conditions. Contactez-nous dans les 48h suivant la réception."
+    },
+    {
+      "q": "Puis-je retirer ma commande en magasin ?",
+      "a": "Oui, retrait gratuit à notre magasin de Tanger après confirmation."
+    }
+  ],
+
+  "payment": [
+    {
+      "q": "Quels moyens de paiement acceptez-vous ?",
+      "a": "💰 Paiement à la livraison\n🏦 Virement bancaire\n💳 Paiement en ligne (bientôt)"
+    },
+    {
+      "q": "Puis-je payer en plusieurs fois ?",
+      "a": "Pas encore, mais cette option est en préparation."
+    },
+    {
+      "q": "Comment obtenir un devis ?",
+      "a": "Via la page produit ou le formulaire de contact."
+    },
+    {
+      "q": "Les prix incluent-ils la TVA ?",
+      "a": "Oui, tous les prix sont TTC."
+    },
+    {
+      "q": "Que faire en cas de problème de paiement ?",
+      "a": "Contactez-nous au {{phone}} ou par email {{email}}."
+    }
+  ]
+},
+"product": {
+  "breadcrumb": {
+    "home": "Accueil",
+    "shop": "Boutique"
+  },
+  "currency": "MAD",
+  "addToCart": "Ajouter au panier",
+  "outOfStock": "Rupture de stock",
+  "addToWishlist": "Ajouter aux favoris",
+  "addedToCartTitle": "Ajouté au panier 🛒",
+  "addedToCartDescription": "{{quantity}} x {{name}} ajouté.",
+  "addedToWishlistTitle": "Ajouté aux favoris ❤️",
+  "addedToWishlistDescription": "{{name}} ajouté à vos favoris.",
+  "category": "Catégorie",
+  "stock": "Stock",
+  "defaultDescription": "Aucun descriptif ajouté pour ce produit.",
+  "relatedProducts": "Produits similaires",
+  "loading": "Chargement...",
+  "uncategorized": "Non classé"
+},
+"productTabs": {
+  "descriptionTab": "DESCRIPTION",
+  "additionalTab": "INFORMATIONS SUPPLÉMENTAIRES",
+  "reviewsTab": "AVIS ({{count}})",
+  "shippingTab": "LIVRAISON & EXPÉDITION",
+
+  "descriptionTitle": "Description du produit",
+
+  "noAdditionalInfo": "Aucune information supplémentaire.",
+  "noReviews": "Pas d'avis pour l'instant.",
+
+  "shippingText": "Nous offrons un service de livraison fiable et sécurisé partout au Maroc. Expédition sous 24–48h puis livraison selon votre région. Emballage sécurisé, possibilité de livraison express selon la localité et suivi professionnel assuré par nos partenaires."
+},
+"productCard": {
+  "addToCart": "Ajouter au panier",
+  "addToCartSuccess": "Ajouté au panier !",
+  "addToWishlistSuccess": "Ajouté aux favoris !",
+
+  "promotion": "Promotion",
+  "new": "Nouveauté",
+
+  "currency": "MAD"
+},
+"filters": {
+  "priceFilter": "Filtrer par prix",
+  "priceLabel": "Prix : {{min}} {{currency}} — {{max}} {{currency}}",
+  "apply": "Appliquer",
+
+  "categories": "Catégories",
+  "status": "Statut",
+
+  "new": "Nouveautés",
+  "promotion": "En promotion",
+
+  "topRated": "Produits les mieux notés",
+
+  "currency": "MAD",
+  "uncategorized": "Non classé"
+},
+"rentalModal": {
+    "title": "Demande de location",
+    "successTitle": "Demande envoyée avec succès !",
+    "successDescription": "Votre demande de location a bien été enregistrée. Notre équipe vous contactera sous 24h pour confirmer les détails.",
+
+    "product": {
+      "pricePerDay": "{{price}} MAD / jour",
+      "available": "Disponible",
+      "onOrder": "Sur commande"
+    },
+
+    "period": {
+      "label": "Période de location",
+      "fromTo": "Du {{from}} au {{to}}",
+      "days": "{{count}} jours",
+      "day": "jour"
+    },
+
+    "delivery": {
+      "title": "Livraison sur chantier",
+      "date": "Date de livraison",
+      "time": "Plage horaire",
+      "chooseTime": "Choisir l'horaire",
+      "morning": "Matin (08h - 12h)",
+      "afternoon": "Après-midi (14h - 18h)",
+      "evening": "Soir (18h - 20h)"
+    },
+
+    "form": {
+      "title": "Vos informations",
+      "fullName": "Nom complet",
+      "phone": "Téléphone",
+      "city": "Ville / Chantier",
+      "address": "Adresse du chantier",
+      "notes": "Notes / Instructions (optionnel)",
+      "notesPlaceholder": "Instructions spéciales pour la livraison...",
+      "required": "Veuillez remplir tous les champs obligatoires"
+    },
+
+    "summary": {
+      "title": "Récapitulatif",
+      "product": "Matériel",
+      "pricePerDay": "Prix / jour",
+      "period": "Période",
+      "duration": "Durée",
+      "subtotal": "Sous-total",
+      "deliveryFee": "Frais de livraison",
+      "total": "Total"
+    },
+
+    "buttons": {
+      "submit": "Envoyer ma demande",
+      "sendWhatsApp": "Envoyer via WhatsApp",
+      "close": "Fermer"
+    },
+
+    "errors": {
+      "missingDates": "Dates manquantes",
+      "missingDatesDesc": "Veuillez sélectionner la période de location",
+      "deliveryMissing": "Livraison incomplète",
+      "deliveryMissingDesc": "Veuillez choisir la date et l'heure de livraison",
+      "missingInfo": "Informations manquantes",
+      "missingInfoDesc": "Veuillez remplir tous les champs obligatoires",
+      "generic": "Une erreur est survenue. Veuillez réessayer plus tard."
+    }
+  },
+   "loginModal": {
+    "title": "Connexion",
+    "usernameLabel": "Nom d'utilisateur ou adresse e-mail",
+    "passwordLabel": "Mot de passe",
+    "required": "Obligatoire",
+    "loginButton": "Se connecter",
+    "lostPassword": "Mot de passe oublié ?",
+    "orLoginWith": "Ou se connecter avec",
+    "loginWithGoogle": "Se connecter avec Google",
+    "createAccount": "Créer un compte",
+    "errors": {
+      "invalid": "Identifiants incorrects",
+      "generic": "Une erreur est survenue. Veuillez réessayer."
+    }
+  },
+  "register": {
+    "heroTitle": "Tout pour le BTP et la finition, au meilleur prix.",
+    "heroSubtitle": "Découvrez notre large gamme de produits de droguerie, outillage et matériaux pour vos chantiers.",
+    "title": "Créer un compte",
+    "username": "Nom d'utilisateur",
+    "usernamePlaceholder": "Entrez votre nom d'utilisateur",
+    "phone": "Numéro de téléphone",
+    "phonePlaceholder": "Ex: +212 6 XX XX XX XX",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "Entrez votre email",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "remember": "Se souvenir de moi",
+    "submit": "S'inscrire",
+    "privacyText": "Vos données personnelles seront utilisées pour créer votre compte et améliorer votre expérience.",
+    "privacyLink": "politique de confidentialité",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "loginHere": "Connectez-vous ici",
+    "error": "Erreur",
+    "serverError": "Une erreur est survenue.",
+    "connectionError": "Impossible de se connecter au serveur. Veuillez réessayer."
+  },
+   "legal": {
+    "title": "Mentions Légales",
+    "subtitle": "Informations légales relatives à l’exploitation du site https://sinmat.ma/",
+    "sections": {
+      "editeur": "1. Éditeur du site",
+      "hebergement": "2. Hébergement",
+      "propriete": "3. Propriété intellectuelle",
+      "donnees": "4. Données personnelles",
+      "responsabilite": "5. Limitation de responsabilité",
+      "liens": "6. Liens externes",
+      "cookies": "7. Gestion des cookies",
+      "modification": "8. Modifications des mentions légales"
+    },
+    "content": {
+      "editeur": {
+        "description": "Le présent site web https://sinmat.ma/ est édité par :",
+        "legalForm": "Forme juridique : S.A.R.L.",
+        "capital": "Capital social : 100 000 DH",
+        "address": "Siège social : CPLX BAYTI LAATIK IMM 17 N° 9 BENI TOUZINE, Tanger",
+        "ice": "ICE : 002860191000035",
+        "phone": "Tél : +212 666565325",
+        "email": "Email : contact@sinmat.ma",
+        "director": "Directeur de la société : M. Mohamed Jaaouan"
+      },
+      "hebergement": {
+        "description": "Le Site est hébergé par :",
+        "form": "Société par actions simplifiée",
+        "website": "Site web :"
+      },
+      "propriete": {
+        "text1": "Le Site ainsi que ses contenus (logos, textes, images, vidéos, chartes graphiques...) sont protégés par le droit de la propriété intellectuelle.",
+        "text2": "Toute reproduction, diffusion ou exploitation sans autorisation écrite préalable de SINMAT est strictement interdite."
+      },
+      "donnees": {
+        "text": "Les informations concernant la collecte et le traitement des données personnelles sont disponibles dans notre",
+        "link": "Politique de Confidentialité"
+      },
+      "responsabilite": {
+        "intro": "SINMAT s’efforce d'assurer au mieux l’exactitude des informations publiées. Toutefois, des erreurs ou omissions peuvent apparaître.",
+        "point1": "Pour toute interruption technique",
+        "point2": "Pour les erreurs ou inexactitudes de contenu",
+        "point3": "Pour tout dommage indirect lié à l’usage du Site"
+      },
+      "liens": {
+        "text": "Des liens vers d'autres sites peuvent être proposés. SINMAT décline toute responsabilité quant au contenu de ces sites tiers."
+      },
+      "cookies": {
+        "text": "Pour plus d’informations sur les cookies utilisés, veuillez consulter notre",
+        "link": "Politique des Cookies"
+      },
+      "modification": {
+        "text": "SINMAT se réserve le droit de modifier les présentes mentions légales à tout moment. Dernière mise à jour : 01 Août 2025."
+      }
+    },
+    "contact": {
+      "text": "Pour toute demande, vous pouvez nous contacter à :"
+    }
+  },
+   "legalLayout": {
+    "sidebar": {
+      "title": "Pages Légales",
+      "toc": "Sommaire"
+    },
+    "pages": {
+      "mentions": "Mentions Légales",
+      "cgv": "Conditions Générales de Vente",
+      "confidentialite": "Politique de Confidentialité",
+      "cookies": "Politique des Cookies"
+    }
+  },
+  "cgv": {
+    "title": "Conditions Générales de Vente",
+    "subtitle": "Régissant les relations contractuelles entre SINMAT et ses clients professionnels et particuliers",
+
+    "toc": {
+      "objet": "1. Objet",
+      "produits": "2. Produits",
+      "commande": "3. Commande",
+      "prix": "4. Prix",
+      "paiement": "5. Paiement",
+      "livraison": "6. Livraison",
+      "retours": "7. Retours et réclamations",
+      "responsabilite": "8. Responsabilité",
+      "donnees": "9. Données personnelles",
+      "droit": "10. Droit applicable"
+    },
+
+    "sections": {
+      "objet": {
+        "title": "1. Objet",
+        "content": "Les présentes Conditions Générales de Vente (CGV) ont pour objet de définir les modalités de vente de produits et services entre la société SINMAT et ses clients."
+      },
+      "produits": {
+        "title": "2. Produits",
+        "content": "Les produits vendus sont décrits sur le site et dans les catalogues de SINMAT. Les photographies ne sont pas contractuelles."
+      },
+      "commande": {
+        "title": "3. Commande",
+        "content": "Toute commande implique l’acceptation des présentes CGV. Elle devient définitive après validation écrite de SINMAT."
+      },
+      "prix": {
+        "title": "4. Prix",
+        "content": "Les prix sont indiqués hors taxes et peuvent être modifiés sans préavis. Le tarif applicable est celui en vigueur au jour de la commande."
+      },
+      "paiement": {
+        "title": "5. Paiement",
+        "content": "Les paiements s’effectuent selon les modalités précisées lors de la commande. Aucun escompte n’est accordé."
+      },
+      "livraison": {
+        "title": "6. Livraison",
+        "content": "Les délais de livraison sont indicatifs. Les marchandises voyagent aux risques du client."
+      },
+      "retours": {
+        "title": "7. Retours et réclamations",
+        "content": "Toute réclamation doit être formulée sous 48h après réception. Aucun retour ne sera accepté sans accord préalable."
+      },
+      "responsabilite": {
+        "title": "8. Responsabilité",
+        "content": "SINMAT ne pourra être tenu responsable des dommages indirects liés à l’utilisation des produits."
+      },
+      "donnees": {
+        "title": "9. Données personnelles",
+        "content": "Les données collectées sont traitées conformément à la réglementation en vigueur.",
+        "link": "Politique de Confidentialité"
+      },
+      "droit": {
+        "title": "10. Droit applicable",
+        "content": "Les présentes CGV sont régies par le droit français."
+      }
+    },
+
+    "updated": "Dernière mise à jour : 25 juillet 2025"
+  },
+  "privacy": {
+    "title": "Politique de Confidentialité",
+    "subtitle": "Comment nous collectons, utilisons et protégeons vos données personnelles chez SINMAT",
+    
+    "updated": "Dernière mise à jour : 25 juillet 2025",
+
+    "toc": {
+      "introduction": "1. Introduction",
+      "collecte": "2. Données collectées",
+      "utilisation": "3. Utilisation des données",
+      "partage": "4. Partage des données",
+      "securite": "5. Sécurité",
+      "duree": "6. Durée de conservation",
+      "droits": "7. Vos droits",
+      "contact": "8. Contact"
+    },
+
+    "sections": {
+      "introduction": {
+        "title": "1. Introduction",
+        "content": "Chez SINMAT, la protection de vos données personnelles est une priorité. Cette politique de confidentialité explique comment nous collectons, utilisons, stockons et protégeons vos informations personnelles."
+      },
+      "collecte": {
+        "title": "2. Données collectées",
+        "content": [
+          "Nom, prénom, adresse postale",
+          "Adresse email et numéro de téléphone",
+          "Informations de facturation",
+          "Historique de commandes et de navigation",
+          "Adresse IP, données de connexion"
+        ]
+      },
+      "utilisation": {
+        "title": "3. Utilisation des données",
+        "content": [
+          "Gérer les commandes et livraisons",
+          "Améliorer notre site et nos services",
+          "Communiquer avec vous (devis, support, newsletters)",
+          "Respecter nos obligations légales"
+        ]
+      },
+      "partage": {
+        "title": "4. Partage des données",
+        "content": [
+          "Nos prestataires techniques (hébergement, transporteurs, outils CRM)",
+          "Les autorités judiciaires sur demande légale",
+          "Nous ne revendons jamais vos données personnelles à des tiers."
+        ]
+      },
+      "securite": {
+        "title": "5. Sécurité",
+        "content": "SINMAT met en œuvre des mesures techniques et organisationnelles pour assurer la sécurité de vos données : chiffrement, contrôle d’accès, sauvegardes régulières, etc."
+      },
+      "duree": {
+        "title": "6. Durée de conservation",
+        "content": "Vos données sont conservées pendant la durée nécessaire à la réalisation des finalités décrites, et dans les limites prévues par la loi."
+      },
+      "droits": {
+        "title": "7. Vos droits",
+        "content": [
+          "Droit d’accès, de rectification ou de suppression",
+          "Droit à la portabilité de vos données",
+          "Droit d’opposition ou de limitation du traitement",
+          "Droit d’introduire une réclamation auprès de la CNIL",
+          "Pour exercer vos droits, écrivez-nous à : <a href='mailto:rgpd@sinmat.fr' class='text-primary underline'>rgpd@sinmat.fr</a>"
+        ]
+      },
+      "contact": {
+        "title": "8. Contact",
+        "content": "Pour toute question relative à cette politique de confidentialité, contactez-nous à l’adresse : <a href='mailto:contact@sinmat.fr' class='text-primary underline'>contact@sinmat.fr</a>"
+      }
+    }
+  },
+  "cookies": {
+    "title": "Politique des Cookies",
+    "subtitle": "Découvrez comment SINMAT utilise les cookies pour améliorer votre expérience sur notre site",
+    "updated": "Dernière mise à jour : 25 juillet 2025",
+
+    "toc": {
+      "definition": "1. Qu’est-ce qu’un cookie ?",
+      "types": "2. Types de cookies utilisés",
+      "finalites": "3. Finalités des cookies",
+      "gestion": "4. Gestion des cookies",
+      "consentement": "5. Consentement de l’utilisateur",
+      "modifications": "6. Modifications de cette politique",
+      "contact": "7. Contact"
+    },
+
+    "sections": {
+      "definition": {
+        "title": "1. Qu’est-ce qu’un cookie ?",
+        "content": "Un cookie est un petit fichier texte déposé sur votre appareil (ordinateur, smartphone, etc.) lors de la consultation d’un site internet. Il permet à un site de reconnaître votre appareil et de stocker certaines informations liées à votre visite."
+      },
+
+      "types": {
+  "title": "2. Types de cookies utilisés",
+  "labels": {
+    "technical": "Cookies techniques",
+    "performance": "Cookies de performance",
+    "functionality": "Cookies de fonctionnalité",
+    "thirdparty": "Cookies tiers"
+  },
+  "content": [
+    "nécessaires au bon fonctionnement du site",
+    "utilisés pour analyser le trafic et l’utilisation du site",
+    "permettent de personnaliser votre navigation",
+    "utilisés par nos partenaires (ex. Google Analytics)"
+  ]
+},
+
+      "finalites": {
+        "title": "3. Finalités des cookies",
+        "content": [
+          "Assurer le bon fonctionnement technique du site",
+          "Analyser les performances et la fréquentation",
+          "Proposer une navigation plus fluide et personnalisée",
+          "Mesurer l’efficacité de nos campagnes marketing"
+        ]
+      },
+
+      "gestion": {
+        "title": "4. Gestion des cookies",
+        "content": "Vous pouvez à tout moment configurer votre navigateur pour accepter ou refuser les cookies. La désactivation de certains cookies peut toutefois affecter le bon fonctionnement du site."
+      },
+
+      "consentement": {
+        "title": "5. Consentement de l’utilisateur",
+        "content": "Lors de votre première visite sur le site, un bandeau vous informe de l’utilisation des cookies. Vous pouvez les accepter, les refuser ou les configurer selon vos préférences."
+      },
+
+      "modifications": {
+        "title": "6. Modifications de cette politique",
+        "content": "Cette politique peut être modifiée à tout moment. Nous vous recommandons de la consulter régulièrement."
+      },
+
+      "contact": {
+        "title": "7. Contact",
+        "content": "Pour toute question concernant cette politique, vous pouvez nous contacter par email à rgpd@sinmat.fr"
+      }
+    }
+  }
+}
