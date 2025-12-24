@@ -26,13 +26,7 @@ const TopBar = () => {
                 <Mail className="w-3 h-3" />
                 {t("topbar.newsletter")}
               </button>
-               <button
-                onClick={() => setShowNewsletter(true)}
-                className="flex items-center gap-1 hover:text-primary transition-colors"
-              >
-                <Mail className="w-3 h-3" />
-                {t("topbar.newsletter")}
-              </button>
+              
               <a href="/contact" className="hover:text-primary transition-colors">
                 {t("topbar.contact")}
               </a>
@@ -44,6 +38,7 @@ const TopBar = () => {
                   href="https://www.facebook.com/share/1BynC318yp/"
                   className="hover:text-primary transition-colors"
                 >
+                  <Facebook className="w-4 h-4" />
                   <Facebook className="w-4 h-4" />
                 </a>
                 <a
