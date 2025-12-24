@@ -39,7 +39,6 @@ const TopBar = () => {
                   className="hover:text-primary transition-colors"
                 >
                   <Facebook className="w-4 h-4" />
-                  <Facebook className="w-4 h-4" />
                 </a>
                 <a
                   href="https://www.instagram.com/sinmat.sarl?igsh=YW5kZTIwcXNlZDJl"
