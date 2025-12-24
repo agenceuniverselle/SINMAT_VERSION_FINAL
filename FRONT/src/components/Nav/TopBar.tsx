@@ -26,6 +26,13 @@ const TopBar = () => {
                 <Mail className="w-3 h-3" />
                 {t("topbar.newsletter")}
               </button>
+               <button
+                onClick={() => setShowNewsletter(true)}
+                className="flex items-center gap-1 hover:text-primary transition-colors"
+              >
+                <Mail className="w-3 h-3" />
+                {t("topbar.newsletter")}
+              </button>
               
               <a href="/contact" className="hover:text-primary transition-colors">
                 {t("topbar.contact")}
