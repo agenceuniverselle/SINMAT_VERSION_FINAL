@@ -27,9 +27,6 @@ const TopBar = () => {
                 <Mail className="w-3 h-3" />
                 {t("topbar.newsletter")}
               </button> 
-              <a href="/contact" className="hover:text-primary transition-colors">
-               hhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-              </a>
                <a href="/contact" className="hover:text-primary transition-colors">
                 {t("topbar.contact")}
               </a>
