@@ -1,13 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
 import TopBar from "@/components/Nav/TopBar";
 import Header from "@/components/Nav/Header";
 import Navigation from "@/components/Nav/Navigation";
 import Footer from "@/components/Footer/Footer";
+
 import SidebarFilters from "@/components/shop/SidebarFilters";
 import ProductCard from "@/components/shop/ProductCard";
-import { useLocation } from "react-router-dom";
+
 import { Grid3x3, LayoutGrid, List } from "lucide-react";
 import {
   Select,
@@ -17,7 +21,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { useTranslation } from "react-i18next";
+
+/* ================= API ================= */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 /* ---------------- TYPES ---------------- */
 export interface Product {
@@ -50,6 +56,7 @@ interface LaravelProduct {
   quantity: number;
   images: string | null;
   category: { id: number; name: string } | null;
+  status?: string;
 }
 
 interface Category {
@@ -58,14 +65,16 @@ interface Category {
   parent_id: number | null;
 }
 
-/* ---------------- SHOP ---------------- */
+/* ================= SHOP ================= */
 const Shop = () => {
   const { t } = useTranslation();
-  const API = "http://localhost:8000";
+  const location = useLocation();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [categoryTree, setCategoryTree] = useState<Map<number, number[]>>(new Map());
+  const [categoryTree, setCategoryTree] = useState<Map<number, number[]>>(
+    new Map()
+  );
   const [isCategoryTreeReady, setIsCategoryTreeReady] = useState(false);
 
   const [viewMode, setViewMode] = useState<"grid" | "list" | "grid-4">("grid");
@@ -75,15 +84,19 @@ const Shop = () => {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
-  const location = useLocation();
   const searchTerm =
-    new URLSearchParams(location.search).get("search")?.toLowerCase() || "";
+    new URLSearchParams(location.search)
+      .get("search")
+      ?.toLowerCase() || "";
 
   /* -------- CATEGORY FROM URL -------- */
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const categoryIdFromURL = params.get("category");
-    if (categoryIdFromURL && !selectedCategories.includes(Number(categoryIdFromURL))) {
+    if (
+      categoryIdFromURL &&
+      !selectedCategories.includes(Number(categoryIdFromURL))
+    ) {
       setSelectedCategories([Number(categoryIdFromURL)]);
     }
   }, [location.search]);
@@ -91,7 +104,7 @@ const Shop = () => {
   /* -------- FETCH PRODUCTS -------- */
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${API}/api/produits`);
+      const res = await fetch(`${API_BASE_URL}/api/produits`);
       if (!res.ok) throw new Error();
 
       const data: LaravelProduct[] = await res.json();
@@ -100,9 +113,13 @@ const Shop = () => {
         let imgs: string[] = [];
         try {
           imgs = p.images ? JSON.parse(p.images) : [];
-        } catch { /* empty */ }
+        } catch {
+          /* ignore */
+        }
 
-        const fullImages = imgs.map((img) => `${API}/storage/${img}`);
+        const fullImages = imgs.map(
+          (img) => `${API_BASE_URL}/storage/${img}`
+        );
 
         return {
           id: p.id,
@@ -120,11 +137,16 @@ const Shop = () => {
           onSale: Number(p.sale_price) < Number(p.purchase_price),
           description: t("shop.noDescription"),
           additionalInfo: [
-            { label: t("shop.stock"), value: String(p.quantity) },
-            { label: t("shop.category"), value: p.category?.name ?? t("shop.uncategorized") },
+            {
+              label: t("shop.stock"),
+              value: String(p.quantity),
+            },
+            {
+              label: t("shop.category"),
+              value: p.category?.name ?? t("shop.uncategorized"),
+            },
           ],
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          status: (p as any).status,
+          status: p.status,
         };
       });
 
@@ -138,7 +160,9 @@ const Shop = () => {
   /* -------- FETCH CATEGORIES -------- */
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API}/api/categories`);
+      const res = await fetch(`${API_BASE_URL}/api/categories`);
+      if (!res.ok) throw new Error();
+
       const data: Category[] = await res.json();
 
       const tree = new Map<number, number[]>();
@@ -157,7 +181,10 @@ const Shop = () => {
 
   const getDescendantIds = (id: number): number[] => {
     const children = categoryTree.get(id) ?? [];
-    return children.flatMap((child) => [child, ...getDescendantIds(child)]);
+    return children.flatMap((child) => [
+      child,
+      ...getDescendantIds(child),
+    ]);
   };
 
   useEffect(() => {
@@ -177,12 +204,17 @@ const Shop = () => {
     }
 
     if (selectedCategories.length > 0) {
-      const allIds = selectedCategories.flatMap((id) => [id, ...getDescendantIds(id)]);
+      const allIds = selectedCategories.flatMap((id) => [
+        id,
+        ...getDescendantIds(id),
+      ]);
       result = result.filter((p) => allIds.includes(p.categoryId));
     }
 
     if (selectedStatuses.length > 0) {
-      result = result.filter((p) => selectedStatuses.includes(p.status ?? ""));
+      result = result.filter((p) =>
+        selectedStatuses.includes(p.status ?? "")
+      );
     }
 
     if (searchTerm) {
@@ -209,6 +241,7 @@ const Shop = () => {
       ? filteredProducts
       : filteredProducts.slice(0, parseInt(itemsPerPage));
 
+  /* ================= RENDER ================= */
   return (
     <div className="min-h-screen bg-background">
       <TopBar />
@@ -240,7 +273,9 @@ const Shop = () => {
                     <SelectItem value="18">18</SelectItem>
                     <SelectItem value="24">24</SelectItem>
                     <SelectItem value="100">100</SelectItem>
-                    <SelectItem value="all">{t("shop.all")}</SelectItem>
+                    <SelectItem value="all">
+                      {t("shop.all")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -252,7 +287,10 @@ const Shop = () => {
                 <button onClick={() => setViewMode("grid")} className="p-2 rounded">
                   <Grid3x3 className="w-4 h-4" />
                 </button>
-                <button onClick={() => setViewMode("grid-4")} className="p-2 rounded">
+                <button
+                  onClick={() => setViewMode("grid-4")}
+                  className="p-2 rounded"
+                >
                   <LayoutGrid className="w-4 h-4" />
                 </button>
               </div>
