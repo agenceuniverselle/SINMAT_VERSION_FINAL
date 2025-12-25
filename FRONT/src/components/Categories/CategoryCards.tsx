@@ -44,7 +44,7 @@ export default function CategoryCards() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/categories`);
+      const res = await fetch(`${API_BASE_URL}/api/categories`);
       if (!res.ok) throw new Error();
       setCategories(await res.json());
     } catch {
@@ -74,7 +74,7 @@ export default function CategoryCards() {
 
     try {
       const res = await fetch(
-        `${API_BASE_URL}/categories/${selectedCategory.id}`,
+        `${API_BASE_URL}/api/categories/${selectedCategory.id}`,
         { method: "DELETE" }
       );
 
