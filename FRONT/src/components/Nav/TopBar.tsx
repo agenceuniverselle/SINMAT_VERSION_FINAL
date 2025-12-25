@@ -22,7 +22,10 @@ const TopBar = () => {
           <div style={{ background: "red", color: "white", padding: "5px" }}>
   TEST DEPLOY GLOBAL 25/12 09:10
 </div>
-
+<div className="flex items-center gap-4 md:gap-6">
+          <div style={{ background: "red", color: "white", padding: "5px" }}>
+  TEST DEPLOY GLOBAL 25/12 09:10
+</div>
                <button
                 onClick={() => setShowNewsletter(true)}
                 className="flex items-center gap-1 hover:text-primary transition-colors"
