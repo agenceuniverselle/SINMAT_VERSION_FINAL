@@ -19,7 +19,7 @@ export default function UserDropdown() {
     const token = sessionStorage.getItem("auth_token");
 
     try {
-      await fetch(`${API_BASE_URL}/logout`, {
+      await fetch(`${API_BASE_URL}/api/logout`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
