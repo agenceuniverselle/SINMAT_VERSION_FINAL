@@ -23,7 +23,6 @@ class Produit extends Model
     ];
 
     protected $casts = [
-        'images' => 'array',
         'additional_info' => 'array',
         'in_stock' => 'boolean',
     ];
