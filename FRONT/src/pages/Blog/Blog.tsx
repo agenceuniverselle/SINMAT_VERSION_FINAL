@@ -67,7 +67,7 @@ const Blog = () => {
 
   /* ---------------- FETCH ARTICLES ---------------- */
   useEffect(() => {
-    fetch(`${API_BASE_URL}/blog-posts`)
+    fetch(`${API_BASE_URL}/api/blog-posts`)
       .then((res) => res.json())
       .then(setArticles)
       .catch(() =>
