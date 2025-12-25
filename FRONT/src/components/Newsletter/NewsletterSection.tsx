@@ -4,12 +4,17 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
+/* ✅ API dynamique (local / prod) */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const NewsletterSection = () => {
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const isValidEmail = (email: string) => /^[^\s@]+@gmail\.com$/.test(email);
+  /* ✅ Validation Gmail */
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@gmail\.com$/.test(email);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,9 +27,11 @@ const NewsletterSection = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/newsletter", {
+      const res = await fetch(`${API_BASE_URL}/newsletter`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email }),
       });
 
@@ -50,7 +57,7 @@ const NewsletterSection = () => {
           {/* LEFT : Icon + Text */}
           <div className="flex items-center gap-4">
             <img
-              src="images/casque.png"
+              src="/images/casque.png"
               alt="Casque"
               className="w-40 h-40 object-contain"
             />
@@ -81,10 +88,12 @@ const NewsletterSection = () => {
 
               <Button
                 type="submit"
-                className="bg-[#ff6a00] hover:bg-[#e65900] text-white font-bold px-6 h-11"
                 disabled={loading}
+                className="bg-[#ff6a00] hover:bg-[#e65900] text-white font-bold px-6 h-11"
               >
-                {loading ? t("newsletter.sending") : t("newsletter.button")}
+                {loading
+                  ? t("newsletter.sending", "Envoi...")
+                  : t("newsletter.button")}
               </Button>
             </form>
 
