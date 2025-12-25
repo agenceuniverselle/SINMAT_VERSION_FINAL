@@ -24,7 +24,7 @@ const ArticlesSection = () => {
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/blog-posts`)
+    fetch(`${API_BASE_URL}/api/blog-posts`)
       .then((res) => res.json())
       .then((data) => {
         const latest = data
