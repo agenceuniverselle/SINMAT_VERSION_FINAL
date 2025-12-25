@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,11 +19,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
-// ⭐ VALIDATION
+/* ================= VALIDATION ================= */
 const categorySchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
   description: z.string().optional(),
-  icon: z.any().refine((file) => file instanceof File, "Icône requise"),
+  icon: z.instanceof(File, { message: "Icône requise" }),
   subcategories: z.array(z.string()).optional(),
 });
 
@@ -33,18 +35,18 @@ interface AddCategoryModalProps {
   onSubmit?: () => void;
 }
 
+/* ================= COMPONENT ================= */
 export function AddCategoryModal({
   isOpen,
   onClose,
   onSubmit,
 }: AddCategoryModalProps) {
-  const API = "http://localhost:8000";
+  const API = import.meta.env.VITE_API_BASE_URL;
 
   const [iconPreview, setIconPreview] = useState<string | null>(null);
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Form
   const {
     register,
     handleSubmit,
@@ -55,7 +57,7 @@ export function AddCategoryModal({
     resolver: zodResolver(categorySchema),
   });
 
-  // Reset
+  /* ================= RESET ================= */
   const handleClose = () => {
     reset();
     setSubcategories([]);
@@ -63,24 +65,22 @@ export function AddCategoryModal({
     onClose();
   };
 
-  // Add subcategory
+  /* ================= SUBCATEGORIES ================= */
   const addSubcategory = () => {
     setSubcategories((prev) => [...prev, ""]);
   };
 
-  // Edit
-  const updateSubcategory = (i: number, value: string) => {
+  const updateSubcategory = (index: number, value: string) => {
     const updated = [...subcategories];
-    updated[i] = value;
+    updated[index] = value;
     setSubcategories(updated);
   };
 
-  // Remove
-  const removeSubcategory = (i: number) => {
-    setSubcategories(subcategories.filter((_, index) => index !== i));
+  const removeSubcategory = (index: number) => {
+    setSubcategories(subcategories.filter((_, i) => i !== index));
   };
 
-  // Submit
+  /* ================= SUBMIT ================= */
   const handleFormSubmit = async (data: CategoryFormData) => {
     setIsSubmitting(true);
 
@@ -90,35 +90,35 @@ export function AddCategoryModal({
       formData.append("description", data.description || "");
       formData.append("icon", data.icon);
 
-      subcategories.forEach((sub) => {
-        formData.append("subcategories[]", sub);
-      });
+      subcategories
+        .filter((s) => s.trim() !== "")
+        .forEach((sub) => {
+          formData.append("subcategories[]", sub);
+        });
 
       const res = await fetch(`${API}/api/categories`, {
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Erreur lors de l’ajout");
+      if (!res.ok) throw new Error();
 
       toast.success("Catégorie créée avec succès");
-
-      if (onSubmit) onSubmit();
+      onSubmit?.();
       handleClose();
-    } catch (err: any) {
-      toast.error("Erreur", { description: err.message });
+    } catch {
+      toast.error("Erreur lors de la création de la catégorie");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  /* ================= RENDER ================= */
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent
-        className="max-w-lg w-[95%] sm:w-full max-h-[90vh] overflow-y-auto rounded-lg"
-      >
+      <DialogContent className="max-w-lg w-[95%] sm:w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl sm:text-2xl font-semibold">
+          <DialogTitle className="text-xl font-semibold">
             Ajouter une catégorie
           </DialogTitle>
           <DialogDescription>
@@ -132,33 +132,34 @@ export function AddCategoryModal({
         >
           {/* NOM */}
           <div className="space-y-2">
-            <Label>Nom de la catégorie <span className="text-red-500">*</span></Label>
+            <Label>
+              Nom <span className="text-red-500">*</span>
+            </Label>
             <Input
               {...register("name")}
               placeholder="Ex : Plomberie"
-              className="h-11 w-full"
             />
             {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.name.message}
+              </p>
             )}
           </div>
 
-          {/* SOUS CAT */}
+          {/* SOUS-CATÉGORIES */}
           <div className="space-y-3">
-
             {subcategories.map((sub, index) => (
-              <div key={index} className="flex items-center gap-2 w-full">
+              <div key={index} className="flex gap-2">
                 <Input
                   value={sub}
-                  onChange={(e) => updateSubcategory(index, e.target.value)}
+                  onChange={(e) =>
+                    updateSubcategory(index, e.target.value)
+                  }
                   placeholder={`Sous-catégorie ${index + 1}`}
-                  className="h-11 flex-1"
                 />
-
                 <Button
                   type="button"
                   variant="destructive"
-                  size="sm"
                   onClick={() => removeSubcategory(index)}
                 >
                   X
@@ -171,27 +172,26 @@ export function AddCategoryModal({
             </Button>
           </div>
 
-          {/* ICON */}
+          {/* ICÔNE */}
           <div className="space-y-2">
-            <Label>Icône <span className="text-red-500">*</span></Label>
+            <Label>
+              Icône <span className="text-red-500">*</span>
+            </Label>
 
-            <label
-              htmlFor="icon"
-              className="w-full h-32 border border-dashed rounded-md flex flex-col justify-center items-center cursor-pointer bg-white"
-            >
+            <label className="w-full h-32 border border-dashed rounded-md flex flex-col justify-center items-center cursor-pointer">
               {iconPreview ? (
                 <img
                   src={iconPreview}
-                  className="h-20 w-20 object-contain mx-auto"
+                  alt="Icône"
+                  className="h-20 w-20 object-contain"
                 />
               ) : (
-                <p className="text-gray-500 text-sm">
+                <span className="text-sm text-muted-foreground">
                   Cliquez pour importer
-                </p>
+                </span>
               )}
 
               <Input
-                id="icon"
                 type="file"
                 accept="image/*"
                 className="hidden"
@@ -206,7 +206,9 @@ export function AddCategoryModal({
             </label>
 
             {errors.icon && (
-              <p className="text-red-500 text-sm">{errors.icon.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.icon.message}
+              </p>
             )}
           </div>
 
@@ -215,7 +217,7 @@ export function AddCategoryModal({
             <Label>Description</Label>
             <Textarea
               {...register("description")}
-              className="min-h-[100px] w-full"
+              className="min-h-[100px]"
             />
           </div>
 
@@ -224,7 +226,6 @@ export function AddCategoryModal({
             <Button type="button" variant="outline" onClick={handleClose}>
               Annuler
             </Button>
-
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Création..." : "Créer"}
             </Button>
