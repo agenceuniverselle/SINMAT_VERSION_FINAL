@@ -20,13 +20,7 @@ const TopBar = () => {
             {/* Left side - Links and Social */}
             <div className="flex items-center gap-4 md:gap-6">
         
- <button
-                onClick={() => setShowNewsletter(true)}
-                className="flex items-center gap-1 hover:text-primary transition-colors"
-              >
-                <Mail className="w-3 h-3" />
-                {t("topbar.newsletter")}
-              </button> 
+
                <button
                 onClick={() => setShowNewsletter(true)}
                 className="flex items-center gap-1 hover:text-primary transition-colors"
