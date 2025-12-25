@@ -40,7 +40,7 @@ export default function BlogPost() {
         setLoading(true);
 
         /* ✅ 1) Article */
-        const res = await fetch(`${API_BASE_URL}/blog-posts/${id}`);
+        const res = await fetch(`${API_BASE_URL}/api/blog-posts/${id}`);
         if (!res.ok) throw new Error();
         const data = await res.json();
 
@@ -59,7 +59,7 @@ export default function BlogPost() {
         setArticle(formattedArticle);
 
         /* ✅ 2) Related */
-        const allRes = await fetch(`${API_BASE_URL}/blog-posts`);
+        const allRes = await fetch(`${API_BASE_URL}/api/blog-posts`);
         const allData = await allRes.json();
 
         const relatedArticles: BlogArticle[] = allData
