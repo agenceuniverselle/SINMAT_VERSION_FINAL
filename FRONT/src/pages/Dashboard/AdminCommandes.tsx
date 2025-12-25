@@ -54,7 +54,7 @@ export default function AdminCommandes() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/commandes`);
+      const res = await fetch(`${API_BASE_URL}/api/commandes`);
       if (!res.ok) throw new Error();
       const data = await res.json();
       setOrders(data);
@@ -72,7 +72,7 @@ export default function AdminCommandes() {
 
     try {
       const res = await fetch(
-        `${API_BASE_URL}/commandes/${selectedOrder.id}`,
+        `${API_BASE_URL}/api/commandes/${selectedOrder.id}`,
         { method: "DELETE" }
       );
 
