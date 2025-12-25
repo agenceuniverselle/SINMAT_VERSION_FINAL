@@ -3,12 +3,16 @@ import { MapPin, Phone, Mail, Clock, Facebook, Instagram } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
+/** ✅ API dynamique */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const Footer = () => {
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
 
-  const isValidGmail = (email: string) => /^[^\s@]+@gmail\.com$/.test(email);
+  const isValidGmail = (email: string) =>
+    /^[^\s@]+@gmail\.com$/.test(email);
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +24,7 @@ const Footer = () => {
 
     setSending(true);
     try {
-      const res = await fetch("http://localhost:8000/api/newsletter", {
+      const res = await fetch(`${API_BASE_URL}/newsletter`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -34,7 +38,7 @@ const Footer = () => {
 
       toast.success(t("footer.newsletter.success"));
       setEmail("");
-    } catch (error) {
+    } catch {
       toast.error(t("footer.newsletter.error"));
     } finally {
       setSending(false);
@@ -80,27 +84,31 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-white text-lg font-semibold mb-4">{t("footer.contact.title")}</h3>
+            <h3 className="text-white text-lg font-semibold mb-4">
+              {t("footer.contact.title")}
+            </h3>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
                 <MapPin className="w-5 h-5 mt-1 text-orange-500" />
                 <span>{t("footer.contact.address")}</span>
               </li>
               <li className="flex items-center gap-2">
-  <Phone className="w-4 h-4 text-orange-500" />
-  <a
-    href="tel:+212666565325"
-    className="hover:text-orange-400 transition"
-    dir="ltr"
-    style={{ unicodeBidi: "bidi-override" }}
-  >
-    +212 6 66 56 53 25
-  </a>
-</li>
-
+                <Phone className="w-4 h-4 text-orange-500" />
+                <a
+                  href="tel:+212666565325"
+                  className="hover:text-orange-400 transition"
+                  dir="ltr"
+                  style={{ unicodeBidi: "bidi-override" }}
+                >
+                  +212 6 66 56 53 25
+                </a>
+              </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-orange-500" />
-                <a href="mailto:contact@sinmat.ma" className="hover:text-orange-400 transition">
+                <a
+                  href="mailto:contact@sinmat.ma"
+                  className="hover:text-orange-400 transition"
+                >
                   contact@sinmat.ma
                 </a>
               </li>
@@ -113,7 +121,9 @@ const Footer = () => {
 
           {/* Links */}
           <div>
-            <h3 className="text-white text-lg font-semibold mb-4">{t("footer.links.title")}</h3>
+            <h3 className="text-white text-lg font-semibold mb-4">
+              {t("footer.links.title")}
+            </h3>
             <ul className="space-y-3 text-sm">
               <li><a href="/" className="hover:text-orange-400 transition">{t("footer.links.home")}</a></li>
               <li><a href="/Catalogue" className="hover:text-orange-400 transition">{t("footer.links.products")}</a></li>
@@ -124,8 +134,13 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div className="md:col-span-2">
-            <h3 className="text-white text-lg font-semibold mb-4">{t("footer.newsletter.title")}</h3>
-            <p className="text-sm text-gray-400 mb-4">{t("footer.newsletter.description")}</p>
+            <h3 className="text-white text-lg font-semibold mb-4">
+              {t("footer.newsletter.title")}
+            </h3>
+            <p className="text-sm text-gray-400 mb-4">
+              {t("footer.newsletter.description")}
+            </p>
+
             <form
               onSubmit={handleNewsletterSubmit}
               className="flex flex-col sm:flex-row items-center gap-3"
@@ -136,14 +151,18 @@ const Footer = () => {
                 placeholder={t("footer.newsletter.placeholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 w-full px-3 py-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                className="flex-1 w-full px-3 py-2 rounded bg-gray-700 text-white placeholder-gray-400
+                  focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
               />
               <button
                 type="submit"
                 disabled={sending}
-                className="px-5 py-2 bg-orange-500 text-white font-semibold rounded hover:bg-orange-600 transition"
+                className="px-5 py-2 bg-orange-500 text-white font-semibold rounded
+                  hover:bg-orange-600 transition"
               >
-                {sending ? t("footer.newsletter.sending") : t("footer.newsletter.subscribe")}
+                {sending
+                  ? t("footer.newsletter.sending")
+                  : t("footer.newsletter.subscribe")}
               </button>
             </form>
           </div>
