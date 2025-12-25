@@ -50,7 +50,7 @@ export default function Commandes() {
       if (!token) return;
 
       try {
-        const res = await fetch(`${API_BASE_URL}/mes-commandes`, {
+        const res = await fetch(`${API_BASE_URL}/api/mes-commandes`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
