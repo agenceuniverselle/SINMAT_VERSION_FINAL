@@ -5,7 +5,7 @@ import { Pencil, Trash2, PlusCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { AddCategoryModal } from "./AddCategoryModal";
-import { EditCategoryModal } from "./EditCategoryModal"; // ✔ SEUL IMPORT
+import { EditCategoryModal } from "./EditCategoryModal";
 
 import {
   Dialog,
@@ -22,6 +22,10 @@ type Category = {
   description?: string;
 };
 
+/** ✅ URLs dynamiques */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const APP_BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+
 export default function CategoryCards() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,17 +36,15 @@ export default function CategoryCards() {
 
   // 🔴 DELETE DIALOG
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
-  );
+  const [selectedCategory, setSelectedCategory] =
+    useState<Category | null>(null);
 
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
-  );
+  const [selectedCategoryId, setSelectedCategoryId] =
+    useState<number | null>(null);
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/categories");
+      const res = await fetch(`${API_BASE_URL}/categories`);
       if (!res.ok) throw new Error();
       setCategories(await res.json());
     } catch {
@@ -72,15 +74,12 @@ export default function CategoryCards() {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/api/categories/${selectedCategory.id}`,
-        {
-          method: "DELETE",
-        }
+        `${API_BASE_URL}/categories/${selectedCategory.id}`,
+        { method: "DELETE" }
       );
 
       if (!res.ok) throw new Error();
 
-      // supprimer du state
       setCategories((prev) =>
         prev.filter((c) => c.id !== selectedCategory.id)
       );
@@ -118,8 +117,8 @@ export default function CategoryCards() {
           <div
             key={cat.id}
             className="
-              bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 
-              shadow-sm rounded-xl p-4 flex flex-col gap-3 
+              bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700
+              shadow-sm rounded-xl p-4 flex flex-col gap-3
               hover:shadow-md transition-all
             "
           >
@@ -132,7 +131,7 @@ export default function CategoryCards() {
                 "
               >
                 <img
-                  src={`http://localhost:8000/storage/${cat.icon}`}
+                  src={`${APP_BASE_URL}/storage/${cat.icon}`}
                   alt={cat.name}
                   className="w-full h-full object-contain"
                 />
@@ -145,7 +144,6 @@ export default function CategoryCards() {
 
             {/* Actions */}
             <div className="flex justify-end gap-2 mt-2">
-              {/* EDIT */}
               <Button
                 variant="outline"
                 size="icon"
@@ -154,7 +152,6 @@ export default function CategoryCards() {
                 <Pencil className="w-4 h-4 text-yellow-600" />
               </Button>
 
-              {/* DELETE */}
               <Button
                 variant="destructive"
                 size="icon"
