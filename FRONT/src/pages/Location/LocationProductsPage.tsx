@@ -15,6 +15,10 @@ import {
 
 import AddLocationProductModal from "@/components/location/AddLocationProductModal";
 
+/* ================= API ================= */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/* ================= TYPES ================= */
 type LocationProduct = {
   id: number;
   name: string;
@@ -26,14 +30,16 @@ type LocationProduct = {
 export default function LocationProductsPage() {
   const [products, setProducts] = useState<LocationProduct[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [selectedProduct, setSelectedProduct] =
     useState<LocationProduct | null>(null);
 
+  /* ================= FETCH ================= */
   const fetchProducts = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/location_products");
+      const res = await fetch(`${API_BASE_URL}/api/location_products`);
       const data = await res.json();
       setProducts(data);
     } catch {
@@ -47,15 +53,16 @@ export default function LocationProductsPage() {
     fetchProducts();
   }, []);
 
+  /* ================= DELETE ================= */
   const handleDelete = async () => {
     if (!selectedProduct) return;
+
     try {
       await fetch(
-        `http://localhost:8000/api/location_products/${selectedProduct.id}`,
-        {
-          method: "DELETE",
-        }
+        `${API_BASE_URL}/api/location_products/${selectedProduct.id}`,
+        { method: "DELETE" }
       );
+
       toast.success("Produit supprimé");
       fetchProducts();
     } catch {
@@ -66,6 +73,7 @@ export default function LocationProductsPage() {
     }
   };
 
+  /* ================= RENDER ================= */
   return (
     <div className="flex bg-gray-50 dark:bg-gray-900">
       <AppSidebar />
@@ -74,6 +82,7 @@ export default function LocationProductsPage() {
         <AppHeader />
 
         <main className="p-6">
+          {/* HEADER */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Produits de location</h2>
             <Button onClick={() => setAddModalOpen(true)}>
@@ -82,11 +91,13 @@ export default function LocationProductsPage() {
             </Button>
           </div>
 
+          {/* ETATS */}
           {loading && <p>Chargement...</p>}
           {!loading && products.length === 0 && (
             <p className="text-gray-500">Aucun produit trouvé.</p>
           )}
 
+          {/* GRID PRODUITS */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {products.map((prod) => (
               <div
@@ -97,28 +108,34 @@ export default function LocationProductsPage() {
                   {prod.image && (
                     <div className="w-full h-40 mb-3 overflow-hidden rounded-md border">
                       <img
-                        src={`http://localhost:8000/storage/${prod.image}`}
+                        src={`${API_BASE_URL}/storage/${prod.image}`}
                         alt={prod.name}
                         className="w-full h-full object-contain"
                       />
                     </div>
                   )}
+
                   <p className="font-semibold text-lg">{prod.name}</p>
+
                   {prod.description && (
                     <p className="text-sm text-muted-foreground">
                       {prod.description}
                     </p>
                   )}
+
                   <p className="text-sm mt-1 text-green-600">
-                    {prod.price} € / jour
+                    {prod.price} MAD / jour
                   </p>
                 </div>
 
+                {/* ACTIONS */}
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => toast.info("Fonction d’édition à venir")}
+                    onClick={() =>
+                      toast.info("Fonction d’édition à venir")
+                    }
                   >
                     <Pencil className="w-4 h-4 text-yellow-600" />
                   </Button>
@@ -138,7 +155,7 @@ export default function LocationProductsPage() {
             ))}
           </div>
 
-          {/* Modal d’ajout */}
+          {/* MODAL AJOUT */}
           {addModalOpen && (
             <AddLocationProductModal
               open={addModalOpen}
@@ -147,7 +164,7 @@ export default function LocationProductsPage() {
             />
           )}
 
-          {/* Confirmation de suppression */}
+          {/* CONFIRM DELETE */}
           <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
             <DialogContent>
               <DialogHeader>
