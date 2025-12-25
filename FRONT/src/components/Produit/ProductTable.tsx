@@ -13,6 +13,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { EditProductModal } from "./EditProductModal";
 
+/* ✅ API dynamique */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 type Product = {
   id: number;
   name: string;
@@ -25,21 +28,24 @@ type Product = {
 export default function ProductTable() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // 🔵 Modal ajout
   const [modalOpen, setModalOpen] = useState(false);
 
-  // 🔥 Dialog suppression
+  // 🔴 Dialog suppression
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // 🔥 Modal EDIT
+  // 🟡 Modal édition
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editProductId, setEditProductId] = useState<number | null>(null);
 
   const navigate = useNavigate();
 
+  /* 🔽 Charger les produits */
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/produits");
+      const response = await fetch(`${API_BASE_URL}/produits`);
       if (!response.ok) throw new Error();
       const data = await response.json();
       setProducts(data);
@@ -64,10 +70,8 @@ export default function ProductTable() {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/api/produits/${selectedProduct.id}`,
-        {
-          method: "DELETE",
-        }
+        `${API_BASE_URL}/produits/${selectedProduct.id}`,
+        { method: "DELETE" }
       );
 
       if (!res.ok) throw new Error();
@@ -75,6 +79,7 @@ export default function ProductTable() {
       setProducts((prev) =>
         prev.filter((p) => p.id !== selectedProduct.id)
       );
+
       toast.success("Produit supprimé");
     } catch {
       toast.error("Erreur lors de la suppression");
@@ -91,7 +96,7 @@ export default function ProductTable() {
 
   return (
     <div className="p-6">
-      {/* Header */}
+      {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Liste des produits</h2>
 
@@ -101,7 +106,7 @@ export default function ProductTable() {
         </Button>
       </div>
 
-      {/* Loading / Table */}
+      {/* TABLE */}
       {loading ? (
         <p>Chargement...</p>
       ) : products.length === 0 ? (
@@ -127,13 +132,21 @@ export default function ProductTable() {
                   className="border-b hover:bg-gray-50 dark:hover:bg-gray-800"
                 >
                   <td className="px-4 py-2">{prod.name}</td>
-                  <td className="px-4 py-2">{prod.category?.name ?? "-"}</td>
-                  <td className="px-4 py-2">{prod.purchase_price} MAD</td>
-                  <td className="px-4 py-2">{prod.sale_price} MAD</td>
-                  <td className="px-4 py-2">{prod.quantity}</td>
+                  <td className="px-4 py-2">
+                    {prod.category?.name ?? "-"}
+                  </td>
+                  <td className="px-4 py-2">
+                    {prod.purchase_price} MAD
+                  </td>
+                  <td className="px-4 py-2">
+                    {prod.sale_price} MAD
+                  </td>
+                  <td className="px-4 py-2">
+                    {prod.quantity}
+                  </td>
 
                   <td className="px-4 py-2 flex items-center justify-end gap-2">
-                    {/* 🔵 VIEW DETAILS */}
+                    {/* VIEW */}
                     <Button
                       variant="ghost"
                       size="icon"
@@ -144,7 +157,7 @@ export default function ProductTable() {
                       <Eye className="w-4 h-4 text-blue-500" />
                     </Button>
 
-                    {/* 🟡 EDIT PRODUCT (MODAL) */}
+                    {/* EDIT */}
                     <Button
                       variant="ghost"
                       size="icon"
@@ -153,7 +166,7 @@ export default function ProductTable() {
                       <Pencil className="w-4 h-4 text-yellow-500" />
                     </Button>
 
-                    {/* 🔴 DELETE PRODUCT */}
+                    {/* DELETE */}
                     <Button
                       variant="ghost"
                       size="icon"
@@ -169,7 +182,7 @@ export default function ProductTable() {
         </div>
       )}
 
-      {/* Modal Ajout produit */}
+      {/* MODAL AJOUT */}
       {modalOpen && (
         <AddProductModal
           isOpen={modalOpen}
@@ -180,7 +193,7 @@ export default function ProductTable() {
         />
       )}
 
-      {/* Modal Edition produit */}
+      {/* MODAL EDIT */}
       {editModalOpen && editProductId !== null && (
         <EditProductModal
           isOpen={editModalOpen}
@@ -190,7 +203,7 @@ export default function ProductTable() {
         />
       )}
 
-      {/* 🗑️ Dialog Delete */}
+      {/* DIALOG DELETE */}
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <DialogContent>
           <DialogHeader>
@@ -212,7 +225,10 @@ export default function ProductTable() {
               Annuler
             </Button>
 
-            <Button variant="destructive" onClick={deleteProduct}>
+            <Button
+              variant="destructive"
+              onClick={deleteProduct}
+            >
               Supprimer
             </Button>
           </div>
