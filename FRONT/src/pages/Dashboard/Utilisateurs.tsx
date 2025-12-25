@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -9,7 +11,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -20,17 +21,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Shield, Trash } from "lucide-react";
+import { Plus, Edit, Trash, Shield } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
-import { Link } from "react-router-dom";
+
+/* ================= API ================= */
+const API = import.meta.env.VITE_API_BASE_URL;
+
+/* ================= TYPES ================= */
 type Permission = {
   id: number;
   name: string;
@@ -39,23 +37,23 @@ type Permission = {
 };
 
 export default function Utilisateurs() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [selectedUser, setSelectedUser] = useState<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [users, setUsers] = useState<any[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [permissions, setPermissions] = useState<any[]>([]);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
   const [userPermissions, setUserPermissions] = useState<number[]>([]);
-  const [showDetails, setShowDetails] = useState(false);
+
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
+
   const [userToEdit, setUserToEdit] = useState<any>(null);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
+
   const [editPassword, setEditPassword] = useState("");
   const [editConfirm, setEditConfirm] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [userToDelete, setUserToDelete] = useState<any>(null);
+
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
@@ -63,340 +61,183 @@ export default function Utilisateurs() {
     password: "",
     confirm: "",
   });
-  const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
+
   const [newPermission, setNewPermission] = useState({
     name: "",
     code: "",
     category: "",
   });
-  // Pour édition d'une permission
-  const [editingPermission, setEditingPermission] = useState<Permission | null>(
-    null
-  );
-  const [newCategoryName, setNewCategoryName] = useState<string>("");
-  // Pour édition d'une catégorie
-  const [editingCategory, setEditingCategory] = useState<string | null>(null);
-  const [categoryToAddTo, setCategoryToAddTo] = useState<string | null>(null);
-  // Pour suppression
-  const [deletingPermission, setDeletingPermission] =
-    useState<Permission | null>(null);
-  const [deletingCategory, setDeletingCategory] = useState<string | null>(null);
 
-  const handleUpdateUser = async () => {
-    if (editPassword !== editConfirm) {
-      toast.error("Les mots de passe ne correspondent pas !");
+  /* ================= FETCH ================= */
+  const fetchUsers = async () => {
+    const res = await fetch(`${API}/users`);
+    setUsers(await res.json());
+  };
+
+  const fetchPermissions = async () => {
+    const res = await fetch(`${API}/permissions`);
+    setPermissions(await res.json());
+  };
+
+  useEffect(() => {
+    fetchUsers();
+    fetchPermissions();
+  }, []);
+
+  /* ================= CREATE USER ================= */
+  const handleCreateUser = async () => {
+    if (!newUser.name || !newUser.email || !newUser.password) {
+      toast.error("Champs obligatoires manquants");
+      return;
+    }
+
+    if (newUser.password !== newUser.confirm) {
+      toast.error("Les mots de passe ne correspondent pas");
       return;
     }
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const payload: any = {
-        name: userToEdit.name,
-        email: userToEdit.email,
-        phone: userToEdit.phone,
-      };
-
-      // Ajouter le mot de passe UNIQUEMENT si rempli
-      if (editPassword.length > 0) {
-        payload.password = editPassword;
-      }
-
-      const res = await fetch(
-        `http://localhost:8000/api/users/${userToEdit.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(`${API}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUser),
+      });
 
       if (!res.ok) throw new Error();
-      toast.success("Utilisateur mis à jour");
 
-      setEditDialogOpen(false);
+      toast.success("Utilisateur créé");
+      setOpenCreateDialog(false);
+      setNewUser({ name: "", email: "", phone: "", password: "", confirm: "" });
+      fetchUsers();
+    } catch {
+      toast.error("Erreur lors de la création");
+    }
+  };
+
+  /* ================= UPDATE USER ================= */
+  const handleUpdateUser = async () => {
+    if (editPassword && editPassword !== editConfirm) {
+      toast.error("Les mots de passe ne correspondent pas");
+      return;
+    }
+
+    const payload: any = {
+      name: userToEdit.name,
+      email: userToEdit.email,
+      phone: userToEdit.phone,
+    };
+
+    if (editPassword) payload.password = editPassword;
+
+    try {
+      const res = await fetch(`${API}/users/${userToEdit.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error();
+
+      toast.success("Utilisateur mis à jour");
+      setOpenEditDialog(false);
       setEditPassword("");
       setEditConfirm("");
-
-      const refreshed = await fetch("http://localhost:8000/api/users");
-      setUsers(await refreshed.json());
+      fetchUsers();
     } catch {
       toast.error("Erreur de mise à jour");
     }
   };
 
+  /* ================= DELETE USER ================= */
   const handleDeleteUser = async () => {
     try {
-      const res = await fetch(
-        `http://localhost:8000/api/users/${userToDelete.id}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const res = await fetch(`${API}/users/${userToDelete.id}`, {
+        method: "DELETE",
+      });
 
       if (!res.ok) throw new Error();
-      toast.success("Utilisateur supprimé");
-      setDeleteDialogOpen(false);
 
-      const refreshed = await fetch("http://localhost:8000/api/users");
-      setUsers(await refreshed.json());
+      toast.success("Utilisateur supprimé");
+      setOpenDeleteDialog(false);
+      fetchUsers();
     } catch {
       toast.error("Erreur de suppression");
     }
   };
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch("http://localhost:8000/api/users");
-        const data = await res.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Erreur lors du chargement des utilisateurs :", error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-  useEffect(() => {
-    if (!selectedUser) return;
-
-    const fetchUserPermissions = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:8000/api/users/${selectedUser.id}/permissions`
-        );
-        const data = await res.json();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setUserPermissions(data.map((p: any) => p.id));
-      } catch (err) {
-        console.error(
-          "Erreur chargement des permissions de l'utilisateur :",
-          err
-        );
-      }
-    };
-
-    fetchUserPermissions();
-  }, [selectedUser]);
-
-  useEffect(() => {
-    const fetchAllPermissions = async () => {
-      try {
-        const res = await fetch("http://localhost:8000/api/permissions");
-        const allPerms = await res.json();
-        setPermissions(allPerms);
-        console.log("✅ Toutes les permissions chargées :", allPerms);
-      } catch (err) {
-        console.error("❌ Erreur lors du chargement des permissions :", err);
-      }
-    };
-
-    fetchAllPermissions();
-  }, []);
-
-  const handleTogglePermission = async (
-    permissionId: number,
-    enabled: boolean
-  ) => {
+  /* ================= TOGGLE PERMISSION ================= */
+  const togglePermission = async (permissionId: number, enabled: boolean) => {
     try {
-      const url = `http://localhost:8000/api/users/${selectedUser.id}/permissions`;
-      const res = await fetch(url, {
+      await fetch(`${API}/users/${selectedUser.id}/permissions`, {
         method: enabled ? "POST" : "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ permission_id: permissionId }),
       });
 
-      if (!res.ok) throw new Error("Erreur lors de la mise à jour");
-
-      toast.success("Permission mise à jour");
-
-      // Met à jour localement la liste
       setUserPermissions((prev) =>
-        enabled
-          ? [...prev, permissionId]
-          : prev.filter((id) => id !== permissionId)
+        enabled ? [...prev, permissionId] : prev.filter((p) => p !== permissionId)
       );
-    } catch (err) {
-      console.error(err);
-      toast.error("Erreur lors de la mise à jour de la permission");
+    } catch {
+      toast.error("Erreur permission");
     }
   };
-  const handleCreateUser = async () => {
-    if (!newUser.name || !newUser.email || !newUser.password) {
-      toast.error("Tous les champs sont obligatoires.");
-      return;
-    }
 
-    if (newUser.password !== newUser.confirm) {
-      toast.error("Les mots de passe ne correspondent pas !");
-      return;
-    }
-
-    try {
-      const res = await fetch("http://localhost:8000/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: newUser.name,
-          email: newUser.email,
-          phone: newUser.phone,
-          password: newUser.password,
-        }),
-      });
-
-      if (!res.ok) throw new Error();
-
-      toast.success("Utilisateur créé avec succès");
-      setOpenCreateDialog(false);
-
-      setNewUser({
-        name: "",
-        email: "",
-        phone: "",
-        password: "",
-        confirm: "",
-      });
-
-      // Refresh list
-      const updated = await fetch("http://localhost:8000/api/users");
-      setUsers(await updated.json());
-    } catch (err) {
-      toast.error("Erreur lors de la création");
-    }
-  };
-  console.log("permissions loaded:", permissions);
-
-  // Regroupe les permissions par catégorie
-  const permissionsByCategory: Record<string, Permission[]> =
-    permissions.reduce((acc, perm) => {
-      const category = perm.category || "Autres";
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(perm);
+  /* ================= GROUP PERMISSIONS ================= */
+  const permissionsByCategory = permissions.reduce(
+    (acc: Record<string, Permission[]>, p) => {
+      const cat = p.category || "Autres";
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push(p);
       return acc;
-    }, {} as Record<string, Permission[]>);
+    },
+    {}
+  );
 
+  /* ================= RENDER ================= */
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* HEADER */}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Gestion des Utilisateurs</h1>
+        <h1 className="text-3xl font-bold">Gestion des utilisateurs</h1>
+
         <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Nouvel Utilisateur
+              <Plus className="mr-2 h-4 w-4" /> Nouvel utilisateur
             </Button>
           </DialogTrigger>
 
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
-              <DialogDescription>
-                Remplissez les informations pour créer un nouveau compte
-                utilisateur
-              </DialogDescription>
+              <DialogTitle>Créer un utilisateur</DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-4 py-4">
-              {/* Nom */}
-              <div className="space-y-2">
-                <Label htmlFor="nom">Nom complet</Label>
-                <Input
-                  id="nom"
-                  placeholder="Jean Dupont"
-                  value={newUser.name}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, name: e.target.value })
-                  }
-                />
-              </div>
-
-              {/* Email */}
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="jean@sinmat.fr"
-                  value={newUser.email}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, email: e.target.value })
-                  }
-                />
-              </div>
-
-              {/* Téléphone */}
-              <div className="space-y-2">
-                <Label htmlFor="phone">Téléphone</Label>
-                <Input
-                  id="phone"
-                  placeholder="+212..."
-                  value={newUser.phone}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, phone: e.target.value })
-                  }
-                />
-              </div>
-
-              {/* Mot de passe */}
-              <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={newUser.password}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, password: e.target.value })
-                  }
-                />
-              </div>
-
-              {/* Confirmation */}
-              <div className="space-y-2">
-                <Label htmlFor="confirm">Confirmer le mot de passe</Label>
-                <Input
-                  id="confirm"
-                  type="password"
-                  placeholder="••••••••"
-                  value={newUser.confirm}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, confirm: e.target.value })
-                  }
-                />
-              </div>
-
-              {/* Alerte mot de passe non identique */}
-              {newUser.password !== newUser.confirm &&
-                newUser.confirm.length > 0 && (
-                  <p className="text-red-500 text-sm">
-                    ⚠️ Les mots de passe ne correspondent pas.
-                  </p>
-                )}
+            <div className="space-y-3">
+              <Input placeholder="Nom" value={newUser.name}
+                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+              <Input placeholder="Email" value={newUser.email}
+                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+              <Input placeholder="Téléphone" value={newUser.phone}
+                onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} />
+              <Input type="password" placeholder="Mot de passe"
+                value={newUser.password}
+                onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
+              <Input type="password" placeholder="Confirmation"
+                value={newUser.confirm}
+                onChange={(e) => setNewUser({ ...newUser, confirm: e.target.value })} />
             </div>
 
-            <Button
-              className="w-full"
-              onClick={handleCreateUser}
-              disabled={
-                !newUser.name ||
-                !newUser.email ||
-                !newUser.password ||
-                newUser.password !== newUser.confirm
-              }
-            >
-              Créer l'utilisateur
+            <Button className="w-full mt-4" onClick={handleCreateUser}>
+              Créer
             </Button>
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Tableau des utilisateurs */}
+      {/* USERS TABLE */}
       <Card>
         <CardHeader>
-          <CardTitle>Liste des Utilisateurs</CardTitle>
+          <CardTitle>Liste des utilisateurs</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -404,61 +245,41 @@ export default function Utilisateurs() {
               <TableRow>
                 <TableHead>Nom</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Date de création</TableHead>
+                <TableHead>Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium text-blue-600 hover:underline cursor-pointer">
-                    <Link to={`/utilisateurs/${user.id}`}>{user.name}</Link>
+              {users.map((u) => (
+                <TableRow key={u.id}>
+                  <TableCell>
+                    <Link to={`/utilisateurs/${u.id}`} className="text-blue-600 hover:underline">
+                      {u.name}
+                    </Link>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {user.email}
+                  <TableCell>{u.email}</TableCell>
+                  <TableCell>
+                    {new Date(u.created_at).toLocaleDateString("fr-FR")}
                   </TableCell>
-
-                  <TableCell className="text-muted-foreground">
-                    {new Date(user.created_at).toLocaleDateString("fr-FR")}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      {/* Permissions */}
-
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setOpenPermissionDialog(true)}
-                        title="Créer une permission"
-                      >
-                        {" "}
-                        <Shield className="h-4 w-4" />
-                      </Button>
-
-                      {/* Modifier */}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setUserToEdit(user);
-                          setEditDialogOpen(true);
-                        }}
-                      >
-                        <Edit className="h-4 w-4 text-blue-600" />
-                      </Button>
-
-                      {/* Supprimer */}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setUserToDelete(user);
-                          setDeleteDialogOpen(true);
-                        }}
-                      >
-                        <Trash className="h-4 w-4 text-red-600" />
-                      </Button>
-                    </div>
+                  <TableCell className="text-right flex gap-2 justify-end">
+                    <Button variant="ghost" size="icon" onClick={() => {
+                      setUserToEdit(u);
+                      setOpenEditDialog(true);
+                    }}>
+                      <Edit className="h-4 w-4 text-blue-600" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => {
+                      setUserToDelete(u);
+                      setOpenDeleteDialog(true);
+                    }}>
+                      <Trash className="h-4 w-4 text-red-600" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => {
+                      setSelectedUser(u);
+                      setOpenPermissionDialog(true);
+                    }}>
+                      <Shield className="h-4 w-4" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -467,7 +288,7 @@ export default function Utilisateurs() {
         </CardContent>
       </Card>
 
-      {/* Permissions groupées par catégorie */}
+   {/* Permissions groupées par catégorie */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Object.entries(permissionsByCategory).map(([category, perms]) => (
           <Card key={category}>
@@ -1003,3 +824,4 @@ export default function Utilisateurs() {
     </div>
   );
 }
+
