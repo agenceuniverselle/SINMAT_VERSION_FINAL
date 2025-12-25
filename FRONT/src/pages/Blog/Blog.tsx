@@ -30,6 +30,9 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
+/* ✅ API dynamique */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const Blog = () => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -41,10 +44,15 @@ const Blog = () => {
 
   const articlesPerPage = 6;
 
+  /* 🔍 Search depuis URL + sidebar */
   const searchTerm =
-    new URLSearchParams(location.search).get("search")?.toLowerCase() || "";
+    searchQuery ||
+    new URLSearchParams(location.search)
+      .get("search")
+      ?.toLowerCase() ||
+    "";
 
-  /* ---------------- CATEGORIES (TRADUITES) ---------------- */
+  /* ---------------- CATEGORIES ---------------- */
   const blogCategories = useMemo(
     () => [
       { key: "material", icon: Hammer },
@@ -59,7 +67,7 @@ const Blog = () => {
 
   /* ---------------- FETCH ARTICLES ---------------- */
   useEffect(() => {
-    fetch("http://localhost:8000/api/blog-posts")
+    fetch(`${API_BASE_URL}/blog-posts`)
       .then((res) => res.json())
       .then(setArticles)
       .catch(() =>
@@ -68,16 +76,18 @@ const Blog = () => {
   }, []);
 
   /* ---------------- FILTER ---------------- */
-  const filteredArticles = articles.filter((article) => {
-    const matchesSearch =
-      article.title.toLowerCase().includes(searchTerm) ||
-      article.excerpt.toLowerCase().includes(searchTerm);
+  const filteredArticles = useMemo(() => {
+    return articles.filter((article) => {
+      const matchesSearch =
+        article.title.toLowerCase().includes(searchTerm) ||
+        article.excerpt.toLowerCase().includes(searchTerm);
 
-    const matchesCategory =
-      !selectedCategory || article.category === selectedCategory;
+      const matchesCategory =
+        !selectedCategory || article.category === selectedCategory;
 
-    return matchesSearch && matchesCategory;
-  });
+      return matchesSearch && matchesCategory;
+    });
+  }, [articles, searchTerm, selectedCategory]);
 
   /* ---------------- PAGINATION ---------------- */
   const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
@@ -86,6 +96,11 @@ const Blog = () => {
     startIndex,
     startIndex + articlesPerPage
   );
+
+  /* Reset page on filter change */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -152,11 +167,17 @@ const Blog = () => {
           <div className="grid lg:grid-cols-[1fr_350px] gap-8">
             {/* ARTICLES */}
             <div>
-              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                {currentArticles.map((article) => (
-                  <BlogCard key={article.id} article={article} />
-                ))}
-              </div>
+              {currentArticles.length === 0 ? (
+                <p className="text-muted-foreground">
+                  {t("blog.noResults")}
+                </p>
+              ) : (
+                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                  {currentArticles.map((article) => (
+                    <BlogCard key={article.id} article={article} />
+                  ))}
+                </div>
+              )}
 
               {/* PAGINATION */}
               {totalPages > 1 && (
@@ -207,14 +228,15 @@ const Blog = () => {
             </div>
 
             {/* SIDEBAR */}
-           <BlogSidebar
-  latestArticles={articles}
-  onSearch={setSearchQuery} // ✅ Ajouté
-  onCategoryClick={(cat) =>
-    setSelectedCategory(cat === selectedCategory ? null : cat)
-  }
-/>
-
+            <BlogSidebar
+              latestArticles={articles}
+              onSearch={setSearchQuery}
+              onCategoryClick={(cat) =>
+                setSelectedCategory(
+                  cat === selectedCategory ? null : cat
+                )
+              }
+            />
           </div>
         </div>
       </section>
