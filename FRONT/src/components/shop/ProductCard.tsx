@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Heart, Eye, ShoppingCart } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useWishlist } from "@/context/WishlistContext";
@@ -49,13 +48,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
     add(product.id);
     toast.success(t("productCard.addToWishlistSuccess"));
   };
-const mainImage = product.images?.[0]
-  ? `https://sinmat.ma/storage/${product.images[0]}`
-  : "/placeholder.png";
-
-const hoverImage = product.images?.[1]
-  ? `https://sinmat.ma/storage/${product.images[1]}`
-  : mainImage;
 
   return (
     <Link to={`/Catalogue/product/${product.id}`}>
@@ -68,14 +60,11 @@ const hoverImage = product.images?.[1]
       >
         {/* IMAGE */}
         <div className="relative h-[60%] overflow-hidden bg-gray-50">
-   
-<img
-  src={isHovered ? hoverImage : mainImage}
-  alt={product.name}
-  className="w-full h-full object-cover transition-all duration-500"
-/>
-
-
+          <img
+            src={isHovered ? product.hoverImage : product.image}
+            alt={product.name}
+            className="w-full h-full object-cover transition-all duration-500"
+          />
 
           {/* BADGES */}
           {product.status === "promotion" && (
@@ -109,7 +98,6 @@ const hoverImage = product.images?.[1]
 
           {/* ACTION ICONS */}
           <div className="absolute top-3 right-3 flex flex-col gap-2">
-            {/* FAVORIS */}
             <button
               onClick={handleWishlist}
               className={`w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center transition-all duration-300 hover:bg-[#ff6a00] hover:text-white ${
@@ -121,7 +109,6 @@ const hoverImage = product.images?.[1]
               <Heart className="w-4 h-4" />
             </button>
 
-            {/* PREVIEW */}
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -148,7 +135,6 @@ const hoverImage = product.images?.[1]
             {product.name}
           </h3>
 
-          {/* PRIX */}
           <div className="flex items-center gap-2" dir="ltr">
             {product.oldPrice && (
               <span className="text-xs text-muted-foreground line-through">
