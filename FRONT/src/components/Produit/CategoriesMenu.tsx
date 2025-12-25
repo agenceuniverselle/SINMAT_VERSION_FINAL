@@ -26,7 +26,8 @@ const CategoriesMenu = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/categories`)
+   fetch(`${API_BASE_URL}/api/categories`)
+
       .then((res) => res.json())
       .then(setCategories)
       .catch((err) =>
