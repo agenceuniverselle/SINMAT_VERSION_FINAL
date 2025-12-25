@@ -27,14 +27,17 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 
-// 📌 VALIDATION ZOD (SEULEMENT AJOUT DE STATUS)
+/* ================= CONFIG ================= */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/* ================= VALIDATION ================= */
 const productSchema = z.object({
   name: z.string().min(1, "Le nom du produit est requis").max(100),
   category: z.string().min(1, "La catégorie est requise"),
   purchasePrice: z.number().min(0, "Le prix d'achat doit être positif"),
   salePrice: z.number().min(0, "Le prix de vente doit être positif"),
   quantity: z.number().int().min(0, "La quantité doit être positive"),
-  status: z.string().optional(), // ✅ AJOUT DU STATUT
+  status: z.string().optional(),
   description: z.string().max(500).optional(),
 });
 
@@ -45,40 +48,38 @@ interface AddProductModalProps {
   onClose: () => void;
 }
 
-/* ---------------------------
-   ADD PRODUCT MODAL
----------------------------- */
+/* ================= COMPONENT ================= */
 export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
-  const API = "http://localhost:8000";
-
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string; children?: any[] }[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Formulaire
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors },
     reset,
+    formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
-    defaultValues: { category: "", status: "" },
+    defaultValues: {
+      category: "",
+      status: "",
+    },
   });
 
-  /* FETCH CATEGORIES */
+  /* ---------- FETCH CATEGORIES ---------- */
   useEffect(() => {
     if (!isOpen) return;
 
-    fetch(`${API}/api/categories`)
+    fetch(`${API_BASE_URL}/api/categories`)
       .then((res) => res.json())
-      .then((data) => setCategories(data))
+      .then(setCategories)
       .catch(() => toast.error("Impossible de charger les catégories"));
   }, [isOpen]);
 
-  /* IMAGE UPLOAD */
+  /* ---------- IMAGE UPLOAD ---------- */
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
 
@@ -93,8 +94,8 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
     setImageFiles((prev) => [...prev, ...files]);
   };
 
-  /* SUBMIT */
-  const handleFormSubmit = async (data: ProductFormData) => {
+  /* ---------- SUBMIT ---------- */
+  const onSubmit = async (data: ProductFormData) => {
     setIsSubmitting(true);
 
     try {
@@ -106,23 +107,13 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
       formData.append("quantity", String(data.quantity));
       formData.append("description", data.description || "");
 
-      // ⭐ AJOUT DU STATUT DANS L'API
       if (data.status) {
         formData.append("status", data.status);
       }
 
       imageFiles.forEach((file) => formData.append("images[]", file));
-console.log("🔍 Données envoyées :", {
-  name: data.name,
-  category_id: data.category,
-  purchase_price: data.purchasePrice,
-  sale_price: data.salePrice,
-  quantity: data.quantity,
-  status: data.status,
-  description: data.description,
-});
 
-      const res = await fetch(`${API}/api/produits`, {
+      const res = await fetch(`${API_BASE_URL}/api/produits`, {
         method: "POST",
         body: formData,
       });
@@ -138,7 +129,7 @@ console.log("🔍 Données envoyées :", {
     }
   };
 
-  /* CLOSE */
+  /* ---------- CLOSE ---------- */
   const handleClose = () => {
     reset();
     setImageFiles([]);
@@ -146,48 +137,51 @@ console.log("🔍 Données envoyées :", {
     onClose();
   };
 
-  /* RENDER */
+  /* ================= RENDER ================= */
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Ajouter un produit</DialogTitle>
-          <DialogDescription>Remplissez les informations du produit.</DialogDescription>
+          <DialogDescription>
+            Remplissez les informations du produit.
+          </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 mt-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {/* NOM */}
             <div className="space-y-2">
-              <Label>Nom du produit <span className="text-red-500">*</span></Label>
-              <Input {...register("name")} placeholder="Ex: Perceuse électrique" />
-              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+              <Label>Nom du produit *</Label>
+              <Input {...register("name")} />
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name.message}</p>
+              )}
             </div>
 
             {/* CATÉGORIE */}
             <div className="space-y-2">
-              <Label>Catégorie <span className="text-red-500">*</span></Label>
+              <Label>Catégorie *</Label>
               <Controller
                 name="category"
                 control={control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionner une catégorie" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((cat: any) => (
+                      {categories.map((cat) => (
                         <div key={cat.id}>
-                          <SelectItem value={String(cat.id)} className="font-medium">
+                          <SelectItem value={String(cat.id)}>
                             {cat.name}
                           </SelectItem>
-
-                          {cat.children?.map((sub: any) => (
+                          {cat.children?.map((sub) => (
                             <SelectItem
                               key={sub.id}
                               value={String(sub.id)}
-                              className="text-gray-600 pl-8"
+                              className="pl-8 text-muted-foreground"
                             >
                               {cat.name} → {sub.name}
                             </SelectItem>
@@ -198,36 +192,38 @@ console.log("🔍 Données envoyées :", {
                   </Select>
                 )}
               />
-              {errors.category && <p className="text-sm text-destructive">{errors.category.message}</p>}
+              {errors.category && (
+                <p className="text-sm text-destructive">
+                  {errors.category.message}
+                </p>
+              )}
             </div>
 
-            {/* PRIX D'ACHAT */}
+            {/* PRIX */}
             <div className="space-y-2">
-              <Label>Prix d'achat <span className="text-red-500">*</span></Label>
+              <Label>Prix d'achat *</Label>
               <Input type="number" step="0.01" {...register("purchasePrice", { valueAsNumber: true })} />
             </div>
 
-            {/* PRIX DE VENTE */}
             <div className="space-y-2">
-              <Label>Prix de vente <span className="text-red-500">*</span></Label>
+              <Label>Prix de vente *</Label>
               <Input type="number" step="0.01" {...register("salePrice", { valueAsNumber: true })} />
             </div>
 
             {/* QUANTITÉ */}
             <div className="space-y-2">
-              <Label>Quantité <span className="text-red-500">*</span></Label>
+              <Label>Quantité *</Label>
               <Input type="number" {...register("quantity", { valueAsNumber: true })} />
             </div>
 
-            {/* ⭐ STATUT (AJOUTÉ) */}
+            {/* STATUT */}
             <div className="space-y-2">
-              <Label>Statut du produit <span className="text-red-500">*</span></Label>
-
+              <Label>Statut</Label>
               <Controller
                 name="status"
                 control={control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue placeholder="Choisir un statut" />
                     </SelectTrigger>
@@ -239,39 +235,37 @@ console.log("🔍 Données envoyées :", {
                 )}
               />
             </div>
-
           </div>
 
           {/* DESCRIPTION */}
           <div className="space-y-2">
             <Label>Description</Label>
-            <Textarea {...register("description")} className="min-h-[100px]" />
+            <Textarea {...register("description")} />
           </div>
 
           {/* IMAGES */}
           <div className="space-y-2">
             <Label>Images</Label>
-
             <div className="border-2 border-dashed rounded-xl p-6">
-              <label htmlFor="images" className="flex flex-col items-center cursor-pointer">
+              <label className="flex flex-col items-center cursor-pointer">
                 <ImageIcon className="h-12 w-12 text-muted-foreground mb-3" />
                 <span className="text-sm">Cliquez pour importer</span>
-                <Input id="images" type="file" multiple className="hidden" onChange={handleImageChange} />
+                <Input type="file" multiple className="hidden" onChange={handleImageChange} />
               </label>
 
               {imagePreviews.length > 0 && (
                 <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {imagePreviews.map((src, index) => (
-                    <div key={index} className="relative group">
+                  {imagePreviews.map((src, i) => (
+                    <div key={i} className="relative">
                       <img src={src} className="w-full h-32 object-cover rounded-lg" />
                       <Button
                         type="button"
-                        variant="destructive"
                         size="icon"
+                        variant="destructive"
                         className="absolute top-2 right-2"
                         onClick={() => {
-                          setImagePreviews((prev) => prev.filter((_, i) => i !== index));
-                          setImageFiles((prev) => prev.filter((_, i) => i !== index));
+                          setImagePreviews((p) => p.filter((_, x) => x !== i));
+                          setImageFiles((p) => p.filter((_, x) => x !== i));
                         }}
                       >
                         <X className="h-4 w-4" />
@@ -288,7 +282,6 @@ console.log("🔍 Données envoyées :", {
             <Button type="button" variant="outline" onClick={handleClose}>
               Annuler
             </Button>
-
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Ajout en cours..." : "Ajouter le produit"}
             </Button>
