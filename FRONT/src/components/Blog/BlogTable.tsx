@@ -13,7 +13,7 @@ import AddBlogPostModal from "./AddBlogPostModal";
 import type { BlogPost as FullBlogPost } from "@/types/blog";
 import EditBlogPostModal from "./EditBlogPostModal";
 
-// Type utilisé pour l’affichage rapide dans la table
+// Type utilisé pour l’affichage rapide
 type BlogPostSummary = {
   id: number;
   title: string;
@@ -21,6 +21,9 @@ type BlogPostSummary = {
   category: string;
   published_at: string | null;
 };
+
+/** ✅ API dynamique (local / prod) */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const BlogTable = () => {
   const [posts, setPosts] = useState<BlogPostSummary[]>([]);
@@ -36,7 +39,7 @@ const BlogTable = () => {
   // Charger tous les posts
   const fetchPosts = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/blog-posts");
+      const res = await fetch(`${API_BASE_URL}/blog-posts`);
       const data = await res.json();
       setPosts(data);
     } catch {
@@ -46,10 +49,10 @@ const BlogTable = () => {
     }
   };
 
-  // Charger un seul post pour l’édition
+  // Charger un seul post pour édition
   const fetchPostById = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/blog-posts/${id}`);
+      const res = await fetch(`${API_BASE_URL}/blog-posts/${id}`);
       const data = await res.json();
       setPostToEdit(data);
       setEditModalOpen(true);
@@ -63,9 +66,12 @@ const BlogTable = () => {
     if (!selectedPostId) return;
 
     try {
-      const res = await fetch(`http://localhost:8000/api/blog-posts/${selectedPostId}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `${API_BASE_URL}/blog-posts/${selectedPostId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!res.ok) throw new Error();
 
@@ -170,11 +176,13 @@ const BlogTable = () => {
         />
       )}
 
-      {/* Dialog Confirmation Suppression */}
+      {/* Confirmation suppression */}
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-red-600">Supprimer cet article ?</DialogTitle>
+            <DialogTitle className="text-red-600">
+              Supprimer cet article ?
+            </DialogTitle>
             <DialogDescription>
               Cette action est irréversible. Voulez-vous vraiment continuer ?
             </DialogDescription>
