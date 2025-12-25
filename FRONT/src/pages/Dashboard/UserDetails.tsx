@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
+/* =======================
+   TYPES
+======================= */
 type Permission = {
   id: number;
   name: string;
@@ -23,6 +26,11 @@ type GroupedPermissions = {
   category: string;
   permissions: Permission[];
 };
+
+/* =======================
+   API
+======================= */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function UserDetails() {
   const { id } = useParams();
@@ -45,10 +53,13 @@ export default function UserDetails() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
 
+  /* =======================
+     FETCH DATA
+  ======================= */
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resUser = await fetch(`http://localhost:8000/api/users/${id}`);
+        const resUser = await fetch(`${API_BASE_URL}/users/${id}`);
         const userData = await resUser.json();
 
         setUser(userData);
@@ -59,8 +70,8 @@ export default function UserDetails() {
         });
 
         const [allPermsRes, userPermsRes] = await Promise.all([
-          fetch(`http://localhost:8000/api/permissions`),
-          fetch(`http://localhost:8000/api/users/${id}/permissions`),
+          fetch(`${API_BASE_URL}/permissions`),
+          fetch(`${API_BASE_URL}/users/${id}/permissions`),
         ]);
 
         const allPerms = await allPermsRes.json();
@@ -77,9 +88,16 @@ export default function UserDetails() {
     fetchData();
   }, [id]);
 
-  const togglePermission = async (permissionId: number, enabled: boolean, silent = false) => {
+  /* =======================
+     PERMISSIONS
+  ======================= */
+  const togglePermission = async (
+    permissionId: number,
+    enabled: boolean,
+    silent = false
+  ) => {
     try {
-      await fetch(`http://localhost:8000/api/users/${id}/permissions`, {
+      await fetch(`${API_BASE_URL}/users/${id}/permissions`, {
         method: enabled ? "POST" : "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ permission_id: permissionId }),
@@ -88,7 +106,9 @@ export default function UserDetails() {
       if (!silent) toast.success("Permission mise à jour");
 
       setUserPermissions((prev) =>
-        enabled ? [...prev, permissionId] : prev.filter((pid) => pid !== permissionId)
+        enabled
+          ? [...prev, permissionId]
+          : prev.filter((pid) => pid !== permissionId)
       );
     } catch {
       if (!silent) toast.error("Erreur de mise à jour");
@@ -97,20 +117,31 @@ export default function UserDetails() {
 
   const handleSelectAll = async () => {
     permissions.forEach((perm) => {
-      if (!userPermissions.includes(perm.id)) togglePermission(perm.id, true, true);
+      if (!userPermissions.includes(perm.id)) {
+        togglePermission(perm.id, true, true);
+      }
     });
     toast.success("Toutes les permissions activées");
   };
 
   const handleDeselectAll = async () => {
-    userPermissions.forEach((pid) => togglePermission(pid, false, true));
+    userPermissions.forEach((pid) =>
+      togglePermission(pid, false, true)
+    );
     toast.success("Toutes les permissions désactivées");
   };
 
+  /* =======================
+     DELETE USER
+  ======================= */
   const handleDeleteUser = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/users/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE_URL}/users/${id}`, {
+        method: "DELETE",
+      });
+
       if (!res.ok) throw new Error();
+
       toast.success("Utilisateur supprimé");
       navigate("/admin-utilisateurs");
     } catch {
@@ -120,6 +151,9 @@ export default function UserDetails() {
     }
   };
 
+  /* =======================
+     UPDATE USER
+  ======================= */
   const handleUpdateUser = async () => {
     if (password !== passwordConfirm) {
       toast.error("Les mots de passe ne correspondent pas !");
@@ -133,12 +167,10 @@ export default function UserDetails() {
       phone: formData.phone,
     };
 
-    if (password.length > 0) {
-      payload.password = password;
-    }
+    if (password.length > 0) payload.password = password;
 
     try {
-      const res = await fetch(`http://localhost:8000/api/users/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/users/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -148,6 +180,7 @@ export default function UserDetails() {
 
       const updated = await res.json();
       setUser(updated);
+
       toast.success("Utilisateur mis à jour");
       setShowEditForm(false);
       setPassword("");
@@ -157,15 +190,22 @@ export default function UserDetails() {
     }
   };
 
+  /* =======================
+     GROUP PERMISSIONS
+  ======================= */
   const groupPermissions = (): GroupedPermissions[] => {
     const groups: Record<string, Permission[]> = {};
+
     permissions.forEach((perm) => {
       const category = perm.category || "Autres";
       if (!groups[category]) groups[category] = [];
       groups[category].push(perm);
     });
 
-    return Object.entries(groups).map(([category, perms]) => ({ category, permissions: perms }));
+    return Object.entries(groups).map(([category, perms]) => ({
+      category,
+      permissions: perms,
+    }));
   };
 
   if (!user) return <p className="p-6">Chargement...</p>;
@@ -173,17 +213,26 @@ export default function UserDetails() {
   return (
     <>
       <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {/* Infos utilisateur */}
+        {/* INFOS USER */}
         <div className="lg:col-span-1 space-y-4">
           <section className="border rounded p-4 bg-white shadow-sm">
             <div className="flex justify-between items-center border-b pb-2 mb-2">
-              <h2 className="text-lg font-semibold">Informations de l'utilisateur</h2>
+              <h2 className="text-lg font-semibold">
+                Informations de l'utilisateur
+              </h2>
               <div className="space-x-2">
-                <Button variant="outline" size="sm" onClick={() => setShowEditForm(!showEditForm)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowEditForm(!showEditForm)}
+                >
                   {showEditForm ? "Annuler" : "Modifier"}
                 </Button>
-                <Button variant="destructive" size="sm" onClick={() => setOpenDialog(true)}>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setOpenDialog(true)}
+                >
                   Supprimer
                 </Button>
               </div>
@@ -193,75 +242,102 @@ export default function UserDetails() {
               <p><strong>Nom :</strong> {user.name}</p>
               <p><strong>Email :</strong> {user.email}</p>
               <p><strong>Téléphone :</strong> {user.phone || "-"}</p>
-              <p><strong>Créé le :</strong> {new Date(user.created_at).toLocaleDateString("fr-FR")}</p>
+              <p>
+                <strong>Créé le :</strong>{" "}
+                {new Date(user.created_at).toLocaleDateString("fr-FR")}
+              </p>
             </div>
           </section>
 
-          {/* Formulaire édition */}
+          {/* EDIT FORM */}
           {showEditForm && (
             <section className="border rounded p-4 bg-white shadow-sm">
-              <h3 className="text-md font-semibold mb-4">Modifier l'utilisateur</h3>
+              <h3 className="text-md font-semibold mb-4">
+                Modifier l'utilisateur
+              </h3>
+
               <div className="space-y-3">
                 <Input
                   placeholder="Nom"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                 />
                 <Input
                   placeholder="Email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                 />
                 <Input
                   placeholder="Téléphone"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
                 />
 
                 <hr />
 
                 <Input
                   type="password"
-                  placeholder="Nouveau mot de passe (optionnel)"
+                  placeholder="Nouveau mot de passe"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-
                 <Input
                   type="password"
                   placeholder="Confirmer le mot de passe"
                   value={passwordConfirm}
-                  onChange={(e) => setPasswordConfirm(e.target.value)}
+                  onChange={(e) =>
+                    setPasswordConfirm(e.target.value)
+                  }
                 />
 
-                {password !== passwordConfirm && passwordConfirm.length > 0 && (
-                  <p className="text-red-500 text-sm">
-                    ⚠️ Les mots de passe ne correspondent pas.
-                  </p>
-                )}
+                {password !== passwordConfirm &&
+                  passwordConfirm.length > 0 && (
+                    <p className="text-red-500 text-sm">
+                      ⚠️ Les mots de passe ne correspondent pas.
+                    </p>
+                  )}
 
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setShowEditForm(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowEditForm(false)}
+                  >
                     Annuler
                   </Button>
-                  <Button onClick={handleUpdateUser}>Enregistrer</Button>
+                  <Button onClick={handleUpdateUser}>
+                    Enregistrer
+                  </Button>
                 </div>
               </div>
             </section>
           )}
         </div>
 
-        {/* Permissions */}
+        {/* PERMISSIONS */}
         <div className="lg:col-span-2 space-y-4">
           <section className="border rounded p-4 bg-white shadow-sm">
             <div className="flex justify-between items-center border-b pb-2 mb-4">
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-semibold">Permissions</h2>
-                <Badge variant="secondary">{userPermissions.length}</Badge>
+                <Badge variant="secondary">
+                  {userPermissions.length}
+                </Badge>
               </div>
               <div className="space-x-2">
-                <Button size="sm" onClick={handleSelectAll}>Tout activer</Button>
-                <Button size="sm" variant="outline" onClick={handleDeselectAll}>
+                <Button size="sm" onClick={handleSelectAll}>
+                  Tout activer
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleDeselectAll}
+                >
                   Tout désactiver
                 </Button>
               </div>
@@ -269,7 +345,10 @@ export default function UserDetails() {
 
             {groupPermissions().map((group) => (
               <div key={group.category} className="mb-6">
-                <h4 className="text-md font-semibold mb-2">{group.category}</h4>
+                <h4 className="text-md font-semibold mb-2">
+                  {group.category}
+                </h4>
+
                 <div className="space-y-1">
                   {group.permissions.map((perm) => (
                     <div
@@ -279,7 +358,9 @@ export default function UserDetails() {
                       <span>{perm.name}</span>
                       <Switch
                         checked={userPermissions.includes(perm.id)}
-                        onCheckedChange={(checked) => togglePermission(perm.id, checked)}
+                        onCheckedChange={(checked) =>
+                          togglePermission(perm.id, checked)
+                        }
                       />
                     </div>
                   ))}
@@ -290,21 +371,30 @@ export default function UserDetails() {
         </div>
       </div>
 
-      {/* Dialog Suppression */}
+      {/* DELETE DIALOG */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-red-600">Supprimer l'utilisateur ?</DialogTitle>
+            <DialogTitle className="text-red-600">
+              Supprimer l'utilisateur ?
+            </DialogTitle>
             <DialogDescription>
-              Cette action est définitive. Voulez-vous vraiment supprimer{" "}
-              <strong>{user.name}</strong> ?
+              Cette action est définitive. Voulez-vous vraiment
+              supprimer <strong>{user.name}</strong> ?
             </DialogDescription>
           </DialogHeader>
+
           <div className="flex justify-end gap-4 mt-4">
-            <Button variant="outline" onClick={() => setOpenDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setOpenDialog(false)}
+            >
               Annuler
             </Button>
-            <Button variant="destructive" onClick={handleDeleteUser}>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteUser}
+            >
               Supprimer
             </Button>
           </div>
