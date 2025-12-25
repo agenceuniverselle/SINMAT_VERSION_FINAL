@@ -15,26 +15,32 @@ interface Article {
   created_at: string;
 }
 
+/** ✅ URLs dynamiques */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const APP_BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+
 const ArticlesSection = () => {
   const { t } = useTranslation();
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/blog-posts")
+    fetch(`${API_BASE_URL}/blog-posts`)
       .then((res) => res.json())
       .then((data) => {
         const latest = data
           .sort(
             (a: Article, b: Article) =>
-              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
           )
           .slice(0, 3)
           .map((article: Article) => ({
             ...article,
             image: article.image?.startsWith("http")
               ? article.image
-              : `http://localhost:8000/storage/${article.image}`,
+              : `${APP_BASE_URL}/storage/${article.image}`,
           }));
+
         setArticles(latest);
       })
       .catch((err) => {
@@ -67,14 +73,19 @@ const ArticlesSection = () => {
         {/* Articles */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.map((article) => {
-            const formattedDate = new Date(article.created_at).toLocaleDateString("fr-FR", {
+            const formattedDate = new Date(
+              article.created_at
+            ).toLocaleDateString("fr-FR", {
               day: "2-digit",
               month: "long",
               year: "numeric",
             });
 
             return (
-              <Card key={article.id} className="group overflow-hidden border hover:shadow-xl transition-all flex flex-col">
+              <Card
+                key={article.id}
+                className="group overflow-hidden border hover:shadow-xl transition-all flex flex-col"
+              >
                 <div className="relative overflow-hidden h-56">
                   <img
                     src={article.image}
@@ -87,6 +98,7 @@ const ArticlesSection = () => {
                     </span>
                   </div>
                 </div>
+
                 <CardContent className="p-6 flex flex-col flex-grow">
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                     <span className="flex items-center gap-1">
@@ -98,12 +110,15 @@ const ArticlesSection = () => {
                       {article.author}
                     </span>
                   </div>
+
                   <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2">
                     {article.title}
                   </h3>
+
                   <p className="text-muted-foreground mb-4 line-clamp-3">
                     {article.excerpt}
                   </p>
+
                   <Button
                     variant="link"
                     className="p-0 h-auto text-primary group/btn mt-auto self-start"
@@ -120,7 +135,7 @@ const ArticlesSection = () => {
           })}
         </div>
 
-        {/* CTA Footer */}
+        {/* CTA */}
         <div className="text-center mt-12">
           <Button
             variant="outline"
