@@ -38,7 +38,7 @@ export default function EditLocationCategoryModal({
 
   useEffect(() => {
     if (categoryId && open) {
-      fetch(`${API_BASE_URL}/categories_location/${categoryId}`)
+      fetch(`${API_BASE_URL}/api/categories_location/${categoryId}`)
         .then((res) => res.json())
         .then((data) => {
           setForm({
@@ -82,7 +82,7 @@ export default function EditLocationCategoryModal({
 
     try {
       const res = await fetch(
-        `${API_BASE_URL}/categories_location/${categoryId}`,
+        `${API_BASE_URL}/api/categories_location/${categoryId}`,
         {
           method: "POST",
           headers: {
