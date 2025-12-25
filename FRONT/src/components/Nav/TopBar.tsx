@@ -31,9 +31,7 @@ const TopBar = () => {
                <a href="/contact" className="hover:text-primary transition-colors">
                 {t("topbar.contact")}
               </a>
-               <a href="/contact" className="hover:text-primary transition-colors">
-                {t("topbar.contact")}
-              </a>
+              
               <a href="/faqs" className="hover:text-primary transition-colors">
                 {t("topbar.faqs")}
               </a>
