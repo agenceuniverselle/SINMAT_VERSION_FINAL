@@ -10,6 +10,10 @@ import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
 import { useTranslation } from "react-i18next";
 
+/* ✅ API & STORAGE dynamiques */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const STORAGE_BASE_URL = import.meta.env.VITE_STORAGE_BASE_URL;
+
 type Product = {
   id: number;
   name: string;
@@ -44,22 +48,25 @@ const BestsellerProducts = () => {
     toast.success(t("bestseller.addToWishlistSuccess"));
   };
 
+  /* 🔽 Charger les produits */
   const fetchProducts = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/produits/latest");
+      const res = await fetch(`${API_BASE_URL}/produits/latest`);
       if (!res.ok) throw new Error();
 
       const data = await res.json();
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const mapped = data.map((p: any) => ({
+      const mapped: Product[] = data.map((p: any) => ({
         id: p.id,
         name: p.name,
         category: p.category ?? null,
         price: Number(p.sale_price),
         oldPrice: p.purchase_price ? Number(p.purchase_price) : undefined,
-        images: p.images?.map(
-          (img: string) => `http://localhost:8000/storage/${img}`
-        ) ?? [],
+        images:
+          p.images?.map(
+            (img: string) => `${STORAGE_BASE_URL}/${img}`
+          ) ?? [],
       }));
 
       setProducts(mapped);
@@ -74,6 +81,7 @@ const BestsellerProducts = () => {
     fetchProducts();
   }, []);
 
+  /* 🔽 Popup newsletter on scroll */
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -91,6 +99,7 @@ const BestsellerProducts = () => {
     };
   }, [hasShownPopup]);
 
+  /* 🔽 Newsletter submit */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -99,13 +108,13 @@ const BestsellerProducts = () => {
       return;
     }
 
-    if (email.trim() && !email.toLowerCase().endsWith("@gmail.com")) {
+    if (email && !email.toLowerCase().endsWith("@gmail.com")) {
       toast.error(t("bestseller.errors.invalidEmail"));
       return;
     }
 
     try {
-      const res = await fetch("http://localhost:8000/api/newsletter", {
+      const res = await fetch(`${API_BASE_URL}/newsletter`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, phone }),
@@ -223,7 +232,7 @@ const BestsellerProducts = () => {
         </div>
       </div>
 
-      {/* NEWSLETTER */}
+      {/* NEWSLETTER POPUP */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-md p-6 rounded relative">
