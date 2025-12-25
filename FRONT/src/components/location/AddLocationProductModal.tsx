@@ -44,7 +44,7 @@ export const AddLocationProductModal = ({
   // 🔽 Charger les catégories
   useEffect(() => {
     if (open) {
-      fetch(`${API_BASE_URL}/categories_location`)
+      fetch(`${API_BASE_URL}/api/categories_location`)
         .then((res) => res.json())
         .then((data) => setCategories(data))
         .catch(() =>
@@ -82,7 +82,7 @@ export const AddLocationProductModal = ({
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/produits_location`, {
+      const res = await fetch(`${API_BASE_URL}/api/produits_location`, {
         method: "POST",
         body: formData,
       });
