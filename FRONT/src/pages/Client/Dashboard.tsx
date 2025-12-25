@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import AppHeader from "@/layout/AppHeader";
 import ClientSidebar from "@/layout/ClientSidebar";
 
-// Types
+/* ✅ API dynamique */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/* ================= TYPES ================= */
 type Order = {
   id: number;
   created_at: string;
@@ -14,6 +17,7 @@ type Order = {
   total: number;
 };
 
+/* ================= STAT CARD ================= */
 const StatCard = ({
   title,
   value,
@@ -38,54 +42,59 @@ const StatCard = ({
   </Card>
 );
 
+/* ================= DASHBOARD ================= */
 export default function Dashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
-useEffect(() => {
-  const fetchSubscriptionStatus = async () => {
-    const token = sessionStorage.getItem("auth_token");
-    if (!token) return;
+  /* 🔔 NEWSLETTER STATUS */
+  useEffect(() => {
+    const fetchSubscriptionStatus = async () => {
+      const token = sessionStorage.getItem("auth_token");
+      if (!token) return;
 
-    try {
-      const res = await fetch("http://localhost:8000/api/newsletter/is-subscribed", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      try {
+        const res = await fetch(
+          `${API_BASE_URL}/newsletter/is-subscribed`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      if (!res.ok) throw new Error("Erreur lors de la récupération");
+        if (!res.ok) throw new Error();
 
-      const data = await res.json();
-      setIsSubscribed(data.subscribed); // true or false
-    } catch (error) {
-      console.error("Erreur newsletter:", error);
-    }
-  };
+        const data = await res.json();
+        setIsSubscribed(Boolean(data.subscribed));
+      } catch (error) {
+        console.error("Erreur newsletter :", error);
+      }
+    };
 
-  fetchSubscriptionStatus();
-}, []);
+    fetchSubscriptionStatus();
+  }, []);
 
-
+  /* 📦 COMMANDES */
   useEffect(() => {
     const fetchOrders = async () => {
       const token = sessionStorage.getItem("auth_token");
       if (!token) return;
 
       try {
-        const res = await fetch("http://localhost:8000/api/mes-commandes", {
+        const res = await fetch(`${API_BASE_URL}/mes-commandes`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!res.ok) throw new Error("Erreur lors de la récupération");
+        if (!res.ok) throw new Error();
 
         const data = await res.json();
         setOrders(data);
-      } catch (err) {
-        console.error("Erreur:", err);
+      } catch (error) {
+        console.error("Erreur commandes :", error);
       } finally {
         setLoading(false);
       }
@@ -94,16 +103,27 @@ useEffect(() => {
     fetchOrders();
   }, []);
 
+  /* ================= CALCULS ================= */
   const totalOrders = orders.length;
+
   const totalInProgress = orders.filter((o) =>
     ["en cours", "En cours"].includes(o.status)
   ).length;
-  const totalSpent = orders.reduce((sum, o) => sum + Number(o.total), 0);
+
+  const totalSpent = orders.reduce(
+    (sum, o) => sum + Number(o.total),
+    0
+  );
 
   const recentOrders = [...orders]
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() -
+        new Date(a.created_at).getTime()
+    )
     .slice(0, 3);
 
+  /* ================= UI ================= */
   return (
     <div className="flex min-h-screen bg-background">
       <ClientSidebar />
@@ -112,7 +132,7 @@ useEffect(() => {
         <AppHeader />
 
         <main className="p-6 space-y-6">
-          {/* Statistiques */}
+          {/* 🔢 STATISTIQUES */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <StatCard
               title="Total Commandes"
@@ -120,54 +140,63 @@ useEffect(() => {
               icon={ShoppingCart}
               color="text-primary"
             />
+
             <StatCard
               title="En cours"
               value={totalInProgress}
               icon={Package}
               color="text-orange-500"
             />
+
             <StatCard
               title="Dépenses totales"
               value={`${totalSpent.toFixed(2)} MAD`}
               icon={TrendingUp}
               color="text-green-500"
             />
-     <StatCard
-  title="Newsletter"
-  value={isSubscribed ? "Abonné" : "Non abonné"}
-  icon={Mail}
-  color={isSubscribed ? "text-blue-500" : "text-gray-400"}
-/>
 
-
+            <StatCard
+              title="Newsletter"
+              value={isSubscribed ? "Abonné" : "Non abonné"}
+              icon={Mail}
+              color={isSubscribed ? "text-blue-500" : "text-gray-400"}
+            />
           </div>
 
-          {/* Commandes récentes */}
+          {/* 🧾 COMMANDES RÉCENTES */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Commandes Récentes</CardTitle>
+              <CardTitle>Commandes récentes</CardTitle>
               <Button variant="outline" size="sm" asChild>
                 <Link to="/client/commandes">Voir tout</Link>
               </Button>
             </CardHeader>
+
             <CardContent>
               {loading ? (
                 <p className="text-muted-foreground">Chargement...</p>
               ) : recentOrders.length === 0 ? (
-                <p className="text-muted-foreground">Aucune commande trouvée.</p>
+                <p className="text-muted-foreground">
+                  Aucune commande trouvée.
+                </p>
               ) : (
                 <div className="space-y-4">
                   {recentOrders.map((order) => (
                     <div
                       key={order.id}
-                      className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
+                      className="flex items-center justify-between border-b pb-4 last:border-0"
                     >
                       <div>
                         <p className="font-medium">CMD-{order.id}</p>
-                        <p className="text-sm text-muted-foreground">{order.created_at}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {order.created_at}
+                        </p>
                       </div>
+
                       <div className="text-right">
-                        <p className="font-bold">{order.total.toFixed(2)} MAD</p>
+                        <p className="font-bold">
+                          {order.total.toFixed(2)} MAD
+                        </p>
                         <p
                           className={`text-sm ${
                             order.status === "Livrée"
@@ -187,9 +216,9 @@ useEffect(() => {
             </CardContent>
           </Card>
 
-          {/* Actions rapides */}
+          {/* ⚡ ACTIONS RAPIDES */}
           <div className="grid gap-4 md:grid-cols-2">
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition">
               <Link to="/client/commandes">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -199,13 +228,13 @@ useEffect(() => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Consultez l'historique et le suivi de vos commandes
+                    Consultez l’historique et le suivi de vos commandes
                   </p>
                 </CardContent>
               </Link>
             </Card>
 
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition">
               <Link to="/Client-profile">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
