@@ -46,7 +46,7 @@ const AddLocationCategoryModal = ({ open, onOpenChange, onSuccess }: Props) => {
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/categories_location`, {
+      const res = await fetch(`${API_BASE_URL}/api/categories_location`, {
         method: "POST",
         body: formData,
       });
