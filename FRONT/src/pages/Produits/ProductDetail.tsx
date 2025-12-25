@@ -8,6 +8,7 @@ import TopBar from "@/components/Nav/TopBar";
 import Header from "@/components/Nav/Header";
 import Navigation from "@/components/Nav/Navigation";
 import Footer from "@/components/Footer/Footer";
+
 import ProductGallery from "@/components/shop/ProductGallery";
 import ProductTabs from "@/components/shop/ProductTabs";
 import ProductCard from "@/components/shop/ProductCard";
@@ -15,8 +16,6 @@ import ProductCard from "@/components/shop/ProductCard";
 import { Button } from "@/components/ui/button";
 import {
   Heart,
-  ChevronLeft,
-  ChevronRight,
   Minus,
   Plus,
   Facebook,
@@ -29,6 +28,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 
+/* ================= API ================= */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/* ================= TYPES ================= */
 export interface Product {
   id: number;
   name: string;
@@ -50,7 +53,6 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const API = "http://localhost:8000";
 
   const [product, setProduct] = useState<Product | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
@@ -61,18 +63,26 @@ const ProductDetail = () => {
   const { add: addToCart } = useCart();
   const { add: addToWishlist } = useWishlist();
 
+  /* -------- FETCH SINGLE PRODUCT -------- */
   const fetchProduct = async () => {
     try {
-      const res = await fetch(`${API}/api/produits/${id}`);
+      const res = await fetch(`${API_BASE_URL}/api/produits/${id}`);
       if (!res.ok) throw new Error();
 
       const p = await res.json();
 
-      const imgs: string[] = Array.isArray(p.images)
-        ? p.images.map((img: string) =>
-            img.startsWith("http") ? img : `${API}/storage/${img}`
-          )
-        : [];
+      let imgs: string[] = [];
+      try {
+        imgs = Array.isArray(p.images)
+          ? p.images.map((img: string) =>
+              img.startsWith("http")
+                ? img
+                : `${API_BASE_URL}/storage/${img}`
+            )
+          : [];
+      } catch {
+        /* ignore */
+      }
 
       setProduct({
         id: p.id,
@@ -90,7 +100,10 @@ const ProductDetail = () => {
         description: p.description || t("product.defaultDescription"),
         additionalInfo: [
           { label: t("product.stock"), value: String(p.quantity) },
-          { label: t("product.category"), value: p.category?.name ?? "-" },
+          {
+            label: t("product.category"),
+            value: p.category?.name ?? "-",
+          },
         ],
       });
     } catch {
@@ -98,29 +111,51 @@ const ProductDetail = () => {
     }
   };
 
+  /* -------- FETCH ALL PRODUCTS (RELATED) -------- */
   const fetchAllProducts = async () => {
-    const res = await fetch(`${API}/api/produits`);
-    const data = await res.json();
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/produits`);
+      if (!res.ok) throw new Error();
 
-    setAllProducts(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      data.map((p: any) => ({
-        id: p.id,
-        name: p.name,
-        category: p.category?.name ?? "",
-        price: Number(p.sale_price),
-        oldPrice: Number(p.purchase_price),
-        image: p.images?.[0] ?? "/no-image.png",
-        hoverImage: p.images?.[1] ?? p.images?.[0] ?? "/no-image.png",
-        images: p.images ?? [],
-        rating: 4.5,
-        reviews: 20,
-        inStock: p.quantity > 0,
-        onSale: Number(p.sale_price) < Number(p.purchase_price),
-        description: "",
-        additionalInfo: [],
-      }))
-    );
+      const data = await res.json();
+
+      setAllProducts(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data.map((p: any) => {
+          let imgs: string[] = [];
+          try {
+            imgs = Array.isArray(p.images)
+              ? p.images.map((img: string) =>
+                  img.startsWith("http")
+                    ? img
+                    : `${API_BASE_URL}/storage/${img}`
+                )
+              : [];
+          } catch {
+            /* ignore */
+          }
+
+          return {
+            id: p.id,
+            name: p.name,
+            category: p.category?.name ?? "",
+            price: Number(p.sale_price),
+            oldPrice: Number(p.purchase_price),
+            image: imgs[0] ?? "/no-image.png",
+            hoverImage: imgs[1] ?? imgs[0] ?? "/no-image.png",
+            images: imgs,
+            rating: 4.5,
+            reviews: 20,
+            inStock: p.quantity > 0,
+            onSale: Number(p.sale_price) < Number(p.purchase_price),
+            description: "",
+            additionalInfo: [],
+          };
+        })
+      );
+    } catch {
+      /* silent */
+    }
   };
 
   useEffect(() => {
@@ -131,19 +166,31 @@ const ProductDetail = () => {
 
   useEffect(() => {
     if (!product) return;
+
     setRelated(
-      allProducts.filter(
-        (p) => p.id !== product.id && p.category === product.category
-      ).slice(0, 4)
+      allProducts
+        .filter(
+          (p) =>
+            p.id !== product.id && p.category === product.category
+        )
+        .slice(0, 4)
     );
   }, [product, allProducts]);
 
   if (!product) {
-    return <div className="p-10 text-center">{t("product.loading")}</div>;
+    return (
+      <div className="p-10 text-center">
+        {t("product.loading")}
+      </div>
+    );
   }
 
+  /* -------- ACTIONS -------- */
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) addToCart(product.id);
+    for (let i = 0; i < quantity; i++) {
+      addToCart(product.id);
+    }
+
     toast({
       title: t("product.addedToCartTitle"),
       description: t("product.addedToCartDescription", {
@@ -163,6 +210,7 @@ const ProductDetail = () => {
     });
   };
 
+  /* ================= RENDER ================= */
   return (
     <div className="min-h-screen bg-background">
       <TopBar />
@@ -185,31 +233,51 @@ const ProductDetail = () => {
 
         {/* Main */}
         <div className="grid md:grid-cols-2 gap-12 mb-16">
-          <ProductGallery images={product.images} productName={product.name} />
+          <ProductGallery
+            images={product.images}
+            productName={product.name}
+          />
 
           <div>
-            <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
+            <h1 className="text-4xl font-bold mb-4">
+              {product.name}
+            </h1>
 
             <div
               dir="ltr"
               className="text-3xl font-bold text-primary mb-6"
             >
-              {product.price.toFixed(2)} {t("product.currency")}
+              {product.price.toFixed(2)}{" "}
+              {t("product.currency")}
             </div>
 
             <div className="flex items-center gap-4 mb-6">
               <div className="flex border rounded">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3">
+                <button
+                  onClick={() =>
+                    setQuantity(Math.max(1, quantity - 1))
+                  }
+                  className="p-3"
+                >
                   <Minus size={16} />
                 </button>
+
                 <input
                   dir="ltr"
                   type="number"
                   className="w-16 text-center border-x"
                   value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, +e.target.value || 1))}
+                  onChange={(e) =>
+                    setQuantity(
+                      Math.max(1, Number(e.target.value) || 1)
+                    )
+                  }
                 />
-                <button onClick={() => setQuantity(quantity + 1)} className="p-3">
+
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="p-3"
+                >
                   <Plus size={16} />
                 </button>
               </div>
@@ -237,15 +305,22 @@ const ProductDetail = () => {
               <span className="text-muted-foreground">
                 {t("product.category")} :
               </span>{" "}
-              <span className="font-semibold">{product.category}</span>
+              <span className="font-semibold">
+                {product.category}
+              </span>
             </div>
 
             <div className="flex gap-2">
-              {[Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
-                <button key={i} className="w-8 h-8 border rounded-full flex items-center justify-center">
-                  <Icon size={16} />
-                </button>
-              ))}
+              {[Facebook, Twitter, Linkedin, Instagram].map(
+                (Icon, i) => (
+                  <button
+                    key={i}
+                    className="w-8 h-8 border rounded-full flex items-center justify-center"
+                  >
+                    <Icon size={16} />
+                  </button>
+                )
+              )}
             </div>
           </div>
         </div>
