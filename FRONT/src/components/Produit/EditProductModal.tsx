@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import { useEffect, useState, ChangeEvent } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   Dialog,
@@ -11,7 +15,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -24,9 +27,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { toast } from "sonner";
-import { Pencil, Trash2 } from "lucide-react";
+/* ================= CONFIG ================= */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+/* ================= VALIDATION ================= */
 const schema = z.object({
   name: z.string().min(1, "Le nom est requis"),
   category: z.string().min(1, "La catégorie est requise"),
@@ -55,6 +59,7 @@ type NewImageItem = {
   preview: string;
 };
 
+/* ================= COMPONENT ================= */
 export function EditProductModal({
   isOpen,
   onClose,
@@ -78,34 +83,27 @@ export function EditProductModal({
     handleSubmit,
     control,
     reset,
-    formState: { errors },
   } = useForm<ProductForm>({
     resolver: zodResolver(schema),
   });
 
-  const API_URL = "http://localhost:8000";
-
-  /* -------------------------
-        Charger catégories
-  ---------------------------*/
+  /* ---------- FETCH CATEGORIES ---------- */
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/categories`);
+      const res = await fetch(`${API_BASE_URL}/api/categories`);
       setCategories(await res.json());
     } catch {
       toast.error("Impossible de charger les catégories");
     }
   };
 
-  /* -------------------------
-         Charger produit
-  ---------------------------*/
+  /* ---------- FETCH PRODUCT ---------- */
   const fetchProduct = async () => {
     if (!productId) return;
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_URL}/api/produits/${productId}`);
+      const res = await fetch(`${API_BASE_URL}/api/produits/${productId}`);
       const data = await res.json();
 
       reset({
@@ -117,9 +115,7 @@ export function EditProductModal({
         description: data.description ?? "",
       });
 
-      // 🔥 data.images est déjà un tableau d'URL complètes
       setExistingImages(Array.isArray(data.images) ? data.images : []);
-
       setNewImages([]);
     } catch {
       toast.error("Erreur lors du chargement du produit");
@@ -135,36 +131,28 @@ export function EditProductModal({
     }
   }, [isOpen, productId]);
 
-  /* -------------------------
-       Ajouter nouvelles images
-  ---------------------------*/
+  /* ---------- IMAGE HANDLING ---------- */
   const handleGalleryChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
     const files = Array.from(e.target.files);
-    const mapped = files.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
-
-    setNewImages((prev) => [...prev, ...mapped]);
+    setNewImages((prev) => [
+      ...prev,
+      ...files.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+      })),
+    ]);
   };
 
-  /* -------------------------
-      Remplacement image exist.
-  ---------------------------*/
   const handleReplaceExisting = (index: number, file: File) => {
     setExistingImages((prev) => prev.filter((_, i) => i !== index));
-
     setNewImages((prev) => [
       ...prev,
       { file, preview: URL.createObjectURL(file) },
     ]);
   };
 
-  /* -------------------------
-        Confirmation delete
-  ---------------------------*/
   const askDelete = (type: "existing" | "new", index: number) => {
     setDeleteTarget({ type, index });
     setConfirmDeleteOpen(true);
@@ -173,21 +161,17 @@ export function EditProductModal({
   const confirmDelete = () => {
     if (!deleteTarget) return;
 
-    const { type, index } = deleteTarget;
-
-    if (type === "existing") {
-      setExistingImages((prev) => prev.filter((_, i) => i !== index));
+    if (deleteTarget.type === "existing") {
+      setExistingImages((prev) => prev.filter((_, i) => i !== deleteTarget.index));
     } else {
-      setNewImages((prev) => prev.filter((_, i) => i !== index));
+      setNewImages((prev) => prev.filter((_, i) => i !== deleteTarget.index));
     }
 
-    setDeleteTarget(null);
     setConfirmDeleteOpen(false);
+    setDeleteTarget(null);
   };
 
-  /* -------------------------
-         SUBMIT
-  ---------------------------*/
+  /* ---------- SUBMIT ---------- */
   const submit = async (data: ProductForm) => {
     if (!productId) return;
 
@@ -200,48 +184,40 @@ export function EditProductModal({
     formData.append("quantity", String(data.quantity));
     formData.append("description", data.description || "");
 
-    // 🔵 Garder images existantes
     existingImages.forEach((img) => formData.append("gallery[]", img));
-
-    // 🟢 Ajouter nouvelles images
-    newImages.forEach((item) => formData.append("images[]", item.file));
+    newImages.forEach((img) => formData.append("images[]", img.file));
 
     try {
-      const res = await fetch(`${API_URL}/api/produits/${productId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/produits/${productId}`, {
         method: "POST",
         body: formData,
       });
 
       if (!res.ok) throw new Error();
 
-      toast.success("Produit mis à jour avec succès");
+      toast.success("Produit mis à jour");
       onUpdated?.();
       onClose();
     } catch {
-      toast.error("Erreur lors de la mise à jour du produit");
+      toast.error("Erreur lors de la mise à jour");
     }
   };
 
   if (loading) return null;
 
-  /* -------------------------
-         RENDER
-  ---------------------------*/
+  /* ================= RENDER ================= */
   return (
     <>
-      {/* MODAL EDIT */}
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Modifier le produit</DialogTitle>
             <DialogDescription>
-              Gérez les informations et la galerie d’images.
+              Informations et images du produit
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSubmit(submit)} className="space-y-6">
-            
-            {/* CHAMPS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <Label>Nom *</Label>
@@ -286,99 +262,42 @@ export function EditProductModal({
               </div>
             </div>
 
-            {/* DESCRIPTION */}
             <div>
               <Label>Description</Label>
               <Textarea {...register("description")} />
             </div>
 
-            {/* IMAGES EXISTANTES */}
+            {/* IMAGES */}
             <div className="space-y-4 border-t pt-4">
-              <Label>Images existantes</Label>
+              <Label>Images</Label>
 
               <div className="flex flex-wrap gap-4">
-                {existingImages.map((url, index) => (
-                  <div key={index} className="relative group w-24 h-24">
-
-                    <img
-                      src={url} // 🔥 FIX — URL complète déjà OK
-                      className="w-24 h-24 object-cover border rounded-md"
-                    />
-
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-3">
-                      
-                      {/* Replace */}
-                      <label
-                        htmlFor={`replace-${index}`}
-                        className="p-2 bg-white/20 hover:bg-white/40 rounded-full cursor-pointer"
-                      >
-                        <Pencil className="w-5 h-5 text-yellow-300" />
-                      </label>
-
-                      <input
-                        id={`replace-${index}`}
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleReplaceExisting(index, file);
-                        }}
-                      />
-
-                      {/* Delete */}
-                      <button
-                        type="button"
-                        onClick={() => askDelete("existing", index)}
-                        className="p-2 bg-white/20 hover:bg-white/40 rounded-full"
-                      >
-                        <Trash2 className="w-5 h-5 text-red-300" />
-                      </button>
+                {[...existingImages, ...newImages.map((n) => n.preview)].map(
+                  (img, index) => (
+                    <div key={index} className="relative w-24 h-24 group">
+                      <img src={img} className="w-24 h-24 object-cover rounded border" />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            askDelete(index < existingImages.length ? "existing" : "new", index)
+                          }
+                        >
+                          <Trash2 className="text-red-300" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* NOUVELLES IMAGES */}
-            <div className="space-y-4">
-              <Label>Nouvelles images</Label>
-
-              <div className="flex flex-wrap gap-4">
-                {newImages.map((img, index) => (
-                  <div key={index} className="relative group w-24 h-24">
-                    <img
-                      src={img.preview}
-                      className="w-24 h-24 object-cover border rounded-md"
-                    />
-
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                      <button
-                        type="button"
-                        onClick={() => askDelete("new", index)}
-                        className="p-2 bg-white/20 hover:bg-white/40 rounded-full"
-                      >
-                        <Trash2 className="w-5 h-5 text-red-300" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
 
-              <Input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleGalleryChange}
-              />
+              <Input type="file" multiple onChange={handleGalleryChange} />
             </div>
 
-            {/* ACTIONS */}
-            <div className="flex justify-end gap-3 border-t pt-4">
+            <div className="flex justify-end gap-3 pt-4 border-t">
               <Button variant="outline" onClick={onClose}>Annuler</Button>
               <Button type="submit">Enregistrer</Button>
             </div>
-
           </form>
         </DialogContent>
       </Dialog>
@@ -390,12 +309,10 @@ export function EditProductModal({
             <DialogTitle>Supprimer l’image ?</DialogTitle>
             <DialogDescription>Action irréversible</DialogDescription>
           </DialogHeader>
-
           <div className="flex justify-end gap-3 mt-4">
             <Button variant="outline" onClick={() => setConfirmDeleteOpen(false)}>
               Annuler
             </Button>
-
             <Button variant="destructive" onClick={confirmDelete}>
               Supprimer
             </Button>
