@@ -12,6 +12,9 @@ import {
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
+/* ✅ API dynamique (local / prod) */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 interface NewsletterModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -21,10 +24,11 @@ const NewsletterModal = ({ open, onOpenChange }: NewsletterModalProps) => {
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const isValidEmail = (email: string) => {
-    return /^[^\s@]+@gmail\.com$/.test(email);
-  };
+  /* ✅ Validation Gmail (comme avant) */
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@gmail\.com$/.test(email);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,15 +38,20 @@ const NewsletterModal = ({ open, onOpenChange }: NewsletterModalProps) => {
       return;
     }
 
+    setLoading(true);
+
     try {
-      const res = await fetch("http://localhost:8000/api/newsletter", {
+      const res = await fetch(`${API_BASE_URL}/newsletter`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.message || "Erreur serveur");
       }
 
@@ -52,12 +61,15 @@ const NewsletterModal = ({ open, onOpenChange }: NewsletterModalProps) => {
       onOpenChange(false);
     } catch (err) {
       toast.error((err as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl p-0 overflow-hidden bg-background/25 backdrop-blur-sm">
+        {/* CLOSE */}
         <button
           onClick={() => onOpenChange(false)}
           className="absolute right-4 top-4 z-50 text-white opacity-70 hover:opacity-100"
@@ -67,6 +79,7 @@ const NewsletterModal = ({ open, onOpenChange }: NewsletterModalProps) => {
 
         <div className="relative min-h-[400px] flex items-center justify-center bg-gradient-to-br from-navy/90 to-navy/70 p-12">
           <div className="absolute inset-0 bg-[url('/images/drog.png')] bg-cover bg-center opacity-30" />
+
           <div className="relative z-10 text-center max-w-xl">
             <DialogHeader className="space-y-4">
               <DialogTitle className="text-4xl md:text-5xl font-bold text-white whitespace-pre-line">
@@ -90,14 +103,20 @@ const NewsletterModal = ({ open, onOpenChange }: NewsletterModalProps) => {
                   required
                   className="flex-1 h-12 bg-white/90 border-none text-foreground placeholder:text-muted-foreground"
                 />
+
                 <Button
                   type="submit"
+                  disabled={loading}
                   className="h-12 px-8 bg-primary hover:bg-primary/90 text-white font-semibold"
                 >
-                  {t("newsletterModal.submit")}
+                  {loading
+                    ? t("newsletterModal.sending", "Envoi...")
+                    : t("newsletterModal.submit")}
                 </Button>
               </div>
+
               {error && <p className="text-sm text-red-500">{error}</p>}
+
               <p className="text-sm text-white/80">
                 {t("newsletterModal.privacyText")}{" "}
                 <a
