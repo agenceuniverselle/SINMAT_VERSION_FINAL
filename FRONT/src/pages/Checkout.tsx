@@ -50,7 +50,7 @@ export default function CheckoutPage() {
 
       for (const item of cart) {
         try {
-          const res = await fetch(`${API_BASE_URL}/produits/${item.id}`);
+          const res = await fetch(`${API_BASE_URL}/api/produits/${item.id}`);
           if (!res.ok) continue;
 
           const data = await res.json();
@@ -101,7 +101,7 @@ export default function CheckoutPage() {
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/commandes`, {
+      const res = await fetch(`${API_BASE_URL}/api/commandes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
