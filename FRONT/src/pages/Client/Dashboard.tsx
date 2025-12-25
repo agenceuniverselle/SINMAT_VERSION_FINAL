@@ -56,7 +56,7 @@ export default function Dashboard() {
 
       try {
         const res = await fetch(
-          `${API_BASE_URL}/newsletter/is-subscribed`,
+          `${API_BASE_URL}/api/newsletter/is-subscribed`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -83,7 +83,7 @@ export default function Dashboard() {
       if (!token) return;
 
       try {
-        const res = await fetch(`${API_BASE_URL}/mes-commandes`, {
+        const res = await fetch(`${API_BASE_URL}/api/mes-commandes`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
