@@ -412,30 +412,36 @@ export default function Utilisateurs() {
                   Annuler
                 </Button>
                 <Button
-                  onClick={async () => {
-                    try {
-                      const res = await fetch(
-                        `http://localhost:8000/api/permissions/${editingPermission.id}`,
-                        {
-                          method: "PUT",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify(editingPermission),
-                        }
-                      );
-                      if (!res.ok) throw new Error();
-                      toast.success("Permission modifiée");
-                      setEditingPermission(null);
-                      const refreshed = await fetch(
-                        "http://localhost:8000/api/permissions"
-                      );
-                      setPermissions(await refreshed.json());
-                    } catch {
-                      toast.error("Erreur lors de la modification");
-                    }
-                  }}
-                >
-                  Enregistrer
-                </Button>
+  onClick={async () => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/permissions/${editingPermission.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editingPermission),
+        }
+      );
+
+      if (!res.ok) throw new Error();
+
+      toast.success("Permission modifiée");
+      setEditingPermission(null);
+
+      const refreshed = await fetch(
+        `${API_BASE_URL}/api/permissions`
+      );
+      setPermissions(await refreshed.json());
+    } catch {
+      toast.error("Erreur lors de la modification");
+    }
+  }}
+>
+  Enregistrer
+</Button>
+
               </div>
             </div>
           )}
@@ -463,30 +469,34 @@ export default function Utilisateurs() {
             >
               Annuler
             </Button>
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                try {
-                  const res = await fetch(
-                    `http://localhost:8000/api/permissions/${deletingPermission?.id}`,
-                    {
-                      method: "DELETE",
-                    }
-                  );
-                  if (!res.ok) throw new Error();
-                  toast.success("Permission supprimée");
-                  setDeletingPermission(null);
-                  const refreshed = await fetch(
-                    "http://localhost:8000/api/permissions"
-                  );
-                  setPermissions(await refreshed.json());
-                } catch {
-                  toast.error("Erreur lors de la suppression");
-                }
-              }}
-            >
-              Supprimer
-            </Button>
+          <Button
+  variant="destructive"
+  onClick={async () => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/permissions/${deletingPermission?.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!res.ok) throw new Error();
+
+      toast.success("Permission supprimée");
+      setDeletingPermission(null);
+
+      const refreshed = await fetch(
+        `${API_BASE_URL}/api/permissions`
+      );
+      setPermissions(await refreshed.json());
+    } catch {
+      toast.error("Erreur lors de la suppression");
+    }
+  }}
+>
+  Supprimer
+</Button>
+
           </div>
         </DialogContent>
       </Dialog>
@@ -508,33 +518,37 @@ export default function Utilisateurs() {
             <Button variant="outline" onClick={() => setDeletingCategory(null)}>
               Annuler
             </Button>
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                try {
-                  const toDelete = permissions.filter(
-                    (p) => p.category === deletingCategory
-                  );
-                  await Promise.all(
-                    toDelete.map((p) =>
-                      fetch(`http://localhost:8000/api/permissions/${p.id}`, {
-                        method: "DELETE",
-                      })
-                    )
-                  );
-                  toast.success("Catégorie supprimée avec ses permissions");
-                  setDeletingCategory(null);
-                  const refreshed = await fetch(
-                    "http://localhost:8000/api/permissions"
-                  );
-                  setPermissions(await refreshed.json());
-                } catch {
-                  toast.error("Erreur lors de la suppression de la catégorie");
-                }
-              }}
-            >
-              Supprimer tout
-            </Button>
+           <Button
+  variant="destructive"
+  onClick={async () => {
+    try {
+      const toDelete = permissions.filter(
+        (p) => p.category === deletingCategory
+      );
+
+      await Promise.all(
+        toDelete.map((p) =>
+          fetch(`${API_BASE_URL}/api/permissions/${p.id}`, {
+            method: "DELETE",
+          })
+        )
+      );
+
+      toast.success("Catégorie supprimée avec ses permissions");
+      setDeletingCategory(null);
+
+      const refreshed = await fetch(
+        `${API_BASE_URL}/api/permissions`
+      );
+      setPermissions(await refreshed.json());
+    } catch {
+      toast.error("Erreur lors de la suppression de la catégorie");
+    }
+  }}
+>
+  Supprimer tout
+</Button>
+
           </div>
         </DialogContent>
       </Dialog>
@@ -657,35 +671,41 @@ export default function Utilisateurs() {
         Annuler
       </Button>
       <Button
-        onClick={async () => {
-          try {
-            const toUpdate = permissions.filter(
-              (perm) => perm.category === editingCategory
-            );
+  onClick={async () => {
+    try {
+      const toUpdate = permissions.filter(
+        (perm) => perm.category === editingCategory
+      );
 
-            await Promise.all(
-              toUpdate.map((perm) =>
-                fetch(`http://localhost:8000/api/permissions/${perm.id}`, {
-                  method: "PUT",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ ...perm, category: newCategoryName }),
-                })
-              )
-            );
+      await Promise.all(
+        toUpdate.map((perm) =>
+          fetch(`${API_BASE_URL}/api/permissions/${perm.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...perm,
+              category: newCategoryName,
+            }),
+          })
+        )
+      );
 
-            toast.success("Catégorie renommée !");
-            setEditingCategory(null);
+      toast.success("Catégorie renommée !");
+      setEditingCategory(null);
 
-            const refreshed = await fetch("http://localhost:8000/api/permissions");
-            setPermissions(await refreshed.json());
-          } catch (err) {
-            console.error(err);
-            toast.error("Erreur lors du renommage");
-          }
-        }}
-      >
-        Enregistrer
-      </Button>
+      const refreshed = await fetch(
+        `${API_BASE_URL}/api/permissions`
+      );
+      setPermissions(await refreshed.json());
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur lors du renommage");
+    }
+  }}
+>
+  Enregistrer
+</Button>
+
     </div>
   </DialogContent>
 </Dialog>
@@ -778,46 +798,47 @@ export default function Utilisateurs() {
             >
               Annuler
             </Button>
-            <Button
-              onClick={async () => {
-                if (!newPermission.name || !newPermission.code) {
-                  toast.error("Nom et code requis");
-                  return;
-                }
+           <Button
+  onClick={async () => {
+    if (!newPermission.name || !newPermission.code) {
+      toast.error("Nom et code requis");
+      return;
+    }
 
-                try {
-                  const res = await fetch(
-                    "http://localhost:8000/api/permissions",
-                    {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify(newPermission),
-                    }
-                  );
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/permissions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newPermission),
+        }
+      );
 
-                  if (!res.ok) throw new Error("Erreur");
+      if (!res.ok) throw new Error("Erreur");
 
-                  toast.success("Permission créée !");
-                  setNewPermission({ name: "", code: "", category: "" });
-                  setOpenPermissionDialog(false);
+      toast.success("Permission créée !");
+      setNewPermission({ name: "", code: "", category: "" });
+      setOpenPermissionDialog(false);
 
-                  // Recharge les permissions
-                  if (selectedUser) {
-                    const res = await fetch(
-                      "http://localhost:8000/api/permissions"
-                    );
-                    setPermissions(await res.json());
-                  }
-                  console.log("Payload envoyé :", newPermission);
-                } catch {
-                  toast.error("Erreur lors de la création");
-                }
-              }}
-            >
-              Créer
-            </Button>
+      // 🔄 Recharge les permissions
+      const refreshed = await fetch(
+        `${API_BASE_URL}/api/permissions`
+      );
+      setPermissions(await refreshed.json());
+
+      console.log("Payload envoyé :", newPermission);
+    } catch (error) {
+      console.error(error);
+      toast.error("Erreur lors de la création");
+    }
+  }}
+>
+  Créer
+</Button>
+
           </div>
         </DialogContent>
       </Dialog>
