@@ -4,7 +4,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from "@/components/ui/card";
 import {
   Table,
@@ -12,47 +12,53 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {
-  Edit,
-  Trash2,
-  Mail,
-  MessageSquare
-} from "lucide-react";
+import { Edit, Trash2, Mail, MessageSquare } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { EditMessageModal } from "../Contact/EditMessageModal";
 import { EditNewsletterModal } from "@/components/Newsletter/EditNewsletterModal";
 
+/* ✅ API centralisée */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function MessagesNewsletters() {
-  const [activeTab, setActiveTab] = useState<"messages" | "newsletters">("messages");
+  const [activeTab, setActiveTab] = useState<"messages" | "newsletters">(
+    "messages"
+  );
   const [messages, setMessages] = useState<any[]>([]);
   const [newsletters, setNewsletters] = useState<any[]>([]);
 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [deleteType, setDeleteType] = useState<"message" | "newsletter" | null>(null);
+  const [deleteType, setDeleteType] = useState<
+    "message" | "newsletter" | null
+  >(null);
+
   const [editMessage, setEditMessage] = useState<any>(null);
   const [editNewsletter, setEditNewsletter] = useState<any>(null);
 
   const fetchData = async () => {
     try {
-      const resMessages = await fetch("http://localhost:8000/api/contact-messages");
-      const messagesData = await resMessages.json();
-      setMessages(messagesData);
+      const [resMessages, resNewsletters] = await Promise.all([
+        fetch(`${API_BASE_URL}/contact-messages`),
+        fetch(`${API_BASE_URL}/newsletter-subscribers`),
+      ]);
 
-      const resNewsletters = await fetch("http://localhost:8000/api/newsletter-subscribers");
-      const newsletterData = await resNewsletters.json();
-      setNewsletters(newsletterData);
+      if (!resMessages.ok || !resNewsletters.ok) {
+        throw new Error();
+      }
+
+      setMessages(await resMessages.json());
+      setNewsletters(await resNewsletters.json());
     } catch (err) {
       toast.error("Erreur lors du chargement des données");
       console.error(err);
@@ -63,7 +69,10 @@ export default function MessagesNewsletters() {
     fetchData();
   }, []);
 
-  const openDeleteDialog = (item: any, type: "message" | "newsletter") => {
+  const openDeleteDialog = (
+    item: any,
+    type: "message" | "newsletter"
+  ) => {
     setSelectedItem(item);
     setDeleteType(type);
     setConfirmDelete(true);
@@ -74,14 +83,11 @@ export default function MessagesNewsletters() {
 
     const endpoint =
       deleteType === "message"
-        ? `http://localhost:8000/api/contact-messages/${selectedItem.id}`
-        : `http://localhost:8000/api/newsletter-subscribers/${selectedItem.id}`;
+        ? `${API_BASE_URL}/contact-messages/${selectedItem.id}`
+        : `${API_BASE_URL}/newsletter-subscribers/${selectedItem.id}`;
 
     try {
-      const res = await fetch(endpoint, {
-        method: "DELETE",
-      });
-
+      const res = await fetch(endpoint, { method: "DELETE" });
       if (!res.ok) throw new Error();
 
       toast.success(
@@ -90,19 +96,18 @@ export default function MessagesNewsletters() {
           : "Abonné supprimé"
       );
 
-      // 🧼 Nettoyage local
       if (deleteType === "message") {
         setMessages((prev) =>
-          prev.filter((msg) => msg.id !== selectedItem.id)
+          prev.filter((m) => m.id !== selectedItem.id)
         );
       } else {
         setNewsletters((prev) =>
-          prev.filter((nl) => nl.id !== selectedItem.id)
+          prev.filter((n) => n.id !== selectedItem.id)
         );
       }
-    } catch (error) {
+    } catch (err) {
       toast.error("Échec de la suppression");
-      console.error(error);
+      console.error(err);
     } finally {
       setConfirmDelete(false);
       setSelectedItem(null);
@@ -112,9 +117,12 @@ export default function MessagesNewsletters() {
 
   return (
     <div className="space-y-6">
-      {/* 🔹 Header */}
+      {/* HEADER */}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Messages & Newsletters</h1>
+        <h1 className="text-3xl font-bold">
+          Messages & Newsletters
+        </h1>
+
         <div className="flex gap-2">
           <Button
             variant={activeTab === "messages" ? "default" : "outline"}
@@ -123,8 +131,11 @@ export default function MessagesNewsletters() {
             <MessageSquare className="w-4 h-4 mr-2" />
             Messages
           </Button>
+
           <Button
-            variant={activeTab === "newsletters" ? "default" : "outline"}
+            variant={
+              activeTab === "newsletters" ? "default" : "outline"
+            }
             onClick={() => setActiveTab("newsletters")}
           >
             <Mail className="w-4 h-4 mr-2" />
@@ -133,11 +144,11 @@ export default function MessagesNewsletters() {
         </div>
       </div>
 
-      {/* 🔹 Tableau des Messages */}
+      {/* MESSAGES */}
       {activeTab === "messages" && (
         <Card>
           <CardHeader>
-            <CardTitle>Messages reçus via le formulaire</CardTitle>
+            <CardTitle>Messages reçus</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -147,29 +158,35 @@ export default function MessagesNewsletters() {
                   <TableHead>Email</TableHead>
                   <TableHead>Sujet</TableHead>
                   <TableHead>Message</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {messages.map((msg: any) => (
+                {messages.map((msg) => (
                   <TableRow key={msg.id}>
                     <TableCell>{msg.name}</TableCell>
                     <TableCell>{msg.email}</TableCell>
                     <TableCell>{msg.subject || "-"}</TableCell>
-                    <TableCell>{msg.message}</TableCell>
+                    <TableCell className="max-w-xs truncate">
+                      {msg.message}
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
-  variant="ghost"
-  size="icon"
-  onClick={() => setEditMessage(msg)}
->
-  <Edit className="w-4 h-4 text-yellow-500" />
-</Button>
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditMessage(msg)}
+                        >
+                          <Edit className="w-4 h-4 text-yellow-500" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => openDeleteDialog(msg, "message")}
+                          onClick={() =>
+                            openDeleteDialog(msg, "message")
+                          }
                         >
                           <Trash2 className="w-4 h-4 text-red-500" />
                         </Button>
@@ -183,11 +200,11 @@ export default function MessagesNewsletters() {
         </Card>
       )}
 
-      {/* 🔹 Tableau des abonnés Newsletter */}
+      {/* NEWSLETTERS */}
       {activeTab === "newsletters" && (
         <Card>
           <CardHeader>
-            <CardTitle>Abonnés à la newsletter</CardTitle>
+            <CardTitle>Abonnés Newsletter</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -195,31 +212,39 @@ export default function MessagesNewsletters() {
                 <TableRow>
                   <TableHead>Email</TableHead>
                   <TableHead>Téléphone</TableHead>
-                  <TableHead>Date d'inscription</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead className="text-right">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {newsletters.map((sub: any) => (
+                {newsletters.map((sub) => (
                   <TableRow key={sub.id}>
                     <TableCell>{sub.email || "-"}</TableCell>
                     <TableCell>{sub.phone || "-"}</TableCell>
                     <TableCell>
-                      {new Date(sub.created_at).toLocaleDateString("fr-FR")}
+                      {new Date(sub.created_at).toLocaleDateString(
+                        "fr-FR"
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                       <Button
-  variant="ghost"
-  size="icon"
-  onClick={() => setEditNewsletter(sub)}
->
-  <Edit className="w-4 h-4 text-yellow-500" />
-</Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => openDeleteDialog(sub, "newsletter")}
+                          onClick={() =>
+                            setEditNewsletter(sub)
+                          }
+                        >
+                          <Edit className="w-4 h-4 text-yellow-500" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() =>
+                            openDeleteDialog(sub, "newsletter")
+                          }
                         >
                           <Trash2 className="w-4 h-4 text-red-500" />
                         </Button>
@@ -232,40 +257,40 @@ export default function MessagesNewsletters() {
           </CardContent>
         </Card>
       )}
-{/* ✏️ Modale d'édition de message */}
-{editMessage && (
-  <EditMessageModal
-    open={!!editMessage}
-    message={editMessage}
-    onClose={() => setEditMessage(null)}
-    onUpdated={fetchData}
-  />
-)}
 
-{/* ✏️ Modale d'édition de newsletter */}
-{editNewsletter && (
-  <EditNewsletterModal
-    open={!!editNewsletter}
-    subscriber={editNewsletter}
-    onClose={() => setEditNewsletter(null)}
-    onUpdated={fetchData}
-  />
-)}
+      {/* MODALS */}
+      {editMessage && (
+        <EditMessageModal
+          open
+          message={editMessage}
+          onClose={() => setEditMessage(null)}
+          onUpdated={fetchData}
+        />
+      )}
 
-      {/* 🗑️ Dialog Confirmation Suppression */}
+      {editNewsletter && (
+        <EditNewsletterModal
+          open
+          subscriber={editNewsletter}
+          onClose={() => setEditNewsletter(null)}
+          onUpdated={fetchData}
+        />
+      )}
+
+      {/* DELETE CONFIRM */}
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-red-600 text-lg">
+            <DialogTitle className="text-red-600">
               Confirmation de suppression
             </DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer{" "}
+              Supprimer{" "}
               <strong>
                 {deleteType === "message"
                   ? `le message de ${selectedItem?.name}`
-                  : `l'abonné ${selectedItem?.email}`}
-              </strong>
+                  : `l’abonné ${selectedItem?.email}`}
+              </strong>{" "}
               ?
             </DialogDescription>
           </DialogHeader>
@@ -277,7 +302,10 @@ export default function MessagesNewsletters() {
             >
               Annuler
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+            >
               Supprimer
             </Button>
           </div>
