@@ -17,6 +17,9 @@ import { useAuth } from "@/hooks/useAuth";
 import AppHeader from "@/layout/AppHeader";
 import ClientSidebar from "@/layout/ClientSidebar";
 
+/* ✅ API centralisée */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function Profil() {
   const { user, loading } = useAuth();
   const { toast } = useToast();
@@ -29,7 +32,7 @@ export default function Profil() {
     confirmPassword: "",
   });
 
-  // ✅ Synchroniser les données une fois user chargé
+  /* 🔄 Sync user → form */
   useEffect(() => {
     if (user) {
       setFormData({
@@ -46,10 +49,14 @@ export default function Profil() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  /* 💾 UPDATE PROFIL */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (formData.password && formData.password !== formData.confirmPassword) {
+    if (
+      formData.password &&
+      formData.password !== formData.confirmPassword
+    ) {
       toast({
         title: "Erreur",
         description: "Les mots de passe ne correspondent pas.",
@@ -60,11 +67,16 @@ export default function Profil() {
 
     try {
       const token = sessionStorage.getItem("auth_token");
-      const storedUser = JSON.parse(sessionStorage.getItem("user") || "{}");
+      const storedUser = JSON.parse(
+        sessionStorage.getItem("user") || "{}"
+      );
+
+      if (!token || !storedUser?.id) {
+        throw new Error("Utilisateur non authentifié");
+      }
 
       const payload: Record<string, string> = {
         name: formData.name,
-        email: formData.email,
         phone: formData.phone,
       };
 
@@ -72,19 +84,21 @@ export default function Profil() {
         payload.password = formData.password;
       }
 
-      const res = await fetch(`http://localhost:8000/api/users/${storedUser.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        `${API_BASE_URL}/users/${storedUser.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
-      if (!res.ok) throw new Error("Erreur lors de la mise à jour");
+      if (!res.ok) throw new Error();
 
       const updatedUser = await res.json();
-
       sessionStorage.setItem("user", JSON.stringify(updatedUser));
 
       setFormData((prev) => ({
@@ -98,7 +112,7 @@ export default function Profil() {
         description: "Profil mis à jour avec succès ✅",
       });
     } catch (error) {
-      console.error("Erreur de mise à jour :", error);
+      console.error("Erreur profil :", error);
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour le profil",
@@ -107,15 +121,20 @@ export default function Profil() {
     }
   };
 
-  // ✅ État de chargement
+  /* ⏳ LOADING */
   if (loading) {
     return <div className="p-6">Chargement du profil...</div>;
   }
 
   if (!user) {
-    return <div className="p-6 text-red-500">Utilisateur non connecté.</div>;
+    return (
+      <div className="p-6 text-red-500">
+        Utilisateur non connecté.
+      </div>
+    );
   }
 
+  /* ================= UI ================= */
   return (
     <div className="flex min-h-screen bg-muted/50">
       <ClientSidebar />
@@ -124,18 +143,21 @@ export default function Profil() {
         <AppHeader />
 
         <main className="p-6 space-y-6">
-          {/* 🧑‍💼 Header Profil */}
+          {/* 👤 HEADER PROFIL */}
           <Card>
             <CardContent className="flex items-center gap-6 py-6">
-<div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-black uppercase">
-  {formData.name
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .slice(0, 2)}
-</div>
+              <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold uppercase">
+                {formData.name
+                  .split(" ")
+                  .map((w) => w[0])
+                  .join("")
+                  .slice(0, 2)}
+              </div>
+
               <div>
-                <p className="text-lg font-semibold">{formData.email}</p>
+                <p className="text-lg font-semibold">
+                  {formData.email}
+                </p>
                 <p className="text-muted-foreground flex items-center gap-2">
                   <Phone className="w-4 h-4 text-pink-600" />
                   {formData.phone || "Non défini"}
@@ -144,71 +166,72 @@ export default function Profil() {
             </CardContent>
           </Card>
 
-          {/* 📝 Formulaire de modification */}
+          {/* ✏️ FORMULAIRE */}
           <Card>
             <CardHeader>
               <CardTitle>Modifier mes informations</CardTitle>
             </CardHeader>
+
             <CardContent>
               <form
                 onSubmit={handleSubmit}
                 className="grid grid-cols-1 md:grid-cols-2 gap-6"
               >
-                {/* Nom */}
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nom</Label>
+                  <Label>Nom</Label>
                   <Input
-                    id="name"
                     value={formData.name}
-                    onChange={(e) => handleChange("name", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("name", e.target.value)
+                    }
                   />
                 </div>
 
-                {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label>Email</Label>
                   <Input
-                    id="email"
                     value={formData.email}
                     readOnly
-                    className="bg-[#f5f8ff] cursor-not-allowed"
+                    className="bg-gray-100 cursor-not-allowed"
                   />
                 </div>
 
-                {/* Téléphone */}
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Téléphone</Label>
+                  <Label>Téléphone</Label>
                   <Input
-                    id="phone"
                     value={formData.phone}
-                    onChange={(e) => handleChange("phone", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("phone", e.target.value)
+                    }
                   />
                 </div>
 
-                {/* Mot de passe */}
                 <div className="space-y-2">
-                  <Label htmlFor="password">Nouveau mot de passe</Label>
+                  <Label>Nouveau mot de passe</Label>
                   <Input
-                    id="password"
                     type="password"
                     value={formData.password}
-                    onChange={(e) => handleChange("password", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("password", e.target.value)
+                    }
                     placeholder="Laisser vide pour ne pas changer"
                   />
                 </div>
 
-                {/* Confirmation */}
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="confirmPassword">Confirmer mot de passe</Label>
+                  <Label>Confirmer le mot de passe</Label>
                   <Input
-                    id="confirmPassword"
                     type="password"
                     value={formData.confirmPassword}
-                    onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                    onChange={(e) =>
+                      handleChange(
+                        "confirmPassword",
+                        e.target.value
+                      )
+                    }
                   />
                 </div>
 
-                {/* Bouton */}
                 <div className="md:col-span-2 text-right">
                   <Button className="bg-green-600 hover:bg-green-700">
                     Enregistrer
@@ -217,18 +240,18 @@ export default function Profil() {
               </form>
             </CardContent>
           </Card>
-          {/* 🔷 SUPPORT SECTION */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
-            <h2 className="text-lg font-semibold mb-2">Besoin d’aide ?</h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-2">
-              Pour toute question ou problème, contactez-nous :
-            </p>
-            <ul className="list-disc pl-5 text-gray-600 dark:text-gray-300">
+
+          {/* 🆘 SUPPORT */}
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h2 className="text-lg font-semibold mb-2">
+              Besoin d’aide ?
+            </h2>
+            <ul className="list-disc pl-5 text-gray-600">
               <li>Email : contact@sinmat.ma</li>
               <li>Téléphone : +212 6 69487597</li>
-              <li>Disponible : Lundi à Vendredi, 9h à 18h - Samedi: 9h à 13h</li>
-         
-
+              <li>
+                Lun–Ven : 9h–18h | Samedi : 9h–13h
+              </li>
             </ul>
           </div>
         </main>
