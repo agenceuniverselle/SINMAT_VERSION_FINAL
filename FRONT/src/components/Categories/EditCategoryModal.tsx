@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import { useEffect, useState } from "react";
 import {
   Dialog,
@@ -14,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
+/* ================= PROPS ================= */
 interface EditCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,13 +24,14 @@ interface EditCategoryModalProps {
   onUpdated?: () => void;
 }
 
+/* ================= COMPONENT ================= */
 export function EditCategoryModal({
   isOpen,
   onClose,
   categoryId,
   onUpdated,
 }: EditCategoryModalProps) {
-  const API = "http://localhost:8000";
+  const API = import.meta.env.VITE_API_BASE_URL;
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -35,17 +39,19 @@ export function EditCategoryModal({
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 📌 Charger les données de la catégorie
+  /* ================= FETCH CATEGORY ================= */
   const fetchCategory = async () => {
     try {
       const res = await fetch(`${API}/api/categories/${categoryId}`);
-      if (!res.ok) throw new Error("Erreur API");
+      if (!res.ok) throw new Error();
 
       const data = await res.json();
 
-      setName(data.name);
+      setName(data.name || "");
       setDescription(data.description || "");
-      setIconPreview(`${API}/storage/${data.icon}`);
+      setIconPreview(
+        data.icon ? `${API}/storage/${data.icon}` : null
+      );
     } catch {
       toast.error("Impossible de charger la catégorie");
     } finally {
@@ -60,8 +66,13 @@ export function EditCategoryModal({
     }
   }, [isOpen, categoryId]);
 
-  // 📌 Enregistrement des modifications
+  /* ================= SAVE ================= */
   const handleSave = async () => {
+    if (!name.trim()) {
+      toast.error("Le nom est obligatoire");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("_method", "PUT");
     formData.append("name", name);
@@ -80,18 +91,27 @@ export function EditCategoryModal({
       if (!res.ok) throw new Error();
 
       toast.success("Catégorie mise à jour");
-
-      if (onUpdated) onUpdated();
-      onClose();
+      onUpdated?.();
+      handleClose();
     } catch {
       toast.error("Erreur lors de la modification");
     }
   };
 
+  /* ================= CLOSE ================= */
+  const handleClose = () => {
+    setName("");
+    setDescription("");
+    setIconFile(null);
+    setIconPreview(null);
+    onClose();
+  };
+
   if (loading) return null;
 
+  /* ================= RENDER ================= */
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Modifier la catégorie</DialogTitle>
@@ -101,12 +121,14 @@ export function EditCategoryModal({
         </DialogHeader>
 
         <div className="space-y-5">
+
           {/* NOM */}
           <div className="space-y-2">
-            <Label>Nom</Label>
+            <Label>Nom *</Label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
+              placeholder="Nom de la catégorie"
             />
           </div>
 
@@ -116,17 +138,18 @@ export function EditCategoryModal({
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description (optionnelle)"
             />
           </div>
 
           {/* ICÔNE */}
           <div className="space-y-2">
-            <Label>Icône (PNG, SVG, JPG…)</Label>
+            <Label>Icône</Label>
 
             {iconPreview && (
               <img
                 src={iconPreview}
-                alt="Aperçu de l'icône"
+                alt="Icône catégorie"
                 className="w-24 h-24 border rounded object-contain mx-auto"
               />
             )}
@@ -137,20 +160,23 @@ export function EditCategoryModal({
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
+
                 setIconFile(file);
-                setIconPreview(URL.createObjectURL(file)); // aperçu instantané
+                setIconPreview(URL.createObjectURL(file));
               }}
             />
           </div>
 
           {/* ACTIONS */}
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button variant="outline" onClick={onClose}>
+            <Button variant="outline" onClick={handleClose}>
               Annuler
             </Button>
-
-            <Button onClick={handleSave}>Enregistrer</Button>
+            <Button onClick={handleSave}>
+              Enregistrer
+            </Button>
           </div>
+
         </div>
       </DialogContent>
     </Dialog>
