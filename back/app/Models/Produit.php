@@ -23,6 +23,7 @@ class Produit extends Model
     ];
 
     protected $casts = [
+        'images' => 'array',
         'additional_info' => 'array',
         'in_stock' => 'boolean',
     ];
@@ -38,20 +39,8 @@ class Produit extends Model
             ->withPivot('quantity')
             ->withTimestamps();
     }
-    protected $appends = ['images_array'];
 
-public function getImagesArrayAttribute()
-{
-    if (is_array($this->images)) {
-        return $this->images;
-    }
 
-    if (is_string($this->images)) {
-        return json_decode($this->images, true) ?? [];
-    }
-
-    return [];
-}
 
 
 
