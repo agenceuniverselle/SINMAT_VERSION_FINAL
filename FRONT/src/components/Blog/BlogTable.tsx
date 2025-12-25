@@ -39,7 +39,7 @@ const BlogTable = () => {
   // Charger tous les posts
   const fetchPosts = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/blog-posts`);
+      const res = await fetch(`${API_BASE_URL}/api/blog-posts`);
       const data = await res.json();
       setPosts(data);
     } catch {
@@ -52,7 +52,7 @@ const BlogTable = () => {
   // Charger un seul post pour édition
   const fetchPostById = async (id: number) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/blog-posts/${id}`);
+      const res = await fetch(`${API_BASE_URL}/api/blog-posts/${id}`);
       const data = await res.json();
       setPostToEdit(data);
       setEditModalOpen(true);
@@ -67,7 +67,7 @@ const BlogTable = () => {
 
     try {
       const res = await fetch(
-        `${API_BASE_URL}/blog-posts/${selectedPostId}`,
+        `${API_BASE_URL}/api/blog-posts/${selectedPostId}`,
         {
           method: "DELETE",
         }
