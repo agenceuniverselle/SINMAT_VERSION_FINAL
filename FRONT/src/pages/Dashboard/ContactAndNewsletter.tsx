@@ -49,8 +49,8 @@ export default function MessagesNewsletters() {
   const fetchData = async () => {
     try {
       const [resMessages, resNewsletters] = await Promise.all([
-        fetch(`${API_BASE_URL}/contact-messages`),
-        fetch(`${API_BASE_URL}/newsletter-subscribers`),
+        fetch(`${API_BASE_URL}/api/contact-messages`),
+        fetch(`${API_BASE_URL}/api/newsletter-subscribers`),
       ]);
 
       if (!resMessages.ok || !resNewsletters.ok) {
