@@ -19,9 +19,13 @@ const TopBar = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             {/* Left side - Links and Social */}
             <div className="flex items-center gap-4 md:gap-6">
-          <div style={{ background: "red", color: "white", padding: "5px" }}>
-hhhhhhhhhhhhhhhhhhhhhhhhhhhhhL 25/12 11:10
-</div>
+           <button
+                onClick={() => setShowNewsletter(true)}
+                className="flex items-center gap-1 hover:text-primary transition-colors"
+              >
+                <Mail className="w-3 h-3" />
+                {t("topbar.newsletter")}
+              </button> 
 
                <button
                 onClick={() => setShowNewsletter(true)}
