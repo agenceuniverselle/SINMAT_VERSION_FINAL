@@ -45,7 +45,7 @@ export default function ProductTable() {
   /* 🔽 Charger les produits */
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/produits`);
+      const response = await fetch(`${API_BASE_URL}/api/produits`);
       if (!response.ok) throw new Error();
       const data = await response.json();
       setProducts(data);
