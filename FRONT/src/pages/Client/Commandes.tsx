@@ -21,6 +21,9 @@ import { Badge } from "@/components/ui/badge";
 import AppHeader from "@/layout/AppHeader";
 import ClientSidebar from "@/layout/ClientSidebar";
 
+/* ✅ API dynamique */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 type OrderItem = {
   name: string;
   quantity: number;
@@ -47,7 +50,7 @@ export default function Commandes() {
       if (!token) return;
 
       try {
-        const res = await fetch("http://localhost:8000/api/mes-commandes", {
+        const res = await fetch(`${API_BASE_URL}/mes-commandes`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -66,15 +69,12 @@ export default function Commandes() {
   }, []);
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case "livrée":
-      case "Livrée":
         return "bg-green-500";
       case "expédiée":
-      case "Expédiée":
         return "bg-blue-500";
       case "en cours":
-      case "En cours":
         return "bg-orange-500";
       default:
         return "bg-gray-500";
@@ -83,7 +83,7 @@ export default function Commandes() {
 
   return (
     <>
-      {/* ✅ MODAL (DOIT ÊTRE EN DEHORS DU LAYOUT) */}
+      {/* ✅ MODAL DÉTAIL COMMANDE */}
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
         <DialogContent className="max-w-2xl bg-white">
           <DialogHeader>
@@ -117,7 +117,7 @@ export default function Commandes() {
                         <TableCell>{item.name}</TableCell>
                         <TableCell>{item.quantity}</TableCell>
                         <TableCell className="text-right">
-{Number(item.price).toFixed(2)} MAD
+                          {Number(item.price).toFixed(2)} MAD
                         </TableCell>
                         <TableCell className="text-right">
                           {(item.quantity * item.price).toFixed(2)} MAD
