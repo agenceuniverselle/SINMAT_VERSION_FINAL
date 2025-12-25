@@ -59,7 +59,7 @@ export default function UserDetails() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resUser = await fetch(`${API_BASE_URL}/users/${id}`);
+        const resUser = await fetch(`${API_BASE_URL}/api/users/${id}`);
         const userData = await resUser.json();
 
         setUser(userData);
@@ -70,8 +70,8 @@ export default function UserDetails() {
         });
 
         const [allPermsRes, userPermsRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/permissions`),
-          fetch(`${API_BASE_URL}/users/${id}/permissions`),
+          fetch(`${API_BASE_URL}/api/permissions`),
+          fetch(`${API_BASE_URL}/api/users/${id}/permissions`),
         ]);
 
         const allPerms = await allPermsRes.json();
@@ -97,7 +97,7 @@ export default function UserDetails() {
     silent = false
   ) => {
     try {
-      await fetch(`${API_BASE_URL}/users/${id}/permissions`, {
+      await fetch(`${API_BASE_URL}/api/users/${id}/permissions`, {
         method: enabled ? "POST" : "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ permission_id: permissionId }),
@@ -136,7 +136,7 @@ export default function UserDetails() {
   ======================= */
   const handleDeleteUser = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/users/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${id}`, {
         method: "DELETE",
       });
 
@@ -170,7 +170,7 @@ export default function UserDetails() {
     if (password.length > 0) payload.password = password;
 
     try {
-      const res = await fetch(`${API_BASE_URL}/users/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
