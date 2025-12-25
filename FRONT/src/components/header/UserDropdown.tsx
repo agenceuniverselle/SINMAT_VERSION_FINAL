@@ -1,52 +1,54 @@
 import { useEffect, useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 type User = {
   name: string;
   email: string;
 };
 
+/** ✅ API dynamique */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-async function handleLogout() {
-const token = sessionStorage.getItem("auth_token");
 
-  try {
-    await fetch("http://localhost:8000/api/logout", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-  } catch (err) {
-    console.error("Erreur lors de la déconnexion :", err);
-  }
+  async function handleLogout() {
+    const token = sessionStorage.getItem("auth_token");
 
-  // Nettoyage local
-
-sessionStorage.removeItem("auth_token");
-sessionStorage.removeItem("user");
-
-  // Redirection
-  window.location.href = "/";
-}
-
-useEffect(() => {
-  const storedUser = sessionStorage.getItem("user"); 
-  if (storedUser && storedUser !== "undefined") {
     try {
-      setUser(JSON.parse(storedUser));
-    } catch (error) {
-      console.error("Échec du parsing JSON :", error);
-      setUser(null);
+      await fetch(`${API_BASE_URL}/logout`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (err) {
+      console.error("Erreur lors de la déconnexion :", err);
     }
-  }
-}, []);
 
+    // Nettoyage local
+    sessionStorage.removeItem("auth_token");
+    sessionStorage.removeItem("user");
+
+    // Redirection
+    window.location.href = "/";
+  }
+
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem("user");
+    if (storedUser && storedUser !== "undefined") {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Échec du parsing JSON :", error);
+        setUser(null);
+      }
+    }
+  }, []);
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -78,7 +80,9 @@ useEffect(() => {
           {user?.name ?? "Utilisateur"}
         </span>
         <svg
-          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
           width="18"
           height="20"
           viewBox="0 0 18 20"
@@ -110,32 +114,32 @@ useEffect(() => {
         </div>
 
         <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
-  <li>
-    <DropdownItem
-      onItemClick={closeDropdown}
-      tag="a"
-      to={
-        user?.email === "contact@sinmat.ma"
-          ? "/profile"          // admin
-          : "/Client-profile"   // client
-      }
-      className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-    >
-      <span>📝</span>
-      {user?.email === "contact@sinmat.ma" ? "Edit Admin Profile" : "Edit Client Profile"}
-    </DropdownItem>
-  </li>
-</ul>
-
+          <li>
+            <DropdownItem
+              onItemClick={closeDropdown}
+              tag="a"
+              to={
+                user?.email === "contact@sinmat.ma"
+                  ? "/profile"        // admin
+                  : "/Client-profile" // client
+              }
+              className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+            >
+              <span>📝</span>
+              {user?.email === "contact@sinmat.ma"
+                ? "Edit Admin Profile"
+                : "Edit Client Profile"}
+            </DropdownItem>
+          </li>
+        </ul>
 
         <button
-  onClick={handleLogout}
-  className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
->
-  <span>🚪</span>
-  Sign out
-</button>
-
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+        >
+          <span>🚪</span>
+          Sign out
+        </button>
       </Dropdown>
     </div>
   );
