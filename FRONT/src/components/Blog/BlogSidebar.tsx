@@ -1,17 +1,32 @@
+"use client";
+
 import { Search, Tag } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "react-router-dom";
+
 import { BlogArticle } from "./BlogCard";
-import { useTranslation } from "react-i18next";
+
+/* ================= PROPS ================= */
 interface BlogSidebarProps {
   latestArticles: BlogArticle[];
   onSearch: (query: string) => void;
   onCategoryClick: (category: string) => void;
 }
 
+/* ================= CONFIG ================= */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/* ================= CATEGORIES ================= */
 const categories = [
   "Matériel BTP",
   "Chantier & Sécurité",
@@ -21,11 +36,18 @@ const categories = [
   "Études de prix",
 ];
 
-export function BlogSidebar({ latestArticles, onSearch, onCategoryClick }: BlogSidebarProps) {
-   const { t } = useTranslation();
+/* ================= COMPONENT ================= */
+export function BlogSidebar({
+  latestArticles,
+  onSearch,
+  onCategoryClick,
+}: BlogSidebarProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6 sticky top-6">
-      {/* Recherche */}
+
+      {/* ===== SEARCH ===== */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
@@ -37,7 +59,7 @@ export function BlogSidebar({ latestArticles, onSearch, onCategoryClick }: BlogS
           <div className="relative">
             <Input
               type="search"
-              placeholder="Rechercher un article..."
+              placeholder={t("blog.sidebar.searchPlaceholder")}
               className="pr-10"
               onChange={(e) => onSearch(e.target.value)}
             />
@@ -46,12 +68,12 @@ export function BlogSidebar({ latestArticles, onSearch, onCategoryClick }: BlogS
         </CardContent>
       </Card>
 
-      {/* Catégories */}
+      {/* ===== CATEGORIES ===== */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Tag className="h-5 w-5" />
-           {t("blog.sidebar.categories")}
+            {t("blog.sidebar.categories")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -69,58 +91,78 @@ export function BlogSidebar({ latestArticles, onSearch, onCategoryClick }: BlogS
           </div>
         </CardContent>
       </Card>
-          {/* Derniers articles */}
-<Card>
-  <CardHeader>
-    <CardTitle className="text-lg">{t("blog.sidebar.latest")}</CardTitle>
-  </CardHeader>
-  <CardContent className="space-y-4">
-    {latestArticles
-      .sort((a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime())
-      .slice(0, 3)
-      .map((article) => (
-        <Link
-          key={article.id}
-          to={`/blog/${article.id}`}
-          className="flex gap-3 group"
-        >
-          <div className="w-20 h-20 rounded-md overflow-hidden flex-shrink-0">
-            <img
-              src={
-                article.image?.startsWith("http")
+
+      {/* ===== LATEST ARTICLES ===== */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">
+            {t("blog.sidebar.latest")}
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          {latestArticles
+            .filter((a) => a.created_at)
+            .sort(
+              (a, b) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime()
+            )
+            .slice(0, 3)
+            .map((article) => {
+              const imageUrl =
+                article.image && article.image.startsWith("http")
                   ? article.image
-                  : `http://localhost:8000/storage/${article.image}`
-              }
-              alt={article.title}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h4 className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">
-              {article.title}
-            </h4>
-            <p className="text-xs text-muted-foreground mt-1">
-              {article.author} • {article.read_time} min
-            </p>
-          </div>
-        </Link>
-      ))}
-  </CardContent>
-</Card>
+                  : article.image
+                  ? `${API_BASE_URL}/storage/${article.image}`
+                  : "/images/blog-placeholder.jpg";
 
+              return (
+                <Link
+                  key={article.id}
+                  to={`/blog/${article.id}`}
+                  className="flex gap-3 group"
+                >
+                  <div className="w-20 h-20 rounded-md overflow-hidden flex-shrink-0">
+                    <img
+                      src={imageUrl}
+                      alt={article.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                  </div>
 
-      {/* CTA */}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">
+                      {article.title}
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {article.author} • {article.read_time} min
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+        </CardContent>
+      </Card>
+
+      {/* ===== CTA ===== */}
       <Card className="bg-primary/5 border-primary/20">
         <CardContent className="p-6 text-center space-y-3">
-          <h3 className="font-semibold text-lg">{t("blog.sidebar.ctaTitle")}</h3>
+          <h3 className="font-semibold text-lg">
+            {t("blog.sidebar.ctaTitle")}
+          </h3>
           <p className="text-sm text-muted-foreground">
             {t("blog.sidebar.ctaDescription")}
           </p>
           <Button asChild className="w-full">
-            <Link to="/Contact">{t("blog.sidebar.ctaButton")}</Link>
+            <Link to="/Contact">
+              {t("blog.sidebar.ctaButton")}
+            </Link>
           </Button>
         </CardContent>
       </Card>
+
     </div>
   );
 }
