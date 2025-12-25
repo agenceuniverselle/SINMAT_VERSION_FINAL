@@ -21,6 +21,9 @@ type Category = {
   label: string;
 };
 
+/** ✅ API dynamique */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export const AddLocationProductModal = ({
   open,
   onOpenChange,
@@ -41,10 +44,12 @@ export const AddLocationProductModal = ({
   // 🔽 Charger les catégories
   useEffect(() => {
     if (open) {
-      fetch("http://localhost:8000/api/categories_location")
+      fetch(`${API_BASE_URL}/categories_location`)
         .then((res) => res.json())
         .then((data) => setCategories(data))
-        .catch(() => toast.error("Erreur chargement des catégories"));
+        .catch(() =>
+          toast.error("Erreur chargement des catégories")
+        );
     }
   }, [open]);
 
@@ -70,36 +75,39 @@ export const AddLocationProductModal = ({
     formData.append("description", form.description);
     formData.append("price_per_day", form.price);
     formData.append("location_category_id", form.category_id);
-    formData.append("status", form.status); // 👈 ajouté ici
+    formData.append("status", form.status);
+
     if (form.image) {
       formData.append("image", form.image);
     }
 
-    const res = await fetch("http://localhost:8000/api/produits_location", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      toast.success("Produit ajouté");
-      setForm({
-        name: "",
-        description: "",
-        price: "",
-        image: null,
-        category_id: "",
-        status: "disponible",
+    try {
+      const res = await fetch(`${API_BASE_URL}/produits_location`, {
+        method: "POST",
+        body: formData,
       });
-      onOpenChange(false);
-      onSuccess();
-    } else {
-      toast.error("Erreur lors de l’ajout");
-      setErrors(data.errors || {});
-    }
 
-    setLoading(false);
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("Produit ajouté");
+        setForm({
+          name: "",
+          description: "",
+          price: "",
+          image: null,
+          category_id: "",
+          status: "disponible",
+        });
+        onOpenChange(false);
+        onSuccess();
+      } else {
+        toast.error("Erreur lors de l’ajout");
+        setErrors(data.errors || {});
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -122,7 +130,9 @@ export const AddLocationProductModal = ({
               placeholder="Ex: Pelle mécanique"
             />
             {errors.name && (
-              <p className="text-red-500 text-xs mt-1">{errors.name[0]}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.name[0]}
+              </p>
             )}
           </div>
 
@@ -145,7 +155,8 @@ export const AddLocationProductModal = ({
 
           <div>
             <Label htmlFor="price">
-              Prix journalier (MAD) <span className="text-red-500">*</span>
+              Prix journalier (MAD){" "}
+              <span className="text-red-500">*</span>
             </Label>
             <Input
               id="price"
@@ -156,11 +167,13 @@ export const AddLocationProductModal = ({
               placeholder="Ex: 120"
             />
             {errors.price && (
-              <p className="text-red-500 text-xs mt-1">{errors.price[0]}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.price[0]}
+              </p>
             )}
           </div>
 
-          {/* 🟩 Sélecteur de catégorie */}
+          {/* Catégorie */}
           <div>
             <Label htmlFor="category_id">
               Catégorie <span className="text-red-500">*</span>
@@ -185,26 +198,32 @@ export const AddLocationProductModal = ({
               </p>
             )}
           </div>
-<div>
-  <Label htmlFor="status">
-    Statut du produit <span className="text-red-500">*</span>
-  </Label>
-  <select
-    id="status"
-    name="status"
-    value={form.status}
-    onChange={handleChange}
-    className="w-full border rounded-md px-3 py-2 bg-white dark:bg-gray-800 dark:text-white"
-  >
-    <option value="disponible">Disponible</option>
-    <option value="sur_commande">Sur commande</option>
-    <option value="non_disponible">Non disponible</option>
-  </select>
-  {errors.status && (
-    <p className="text-red-500 text-xs mt-1">{errors.status[0]}</p>
-  )}
-</div>
 
+          {/* Statut */}
+          <div>
+            <Label htmlFor="status">
+              Statut du produit{" "}
+              <span className="text-red-500">*</span>
+            </Label>
+            <select
+              id="status"
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              className="w-full border rounded-md px-3 py-2 bg-white dark:bg-gray-800 dark:text-white"
+            >
+              <option value="disponible">Disponible</option>
+              <option value="sur_commande">Sur commande</option>
+              <option value="non_disponible">Non disponible</option>
+            </select>
+            {errors.status && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.status[0]}
+              </p>
+            )}
+          </div>
+
+          {/* Image */}
           <div>
             <Label htmlFor="image">Image</Label>
             <Input
@@ -215,7 +234,9 @@ export const AddLocationProductModal = ({
               onChange={handleFileChange}
             />
             {errors.image && (
-              <p className="text-red-500 text-xs mt-1">{errors.image[0]}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.image[0]}
+              </p>
             )}
           </div>
 
