@@ -49,9 +49,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
     add(product.id);
     toast.success(t("productCard.addToWishlistSuccess"));
   };
- const mainImage = product.images?.[0]
+const mainImage = product.images?.[0]
   ? `https://sinmat.ma/storage/${product.images[0]}`
   : "/placeholder.png";
+
+const hoverImage = product.images?.[1]
+  ? `https://sinmat.ma/storage/${product.images[1]}`
+  : mainImage;
+
   return (
     <Link to={`/Catalogue/product/${product.id}`}>
       <div
@@ -64,12 +69,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {/* IMAGE */}
         <div className="relative h-[60%] overflow-hidden bg-gray-50">
    
-
 <img
-  src={mainImage}
+  src={isHovered ? hoverImage : mainImage}
   alt={product.name}
   className="w-full h-full object-cover transition-all duration-500"
 />
+
 
 
           {/* BADGES */}
