@@ -8,13 +8,16 @@ import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/* ================= TYPES ================= */
+
 interface Product {
   id: number;
   name: string;
   price: number;
   oldPrice?: number;
   image: string;
-  hoverImage?: string;
   rating: number;
   category: string;
   reviews: number;
@@ -36,6 +39,8 @@ interface SidebarFiltersProps {
   onCategoryChange?: (categories: number[]) => void;
 }
 
+/* ================= COMPONENT ================= */
+
 const SidebarFilters = ({
   products,
   onPriceChange,
@@ -43,7 +48,6 @@ const SidebarFilters = ({
   onCategoryChange,
 }: SidebarFiltersProps) => {
   const { t } = useTranslation();
-  const API = "http://localhost:8000";
 
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
@@ -74,7 +78,7 @@ const SidebarFilters = ({
   /* ---------- CATEGORIES ---------- */
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API}/api/categories`);
+      const res = await fetch(`${API_BASE_URL}/api/categories`);
       const data: Category[] = await res.json();
       setCategories(data);
     } catch (e) {
@@ -114,7 +118,7 @@ const SidebarFilters = ({
   /* ---------- TOP RATED ---------- */
   const fetchTopRated = async () => {
     try {
-      const res = await fetch(`${API}/api/produits`);
+      const res = await fetch(`${API_BASE_URL}/api/produits`);
       const data = await res.json();
 
       setTopRated(
@@ -123,14 +127,16 @@ const SidebarFilters = ({
           let imgs: string[] = [];
           try {
             imgs = p.images ? JSON.parse(p.images) : [];
-          } catch { /* empty */ }
+          } catch {}
 
           return {
             id: p.id,
             name: p.name,
             price: Number(p.sale_price),
             oldPrice: Number(p.purchase_price),
-            image: imgs[0] ? `${API}/storage/${imgs[0]}` : "/no-image.png",
+            image: imgs[0]
+              ? `${API_BASE_URL}/storage/${imgs[0]}`
+              : "/no-image.png",
             rating: 4,
             reviews: 10,
             category: p.category?.name ?? t("filters.uncategorized"),
@@ -139,7 +145,7 @@ const SidebarFilters = ({
           };
         })
       );
-    } catch { /* empty */ }
+    } catch {}
   };
 
   useEffect(() => {
