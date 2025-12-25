@@ -51,7 +51,7 @@ export default function AdminLocations() {
 
   const fetchLocations = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/rental-requests`);
+      const res = await fetch(`${API_BASE_URL}/api/rental-requests`);
       if (!res.ok) throw new Error();
       const data = await res.json();
       setLocations(data);
@@ -245,7 +245,7 @@ export default function AdminLocations() {
                 e.preventDefault();
 
                 const res = await fetch(
-                  `${API_BASE_URL}/rental-requests/${selectedLocation.id}`,
+                  `${API_BASE_URL}/api/rental-requests/${selectedLocation.id}`,
                   {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
@@ -297,7 +297,7 @@ export default function AdminLocations() {
               variant="destructive"
               onClick={async () => {
                 await fetch(
-                  `${API_BASE_URL}/rental-requests/${selectedLocation.id}`,
+                  `${API_BASE_URL}/api/rental-requests/${selectedLocation.id}`,
                   { method: "DELETE" }
                 );
                 setIsDeleteOpen(false);
