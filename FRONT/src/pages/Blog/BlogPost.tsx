@@ -4,13 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import {
-  Calendar,
-  Clock,
-  User,
-  ArrowLeft,
-  Share2,
-} from "lucide-react";
+import { Calendar, Clock, User, ArrowLeft, Share2 } from "lucide-react";
 
 import TopBar from "@/components/Nav/TopBar";
 import Header from "@/components/Nav/Header";
@@ -22,19 +16,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BlogCard, BlogArticle } from "@/components/Blog/BlogCard";
 
+/* ✅ API + Storage dynamiques */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const STORAGE_BASE_URL = import.meta.env.VITE_STORAGE_BASE_URL;
+
 export default function BlogPost() {
   const { t } = useTranslation();
   const { id } = useParams();
+
   const [article, setArticle] = useState<BlogArticle | null>(null);
   const [related, setRelated] = useState<BlogArticle[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const buildImageUrl = (img?: string | null) => {
+    if (!img) return "/no-image.png";
+    if (img.startsWith("http")) return img;
+    return `${STORAGE_BASE_URL}/storage/${img}`;
+  };
+
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/blog-posts/${id}`);
-        if (!res.ok) throw new Error();
+        setLoading(true);
 
+        /* ✅ 1) Article */
+        const res = await fetch(`${API_BASE_URL}/blog-posts/${id}`);
+        if (!res.ok) throw new Error();
         const data = await res.json();
 
         const formattedArticle: BlogArticle = {
@@ -42,9 +49,7 @@ export default function BlogPost() {
           title: data.title,
           excerpt: data.excerpt,
           content: data.content,
-          image: data.image?.startsWith("http")
-            ? data.image
-            : `http://localhost:8000/storage/${data.image}`,
+          image: buildImageUrl(data.image),
           category: data.category,
           author: data.author,
           read_time: data.read_time,
@@ -53,7 +58,8 @@ export default function BlogPost() {
 
         setArticle(formattedArticle);
 
-        const allRes = await fetch("http://localhost:8000/api/blog-posts");
+        /* ✅ 2) Related */
+        const allRes = await fetch(`${API_BASE_URL}/blog-posts`);
         const allData = await allRes.json();
 
         const relatedArticles: BlogArticle[] = allData
@@ -66,9 +72,7 @@ export default function BlogPost() {
             title: a.title,
             excerpt: a.excerpt,
             content: a.content,
-            image: a.image?.startsWith("http")
-              ? a.image
-              : `http://localhost:8000/storage/${a.image}`,
+            image: buildImageUrl(a.image),
             category: a.category,
             author: a.author,
             read_time: a.read_time,
@@ -78,13 +82,30 @@ export default function BlogPost() {
         setRelated(relatedArticles);
       } catch {
         setArticle(null);
+        setRelated([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBlog();
+    if (id) fetchBlog();
   }, [id]);
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = article?.title || "SINMAT";
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        alert(t("blog.copiedLink"));
+      }
+    } catch {
+      // ignore
+    }
+  };
 
   if (loading) {
     return (
@@ -144,26 +165,32 @@ export default function BlogPost() {
 
       <article className="container mx-auto px-4 pb-16">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            {article.title}
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{article.title}</h1>
 
           <div className="flex flex-wrap items-center gap-6 mb-8 pb-8 border-b">
             <div className="flex items-center gap-2 text-muted-foreground">
               <User className="h-4 w-4" />
               <span className="text-sm">{article.author}</span>
             </div>
+
             <div className="flex items-center gap-2 text-muted-foreground">
               <Calendar className="h-4 w-4" />
               <span className="text-sm">{formattedDate}</span>
             </div>
+
             <div className="flex items-center gap-2 text-muted-foreground">
               <Clock className="h-4 w-4" />
               <span className="text-sm">
                 {article.read_time} {t("blog.minutes")}
               </span>
             </div>
-            <Button variant="outline" size="sm" className="ml-auto">
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="ml-auto"
+              onClick={handleShare}
+            >
               <Share2 className="h-4 w-4 mr-2" />
               {t("blog.share")}
             </Button>
@@ -176,12 +203,8 @@ export default function BlogPost() {
 
           <Card className="mt-12 bg-primary/5 border-primary/20">
             <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-3">
-                {t("blog.cta.title")}
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                {t("blog.cta.subtitle")}
-              </p>
+              <h3 className="text-2xl font-bold mb-3">{t("blog.cta.title")}</h3>
+              <p className="text-muted-foreground mb-6">{t("blog.cta.subtitle")}</p>
               <Button size="lg" asChild>
                 <Link to="/Contact">{t("blog.cta.button")}</Link>
               </Button>
@@ -190,9 +213,7 @@ export default function BlogPost() {
 
           {related.length > 0 && (
             <div className="mt-16">
-              <h2 className="text-3xl font-bold mb-8">
-                {t("blog.related")}
-              </h2>
+              <h2 className="text-3xl font-bold mb-8">{t("blog.related")}</h2>
               <div className="grid md:grid-cols-3 gap-6">
                 {related.map((a) => (
                   <BlogCard key={a.id} article={a} />
