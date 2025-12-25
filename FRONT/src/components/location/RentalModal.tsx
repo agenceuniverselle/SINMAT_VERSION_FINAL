@@ -79,7 +79,7 @@ export function RentalModal({ product, open, onOpenChange }: RentalModalProps) {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/rental-requests`, {
+      const res = await fetch(`${API_BASE_URL}/api/rental-requests`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
