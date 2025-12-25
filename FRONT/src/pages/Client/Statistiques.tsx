@@ -12,8 +12,12 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+
 import AppHeader from "@/layout/AppHeader";
 import ClientSidebar from "@/layout/ClientSidebar";
+
+/* ✅ API centralisée */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 type OrderItem = {
   name: string;
@@ -23,7 +27,7 @@ type OrderItem = {
 
 type Order = {
   id: number;
-  created_at: string; // format YYYY-MM-DD
+  created_at: string;
   status: string;
   total: number;
   address: string;
@@ -50,7 +54,7 @@ export default function Statistiques() {
       if (!token) return;
 
       try {
-        const res = await fetch("http://localhost:8000/api/mes-commandes", {
+        const res = await fetch(`${API_BASE_URL}/mes-commandes`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -62,7 +66,7 @@ export default function Statistiques() {
         setOrders(data);
         processStats(data);
       } catch (err) {
-        console.error("Erreur :", err);
+        console.error("Erreur statistiques :", err);
       }
     };
 
@@ -72,15 +76,18 @@ export default function Statistiques() {
   const processStats = (orders: Order[]) => {
     const months = [
       "Jan", "Fév", "Mar", "Avr", "Mai", "Jun",
-      "Jul", "Août", "Sep", "Oct", "Nov", "Déc"
+      "Jul", "Août", "Sep", "Oct", "Nov", "Déc",
     ];
 
-    const monthlyMap: { [key: string]: { commandes: number; montant: number } } = {};
+    const monthlyMap: Record<
+      string,
+      { commandes: number; montant: number }
+    > = {};
 
-    let totalSpent = 0;
+    let spent = 0;
 
     orders.forEach((order) => {
-      const monthIndex = new Date(order.created_at).getMonth(); // 0-11
+      const monthIndex = new Date(order.created_at).getMonth();
       const mois = months[monthIndex];
 
       if (!monthlyMap[mois]) {
@@ -88,8 +95,8 @@ export default function Statistiques() {
       }
 
       monthlyMap[mois].commandes += 1;
-      monthlyMap[mois].montant += order.total;
-      totalSpent += order.total;
+      monthlyMap[mois].montant += Number(order.total);
+      spent += Number(order.total);
     });
 
     const monthlyData: MonthlyData[] = months.map((mois) => ({
@@ -100,8 +107,8 @@ export default function Statistiques() {
 
     setMonthlyStats(monthlyData);
     setTotalOrders(orders.length);
-    setTotalSpent(totalSpent);
-    setAverageBasket(orders.length > 0 ? totalSpent / orders.length : 0);
+    setTotalSpent(spent);
+    setAverageBasket(orders.length ? spent / orders.length : 0);
   };
 
   return (
@@ -112,7 +119,7 @@ export default function Statistiques() {
         <AppHeader />
 
         <main className="p-6 space-y-6">
-          {/* 📊 Commandes par mois */}
+          {/* 📊 Nombre de commandes */}
           <Card>
             <CardHeader>
               <CardTitle>Évolution du nombre de commandes</CardTitle>
@@ -125,13 +132,17 @@ export default function Statistiques() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="commandes" fill="hsl(var(--primary))" name="Commandes" />
+                  <Bar
+                    dataKey="commandes"
+                    fill="hsl(var(--primary))"
+                    name="Commandes"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          {/* 📈 Montant des commandes par mois */}
+          {/* 📈 Dépenses */}
           <Card>
             <CardHeader>
               <CardTitle>Évolution des dépenses mensuelles</CardTitle>
@@ -144,36 +155,53 @@ export default function Statistiques() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="montant" stroke="hsl(var(--primary))" name="Montant (MAD)" />
+                  <Line
+                    type="monotone"
+                    dataKey="montant"
+                    stroke="hsl(var(--primary))"
+                    name="Montant (MAD)"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          {/* Résumé des stats */}
+          {/* 📌 Résumé */}
           <div className="grid gap-4 md:grid-cols-3">
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">Total commandes (2024)</CardTitle>
+                <CardTitle className="text-sm">
+                  Total commandes
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold">{totalOrders}</p>
               </CardContent>
             </Card>
+
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">Dépenses totales</CardTitle>
+                <CardTitle className="text-sm">
+                  Dépenses totales
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold">{totalSpent.toFixed(2)} MAD</p>
+                <p className="text-3xl font-bold">
+                  {totalSpent.toFixed(2)} MAD
+                </p>
               </CardContent>
             </Card>
+
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">Panier moyen</CardTitle>
+                <CardTitle className="text-sm">
+                  Panier moyen
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold">{averageBasket.toFixed(2)} MAD</p>
+                <p className="text-3xl font-bold">
+                  {averageBasket.toFixed(2)} MAD
+                </p>
               </CardContent>
             </Card>
           </div>
