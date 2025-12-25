@@ -3,7 +3,7 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-/* 🔽 Liste des catégories extraites des articles mockés */
+/* 🔽 Liste des catégories */
 const uniqueCategories = [
   "Matériel BTP",
   "Guides & Conseil Pro",
@@ -30,7 +30,14 @@ interface Props {
   onSuccess: () => void;
 }
 
-export const AddBlogPostModal = ({ open, onOpenChange, onSuccess }: Props) => {
+/** ✅ Base API dynamique (local / prod) */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+export const AddBlogPostModal = ({
+  open,
+  onOpenChange,
+  onSuccess,
+}: Props) => {
   const [form, setForm] = useState({
     title: "",
     excerpt: "",
@@ -77,12 +84,11 @@ export const AddBlogPostModal = ({ open, onOpenChange, onSuccess }: Props) => {
     const formData = new FormData();
 
     Object.entries(form).forEach(([key, value]) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (value) formData.append(key, value as any);
     });
 
     try {
-      const res = await fetch("http://localhost:8000/api/blog-posts", {
+      const res = await fetch(`${API_BASE_URL}/blog-posts`, {
         method: "POST",
         body: formData,
       });
@@ -91,7 +97,7 @@ export const AddBlogPostModal = ({ open, onOpenChange, onSuccess }: Props) => {
 
       if (!res.ok) {
         console.error("Erreur serveur :", result);
-        throw new Error("Erreur");
+        throw new Error("Erreur API");
       }
 
       toast.success("Article ajouté !");
@@ -193,7 +199,7 @@ export const AddBlogPostModal = ({ open, onOpenChange, onSuccess }: Props) => {
             />
           </div>
 
-          {/* Contenu (éditeur) */}
+          {/* Contenu */}
           <div>
             <Label>Contenu</Label>
             <ReactQuill
@@ -203,45 +209,15 @@ export const AddBlogPostModal = ({ open, onOpenChange, onSuccess }: Props) => {
               placeholder="Rédige ton contenu ici..."
               style={{ height: "300px", marginBottom: "40px" }}
               className="react-quill-editor"
-              modules={{
-                toolbar: [
-                  [{ header: [1, 2, 3, false] }],
-                  ["bold", "italic", "underline", "strike"],
-                  [{ color: [] }, { background: [] }],
-                  [{ align: [] }],
-                  [{ list: "ordered" }, { list: "bullet" }],
-                  ["link", "image"],
-                  ["clean"],
-                ],
-              }}
-              formats={[
-                "header",
-                "bold",
-                "italic",
-                "underline",
-                "strike",
-                "color",
-                "background",
-                "align",
-                "list",
-                "bullet",
-                "link",
-                "image",
-              ]}
             />
           </div>
 
           {/* Image */}
           <div>
             <Label htmlFor="image">Image</Label>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
+            <Input type="file" accept="image/*" onChange={handleFileChange} />
           </div>
 
-          {/* Bouton */}
           <Button onClick={handleSubmit} disabled={loading} className="w-full">
             {loading ? "Ajout en cours..." : "Ajouter"}
           </Button>
