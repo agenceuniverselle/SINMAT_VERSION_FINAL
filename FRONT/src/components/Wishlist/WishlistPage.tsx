@@ -39,7 +39,7 @@ export default function WishlistPage() {
       const fetched = await Promise.all(
         ids.map(async (id) => {
           try {
-            const res = await fetch(`${API_BASE_URL}/produits/${id}`);
+            const res = await fetch(`${API_BASE_URL}/api/produits/${id}`);
             if (!res.ok) return null;
             return await res.json();
           } catch {
