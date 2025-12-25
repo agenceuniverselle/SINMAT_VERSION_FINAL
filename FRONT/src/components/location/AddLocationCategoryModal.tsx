@@ -15,6 +15,9 @@ interface Props {
   onSuccess: () => void;
 }
 
+/** ✅ API dynamique */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const AddLocationCategoryModal = ({ open, onOpenChange, onSuccess }: Props) => {
   const [form, setForm] = useState({ label: "", value: "" });
   const [iconFile, setIconFile] = useState<File | null>(null);
@@ -42,22 +45,24 @@ const AddLocationCategoryModal = ({ open, onOpenChange, onSuccess }: Props) => {
       formData.append("icon", iconFile);
     }
 
-const res = await fetch("http://localhost:8000/api/categories_location", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const res = await fetch(`${API_BASE_URL}/categories_location`, {
+        method: "POST",
+        body: formData,
+      });
 
-    if (res.ok) {
-      setForm({ label: "", value: "" });
-      setIconFile(null);
-      onOpenChange(false);
-      onSuccess();
-    } else {
-      const data = await res.json();
-      setErrors(data.errors || {});
+      if (res.ok) {
+        setForm({ label: "", value: "" });
+        setIconFile(null);
+        onOpenChange(false);
+        onSuccess();
+      } else {
+        const data = await res.json();
+        setErrors(data.errors || {});
+      }
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -69,7 +74,9 @@ const res = await fetch("http://localhost:8000/api/categories_location", {
 
         <div className="space-y-4">
           <div>
-            <Label htmlFor="label">Nom du catégorie<span className="text-orange-500 ml-1">*</span></Label>
+            <Label htmlFor="label">
+              Nom du catégorie<span className="text-orange-500 ml-1">*</span>
+            </Label>
             <Input
               id="label"
               name="label"
@@ -78,7 +85,9 @@ const res = await fetch("http://localhost:8000/api/categories_location", {
               placeholder="Ex : Mini-pelles"
             />
             {errors.label && (
-              <p className="text-red-500 text-xs mt-1">{errors.label[0]}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.label[0]}
+              </p>
             )}
           </div>
 
@@ -92,7 +101,9 @@ const res = await fetch("http://localhost:8000/api/categories_location", {
               placeholder="ex: excavation"
             />
             {errors.value && (
-              <p className="text-red-500 text-xs mt-1">{errors.value[0]}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.value[0]}
+              </p>
             )}
           </div>
 
@@ -106,7 +117,9 @@ const res = await fetch("http://localhost:8000/api/categories_location", {
               onChange={handleFileChange}
             />
             {errors.icon && (
-              <p className="text-red-500 text-xs mt-1">{errors.icon[0]}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.icon[0]}
+              </p>
             )}
           </div>
 
