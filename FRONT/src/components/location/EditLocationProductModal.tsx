@@ -52,7 +52,7 @@ export const EditLocationProductModal = ({
   // 🔽 Charger catégories
   useEffect(() => {
     if (open) {
-      fetch(`${API_BASE_URL}/categories_location`)
+      fetch(`${API_BASE_URL}/api/categories_location`)
         .then((res) => res.json())
         .then(setCategories)
         .catch(() => toast.error("Erreur chargement des catégories"));
@@ -62,7 +62,7 @@ export const EditLocationProductModal = ({
   // 🔽 Charger produit
   useEffect(() => {
     if (open && productId) {
-      fetch(`${API_BASE_URL}/produits_location/${productId}`)
+      fetch(`${API_BASE_URL}/api/produits_location/${productId}`)
         .then((res) => res.json())
         .then((data) => {
           setForm({
@@ -138,7 +138,7 @@ export const EditLocationProductModal = ({
 
     try {
       const res = await fetch(
-        `${API_BASE_URL}/produits_location/${productId}`,
+        `${API_BASE_URL}/api/produits_location/${productId}`,
         {
           method: "POST",
           body: formData,
