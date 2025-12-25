@@ -51,7 +51,8 @@ const BestsellerProducts = () => {
   /* 🔽 Charger les produits */
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/produits/latest`);
+      const res = await fetch(`${API_BASE_URL}/api/produits/latest`);
+
       if (!res.ok) throw new Error();
 
       const data = await res.json();
@@ -114,7 +115,7 @@ const BestsellerProducts = () => {
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/newsletter`, {
+const res = await fetch(`${API_BASE_URL}/api/newsletter`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, phone }),
