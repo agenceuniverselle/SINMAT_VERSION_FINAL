@@ -88,7 +88,7 @@ export const AddBlogPostModal = ({
     });
 
     try {
-      const res = await fetch(`${API_BASE_URL}/blog-posts`, {
+      const res = await fetch(`${API_BASE_URL}/api/blog-posts`, {
         method: "POST",
         body: formData,
       });
