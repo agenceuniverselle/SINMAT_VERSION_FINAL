@@ -17,6 +17,10 @@ interface Props {
   onUpdated: () => void;
 }
 
+/** ✅ URLs dynamiques */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const STORAGE_URL = import.meta.env.VITE_STORAGE_URL;
+
 export default function EditLocationCategoryModal({
   open,
   onOpenChange,
@@ -33,8 +37,8 @@ export default function EditLocationCategoryModal({
   const [removeIcon, setRemoveIcon] = useState(false);
 
   useEffect(() => {
-    if (categoryId) {
-      fetch(`http://localhost:8000/api/categories_location/${categoryId}`)
+    if (categoryId && open) {
+      fetch(`${API_BASE_URL}/categories_location/${categoryId}`)
         .then((res) => res.json())
         .then((data) => {
           setForm({
@@ -42,11 +46,12 @@ export default function EditLocationCategoryModal({
             value: data.value,
             icon: data.icon || "",
           });
-          setRemoveIcon(false); // reset
+          setRemoveIcon(false);
+          setIconFile(null);
         })
         .catch(() => toast.error("Erreur lors du chargement"));
     }
-  }, [categoryId]);
+  }, [categoryId, open]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -55,7 +60,7 @@ export default function EditLocationCategoryModal({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
       setIconFile(e.target.files[0]);
-      setRemoveIcon(false); // Ne pas supprimer si une nouvelle image est ajoutée
+      setRemoveIcon(false);
     }
   };
 
@@ -77,7 +82,7 @@ export default function EditLocationCategoryModal({
 
     try {
       const res = await fetch(
-        `http://localhost:8000/api/categories_location/${categoryId}`,
+        `${API_BASE_URL}/categories_location/${categoryId}`,
         {
           method: "POST",
           headers: {
@@ -88,6 +93,7 @@ export default function EditLocationCategoryModal({
       );
 
       if (!res.ok) throw new Error();
+
       toast.success("Catégorie mise à jour");
       onUpdated();
       onOpenChange(false);
@@ -110,13 +116,12 @@ export default function EditLocationCategoryModal({
           {form.icon && !removeIcon && (
             <div className="relative w-32 h-32 border rounded-md overflow-hidden group">
               <img
-                src={`http://localhost:8000/storage/${form.icon}`}
+                src={`${STORAGE_URL}/${form.icon}`}
                 alt="Icône actuelle"
                 className="w-full h-full object-contain"
               />
 
-              <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
-                {/* Modifier */}
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
                 <Button
                   variant="outline"
                   size="icon"
@@ -126,7 +131,6 @@ export default function EditLocationCategoryModal({
                   ✏️
                 </Button>
 
-                {/* Supprimer */}
                 <Button
                   variant="destructive"
                   size="icon"
@@ -143,7 +147,7 @@ export default function EditLocationCategoryModal({
             </div>
           )}
 
-          {/* UPLOAD IMAGE */}
+          {/* UPLOAD */}
           <div>
             <Label htmlFor="icon">Icône (image)</Label>
             <Input
