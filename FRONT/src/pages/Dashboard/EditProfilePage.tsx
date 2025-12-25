@@ -79,7 +79,7 @@ export default function EditProfilePage() {
 
       if (password) payload.password = password;
 
-      const res = await fetch(`${API_BASE_URL}/users/${user.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
