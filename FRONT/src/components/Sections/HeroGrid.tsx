@@ -22,7 +22,7 @@ const HeroGrid = () => {
             flex flex-col lg:flex-row items-center justify-between
             p-6 md:p-8 lg:p-12 ${isRTL ? "lg:flex-row-reverse" : ""}`}
           >
-            {/* Texte */}
+            {/* TEXTE */}
             <div
               className={`z-10 max-w-full lg:max-w-md ${
                 isRTL ? "text-right lg:pe-6" : "text-left lg:ps-6"
@@ -41,9 +41,10 @@ const HeroGrid = () => {
                 {t("heroGrid.circularSawDescription")}
               </p>
 
+              {/* ✅ ESPACEMENT MOBILE */}
               <Button
                 variant="link"
-                className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
+                className="text-foreground text-base md:text-lg p-0 h-auto font-medium mb-6 md:mb-0"
                 onClick={() => navigate("/catalogue")}
               >
                 {t("heroGrid.discoverCatalog")}
@@ -51,13 +52,13 @@ const HeroGrid = () => {
               </Button>
             </div>
 
-            {/* Image */}
+            {/* IMAGE */}
             <img
               src={lawnMowerImg}
               alt="Scie circulaire"
               className={`w-full max-w-[280px] sm:max-w-[360px] lg:w-[60%]
               h-auto lg:h-full object-contain transition-transform duration-500
-              group-hover:scale-105 ${
+              group-hover:scale-105 mt-4 md:mt-0 ${
                 isRTL ? "lg:order-first lg:me-6" : "lg:order-last lg:ms-6"
               }`}
             />
@@ -78,7 +79,7 @@ const HeroGrid = () => {
 
               <Button
                 variant="link"
-                className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
+                className="text-foreground text-base md:text-lg p-0 h-auto font-medium mb-6 md:mb-0"
                 onClick={() => navigate("/catalogue")}
               >
                 {t("heroGrid.discoverCatalog")}
@@ -91,7 +92,7 @@ const HeroGrid = () => {
               alt="Safety Equipment"
               className={`mx-auto w-full max-w-[260px] sm:max-w-[320px]
               object-contain transition-transform duration-500
-              group-hover:scale-105 ${
+              group-hover:scale-105 mt-4 md:mt-0 ${
                 isRTL ? "self-start" : "self-end"
               }`}
             />
@@ -110,7 +111,7 @@ const HeroGrid = () => {
                 {t("heroGrid.vacuumCleanerTitle")}
               </h3>
 
-              <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+              <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
                 {t("heroGrid.vacuumCleanerDescription")}
               </p>
             </div>
@@ -120,7 +121,7 @@ const HeroGrid = () => {
               alt="Vacuum Cleaner"
               className={`mx-auto w-full max-w-[260px] sm:max-w-[320px]
               object-contain transition-transform duration-500
-              group-hover:scale-105 ${
+              group-hover:scale-105 mt-4 md:mt-0 ${
                 isRTL ? "self-start" : "self-end"
               }`}
             />
@@ -134,7 +135,7 @@ const HeroGrid = () => {
             flex flex-col lg:flex-row items-center justify-between
             p-6 md:p-8 lg:p-12 ${isRTL ? "lg:flex-row-reverse" : ""}`}
           >
-            {/* Texte */}
+            {/* TEXTE */}
             <div
               className={`z-10 max-w-full lg:max-w-md ${
                 isRTL ? "text-right lg:pe-6" : "text-left lg:ps-6"
@@ -145,7 +146,7 @@ const HeroGrid = () => {
                 {t("heroGrid.newItems")}
               </p>
 
-              <h3 className="text-3xl md:text-4xl font-bold mb-6">
+              <h3 className="text-3xl md:text-4xl font-bold mb-4">
                 {t("heroGrid.cordlessDrillTitle")}
               </h3>
 
@@ -155,7 +156,7 @@ const HeroGrid = () => {
 
               <Button
                 variant="link"
-                className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
+                className="text-foreground text-base md:text-lg p-0 h-auto font-medium mb-6 md:mb-0"
                 onClick={() => navigate("/catalogue")}
               >
                 {t("heroGrid.discoverCatalog")}
@@ -163,13 +164,13 @@ const HeroGrid = () => {
               </Button>
             </div>
 
-            {/* Image */}
+            {/* IMAGE */}
             <img
               src={circularSawImg}
               alt="Cordless Drill"
               className={`w-full max-w-[280px] sm:max-w-[360px] lg:w-[50%]
               h-auto lg:h-full object-contain transition-transform duration-500
-              group-hover:scale-105 ${
+              group-hover:scale-105 mt-4 md:mt-0 ${
                 isRTL ? "lg:order-first lg:me-6" : "lg:order-last lg:ms-6"
               }`}
             />
