@@ -18,7 +18,6 @@ import { BlogCard, BlogArticle } from "@/components/Blog/BlogCard";
 
 /* ✅ API + Storage dynamiques */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const STORAGE_BASE_URL = import.meta.env.VITE_STORAGE_BASE_URL;
 
 export default function BlogPost() {
   const { t } = useTranslation();
@@ -28,11 +27,12 @@ export default function BlogPost() {
   const [related, setRelated] = useState<BlogArticle[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const buildImageUrl = (img?: string | null) => {
-    if (!img) return "/no-image.png";
-    if (img.startsWith("http")) return img;
-    return `${STORAGE_BASE_URL}/storage/${img}`;
-  };
+const buildImageUrl = (img?: string | null) => {
+  if (!img) return "/no-image.png";
+  if (img.startsWith("http")) return img;
+  return `https://sinmat.ma/storage/${img}`;
+};
+
 
   useEffect(() => {
     const fetchBlog = async () => {
