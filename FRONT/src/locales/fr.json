@@ -273,25 +273,30 @@
 "blog": {
   "title": "Blog & Conseils BTP",
   "subtitle": "Retrouvez nos guides, conseils et actualités du secteur de la construction au Maroc",
+
+  "loading": "Chargement de l'article...",
+  "notFound": "Article non trouvé",
+  "backToList": "Retour au blog",
+  "minutes": "min",
+  "share": "Partager",
+  "related": "Articles similaires",
+
   "categories": {
     "material": "Matériel BTP",
     "safety": "Chantier & Sécurité",
     "structure": "Construction & Gros œuvre",
     "guides": "Guides & Conseil Pro",
     "products": "Nouveaux produits",
-    "pricing": "Études de prix",
-    "loading": "Chargement de l'article...",
-    "notFound": "Article non trouvé",
-    "backToList": "Retour au blog",
-    "minutes": "min",
-    "share": "Partager",
-    "cta": {
-      "title": "Besoin d'un devis ?",
-      "subtitle": "Contactez nos experts pour un devis personnalisé",
-      "button": "Demander un devis"
-    },
-    "related": "Articles similaires"
+    "pricing": "Études de prix"
   },
+
+  "cta": {
+    "title": "Besoin d'un devis ?",
+    "subtitle": "Contactez nos experts pour un devis personnalisé",
+    "button": "Demander un devis"
+  }
+}
+
    "sidebar": {
     "searchTitle": "Rechercher",
     "searchInput": "Rechercher un article...",
