@@ -23,7 +23,7 @@ class BlogPostController extends Controller
         'content'   => 'required|string',
         'category'  => 'required|string|max:100',
         'author'    => 'required|string|max:100',
-        'read_time' => 'required|string|max:50',
+        'read_time' => 'required|integer|min:1',
         'image'     => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
     ]);
 
@@ -51,7 +51,7 @@ public function update(Request $request, BlogPost $blogPost)
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         'category' => 'required|string|max:100',
         'author' => 'required|string|max:100',
-        'read_time' => 'required|string|max:50',
+        'read_time' => 'required|integer|min:1',
     ]);
 
     // ✅ Si nouvelle image, on remplace l’ancienne
