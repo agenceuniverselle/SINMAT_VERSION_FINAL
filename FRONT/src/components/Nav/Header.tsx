@@ -14,6 +14,7 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { count: cartCount } = useCart();
   const { count } = useWishlist();
+
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -39,13 +40,13 @@ const Header = () => {
     <header className="bg-background border-b">
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-          
+
           {/* LOGO */}
           <a href="/" className="flex items-center">
             <img
               src="/images/sinmat.jpeg"
               alt="Logo Sinmat"
-              className="w-40 md:w-48 h-auto object-contain"
+              className="w-48 h-28 object-contain"
             />
           </a>
 
@@ -54,14 +55,14 @@ const Header = () => {
             <div className="relative">
               <Input
                 placeholder={t("header.searchPlaceholder")}
+                className="w-full pr-12"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                className="pr-12"
               />
               <Button
                 size="icon"
-                className="absolute right-0 top-0 h-full rounded-l-none bg-primary"
+                className="absolute right-0 top-0 h-full rounded-l-none bg-primary hover:bg-primary/90"
                 onClick={handleSearch}
               >
                 <Search className="w-5 h-5" />
@@ -70,9 +71,9 @@ const Header = () => {
           </div>
 
           {/* ACTIONS */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
 
-            {/* ✅ LOGIN – DESKTOP */}
+            {/* ✅ LOGIN DESKTOP (inchangé) */}
             <Button
               variant="ghost"
               size="sm"
@@ -80,21 +81,21 @@ const Header = () => {
               className="hidden md:flex items-center gap-2"
             >
               <User className="w-4 h-4" />
-              <span>{t("header.login")}</span>
+              <span className="text-sm">{t("header.login")}</span>
             </Button>
 
-            {/* ✅ LOGIN – MOBILE */}
+            {/* ✅ LOGIN MOBILE (NOUVEAU – même style icône) */}
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsLoginOpen(true)}
               className="md:hidden"
+              onClick={() => setIsLoginOpen(true)}
               aria-label="Se connecter"
             >
               <User className="w-5 h-5" />
             </Button>
 
-            {/* WISHLIST */}
+            {/* ❤️ WISHLIST (TOUCHÉ À RIEN) */}
             <Button
               variant="ghost"
               size="icon"
@@ -102,12 +103,12 @@ const Header = () => {
               onClick={() => navigate("/wishlist")}
             >
               <Heart className="w-5 h-5" />
-              {count > 0 && (
-                <span className="badge-count">{count}</span>
-              )}
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">
+                {count}
+              </span>
             </Button>
 
-            {/* CART */}
+            {/* 🛒 CART (TOUCHÉ À RIEN) */}
             <Button
               variant="ghost"
               size="icon"
@@ -115,10 +116,11 @@ const Header = () => {
               onClick={() => navigate("/checkout")}
             >
               <ShoppingCart className="w-5 h-5" />
-              {cartCount > 0 && (
-                <span className="badge-count">{cartCount}</span>
-              )}
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">
+                {cartCount}
+              </span>
             </Button>
+
           </div>
         </div>
       </div>
