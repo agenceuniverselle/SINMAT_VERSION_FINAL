@@ -79,50 +79,55 @@ export const AddBlogPostModal = ({
     setForm((prev) => ({ ...prev, content: value }));
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    const formData = new FormData();
-Object.entries(form).forEach(([key, value]) => {
-  if (value !== null && value !== undefined) {
-    formData.append(key, value as any);
-  }
-});
-
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/blog-posts`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        console.error("Erreur serveur :", result);
-        throw new Error("Erreur API");
+ const handleSubmit = async () => {
+  setLoading(true);
+  const formData = new FormData();
+  
+  Object.entries(form).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      // ✅ Convertir read_time en nombre
+      if (key === 'read_time') {
+        formData.append(key, String(Number(value)));
+      } else {
+        formData.append(key, value as any);
       }
-
-      toast.success("Article ajouté !");
-      onOpenChange(false);
-      onSuccess();
-
-      // reset form
-      setForm({
-        title: "",
-        excerpt: "",
-        content: "",
-        category: "",
-        author: "",
-        read_time: "",
-        image: null,
-      });
-      setCategorySuggestions([]);
-    } catch {
-      toast.error("Erreur lors de l’ajout");
-    } finally {
-      setLoading(false);
     }
-  };
+  });
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/blog-posts`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      console.error("Erreur serveur :", result);
+      throw new Error("Erreur API");
+    }
+
+    toast.success("Article ajouté !");
+    onOpenChange(false);
+    onSuccess();
+
+    // reset form
+    setForm({
+      title: "",
+      excerpt: "",
+      content: "",
+      category: "",
+      author: "",
+      read_time: "",
+      image: null,
+    });
+    setCategorySuggestions([]);
+  } catch {
+    toast.error("Erreur lors de l'ajout");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
