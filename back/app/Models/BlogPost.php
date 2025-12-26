@@ -9,12 +9,23 @@ class BlogPost extends Model
         'title',
         'excerpt',
         'content',
-        'image',
         'category',
         'author',
         'read_time',
+        'image',
         'published_at',
     ];
 
-    protected $dates = ['published_at'];
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
+
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image
+            ? asset('storage/' . $this->image)
+            : null;
+    }
 }
