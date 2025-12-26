@@ -16,7 +16,12 @@ class BlogPostController extends Controller
     public function store(Request $request)
 {
     Log::info('Données reçues:', $request->all());
-
+// Décoder si nécessaire
+    $content = $request->input('content');
+    if (strpos($content, '&lt;') !== false) {
+        $content = html_entity_decode($content);
+        $request->merge(['content' => $content]);
+    }
     $validated = $request->validate([
         'title'     => 'required|string|max:255',
         'excerpt'   => 'required|string',
