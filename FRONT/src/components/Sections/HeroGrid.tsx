@@ -15,19 +15,19 @@ const HeroGrid = () => {
     <section className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-       {/* ===== Featured Circular Saw ===== */}
+{/* ===== Featured Circular Saw ===== */}
 <div className="lg:col-span-2 bg-muted rounded-lg overflow-hidden group cursor-pointer">
   <div
     className={`relative min-h-[360px] md:min-h-[420px] lg:h-[500px]
     flex flex-col lg:flex-row items-center justify-between
     p-6 md:p-8 lg:p-12 ${isRTL ? "lg:flex-row-reverse" : ""}`}
+    dir={isRTL ? "rtl" : "ltr"}
   >
     {/* TEXTE */}
     <div
-      className={`z-10 max-w-full lg:max-w-md flex flex-col ${
+      className={`z-10 max-w-full lg:max-w-md ${
         isRTL ? "text-right lg:pe-6" : "text-left lg:ps-6"
       }`}
-      dir={isRTL ? "rtl" : "ltr"}
     >
       <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
         {t("heroGrid.specialOffer")}
@@ -37,36 +37,44 @@ const HeroGrid = () => {
         {t("heroGrid.circularSawTitle")}
       </h2>
 
-      {/* TEXTE APRÈS IMAGE (MOBILE) */}
-      <div className="order-3 lg:order-none">
-        <p className="text-muted-foreground mb-6 leading-relaxed">
-          {t("heroGrid.circularSawDescription")}
-        </p>
-
-        <Button
-          variant="link"
-          className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
-          onClick={() => navigate("/catalogue")}
-        >
-          {t("heroGrid.discoverCatalog")}
-          <span className="ml-2">→</span>
-        </Button>
+      {/* IMAGE MOBILE (APRÈS TITRE) */}
+      <div className="block lg:hidden my-6">
+        <img
+          src={lawnMowerImg}
+          alt="Scie circulaire"
+          className="w-full max-w-[320px] mx-auto object-contain transition-transform duration-500 group-hover:scale-105"
+        />
       </div>
+
+      {/* TEXTE + CTA */}
+      <p className="text-muted-foreground mb-6 leading-relaxed">
+        {t("heroGrid.circularSawDescription")}
+      </p>
+
+      <Button
+        variant="link"
+        className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
+        onClick={() => navigate("/catalogue")}
+      >
+        {t("heroGrid.discoverCatalog")}
+        <span className="ml-2">→</span>
+      </Button>
     </div>
 
-    {/* IMAGE – APRÈS TITRE EN MOBILE */}
-    <img
-      src={lawnMowerImg}
-      alt="Scie circulaire"
-      className={`order-2 lg:order-none
-      w-full max-w-[280px] sm:max-w-[360px] lg:w-[60%]
-      h-auto lg:h-full object-contain transition-transform duration-500
-      group-hover:scale-105 mt-4 md:mt-0 ${
-        isRTL ? "lg:order-first lg:me-6" : "lg:order-last lg:ms-6"
-      }`}
-    />
+    {/* IMAGE DESKTOP SEULEMENT */}
+    <div className="hidden lg:block">
+      <img
+        src={lawnMowerImg}
+        alt="Scie circulaire"
+        className={`w-[60%] h-full object-contain transition-transform duration-500
+        group-hover:scale-105 ${
+          isRTL ? "me-6" : "ms-6"
+        }`}
+      />
+    </div>
   </div>
 </div>
+
 
         {/* ===== Safety Equipment ===== */}
         <div className="bg-muted rounded-lg overflow-hidden group cursor-pointer">
