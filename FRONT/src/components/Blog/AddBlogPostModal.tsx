@@ -82,10 +82,12 @@ export const AddBlogPostModal = ({
   const handleSubmit = async () => {
     setLoading(true);
     const formData = new FormData();
+Object.entries(form).forEach(([key, value]) => {
+  if (value !== null && value !== undefined) {
+    formData.append(key, value as any);
+  }
+});
 
-    Object.entries(form).forEach(([key, value]) => {
-      if (value) formData.append(key, value as any);
-    });
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/blog-posts`, {
