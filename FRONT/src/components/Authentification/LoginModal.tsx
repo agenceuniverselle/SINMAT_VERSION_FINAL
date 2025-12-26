@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import GoogleIcon from "@/assets/google.svg";
 
 import {
   Dialog,
@@ -149,14 +150,21 @@ export const LoginModal = ({
           </span>
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full gap-2"
-          onClick={() => handleSocialLogin("google")}
-        >
-          {t("loginModal.loginWithGoogle")}
-        </Button>
+    <Button
+  type="button"
+  variant="outline"
+  className="w-full flex items-center justify-center gap-3"
+  onClick={() => handleSocialLogin("google")}
+>
+  <img
+    src={GoogleIcon}
+    alt="Google"
+    className="w-5 h-5"
+  />
+  <span className="font-medium">
+    {t("loginModal.loginWithGoogle")}
+  </span>
+</Button>
 
         <div className="text-center mt-6 pt-6 border-t">
           <button
