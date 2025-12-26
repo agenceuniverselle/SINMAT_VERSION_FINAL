@@ -15,17 +15,17 @@ const HeroGrid = () => {
     <section className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* ===== Featured Circular Saw (RTL OK) ===== */}
+        {/* ===== Featured Circular Saw ===== */}
         <div className="lg:col-span-2 bg-muted rounded-lg overflow-hidden group cursor-pointer">
           <div
-            className={`relative h-[500px] flex items-center justify-between p-8 md:p-12 ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
+            className={`relative min-h-[360px] md:min-h-[420px] lg:h-[500px]
+            flex flex-col lg:flex-row items-center justify-between
+            p-6 md:p-8 lg:p-12 ${isRTL ? "lg:flex-row-reverse" : ""}`}
           >
             {/* Texte */}
             <div
-              className={`z-10 max-w-md ${
-                isRTL ? "text-right pe-6 -me-4" : "text-left ps-6 -ms-4"
+              className={`z-10 max-w-full lg:max-w-md ${
+                isRTL ? "text-right lg:pe-6" : "text-left lg:ps-6"
               }`}
               dir={isRTL ? "rtl" : "ltr"}
             >
@@ -37,26 +37,28 @@ const HeroGrid = () => {
                 {t("heroGrid.circularSawTitle")}
               </h2>
 
-              <p className="text-muted-foreground mb-6 leading-relaxed break-words">
+              <p className="text-muted-foreground mb-6 leading-relaxed">
                 {t("heroGrid.circularSawDescription")}
               </p>
 
-             <Button
-        variant="link"
-        className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
-        onClick={() => navigate("/catalogue")}
-      >
-        {t("heroGrid.discoverCatalog")}
-        <span className="ml-2 inline-block transition-all">→</span>
-      </Button>
+              <Button
+                variant="link"
+                className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
+                onClick={() => navigate("/catalogue")}
+              >
+                {t("heroGrid.discoverCatalog")}
+                <span className="ml-2">→</span>
+              </Button>
             </div>
 
             {/* Image */}
             <img
               src={lawnMowerImg}
               alt="Scie circulaire"
-              className={`w-[60%] h-full object-contain transition-transform duration-500 group-hover:scale-105 ${
-                isRTL ? "order-first me-6" : "order-last ms-6"
+              className={`w-full max-w-[280px] sm:max-w-[360px] lg:w-[60%]
+              h-auto lg:h-full object-contain transition-transform duration-500
+              group-hover:scale-105 ${
+                isRTL ? "lg:order-first lg:me-6" : "lg:order-last lg:ms-6"
               }`}
             />
           </div>
@@ -64,8 +66,8 @@ const HeroGrid = () => {
 
         {/* ===== Safety Equipment ===== */}
         <div className="bg-muted rounded-lg overflow-hidden group cursor-pointer">
-          <div className="relative h-[500px] flex flex-col justify-between p-8">
-            <div className={`z-10 ${isRTL ? "text-right" : "text-left"}`} dir={isRTL ? "rtl" : "ltr"}>
+          <div className="relative min-h-[360px] md:min-h-[420px] lg:h-[500px] flex flex-col justify-between p-6 md:p-8">
+            <div className={`${isRTL ? "text-right" : "text-left"}`} dir={isRTL ? "rtl" : "ltr"}>
               <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
                 {t("heroGrid.safetyEquipmentDescription")}
               </p>
@@ -74,21 +76,23 @@ const HeroGrid = () => {
                 {t("heroGrid.safetyEquipmentTitle")}
               </h3>
 
-               <Button
-        variant="link"
-        className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
-        onClick={() => navigate("/catalogue")}
-      >
-        {t("heroGrid.discoverCatalog")}
-        <span className="ml-2 inline-block transition-all">→</span>
-      </Button>
+              <Button
+                variant="link"
+                className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
+                onClick={() => navigate("/catalogue")}
+              >
+                {t("heroGrid.discoverCatalog")}
+                <span className="ml-2">→</span>
+              </Button>
             </div>
 
             <img
               src={safetyEquipmentImg}
               alt="Safety Equipment"
-              className={`absolute bottom-8 w-[70%] h-[50%] object-contain transition-transform duration-500 group-hover:scale-105 ${
-                isRTL ? "left-4" : "right-4"
+              className={`mx-auto w-full max-w-[260px] sm:max-w-[320px]
+              object-contain transition-transform duration-500
+              group-hover:scale-105 ${
+                isRTL ? "self-start" : "self-end"
               }`}
             />
           </div>
@@ -96,8 +100,8 @@ const HeroGrid = () => {
 
         {/* ===== Vacuum Cleaner ===== */}
         <div className="bg-muted rounded-lg overflow-hidden group cursor-pointer">
-          <div className="relative h-[500px] flex flex-col justify-between p-8">
-            <div className={`z-10 ${isRTL ? "text-right" : "text-left"}`} dir={isRTL ? "rtl" : "ltr"}>
+          <div className="relative min-h-[360px] md:min-h-[420px] lg:h-[500px] flex flex-col justify-between p-6 md:p-8">
+            <div className={`${isRTL ? "text-right" : "text-left"}`} dir={isRTL ? "rtl" : "ltr"}>
               <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
                 SOUFFLEURS-ASPIRATEURS
               </p>
@@ -114,61 +118,63 @@ const HeroGrid = () => {
             <img
               src={vacuumCleanerImg}
               alt="Vacuum Cleaner"
-              className={`absolute bottom-[-10px] md:bottom-[-20px] w-[60%] h-[65%] object-contain transition-transform duration-500 group-hover:scale-105 ${
-                isRTL ? "left-4" : "right-4"
+              className={`mx-auto w-full max-w-[260px] sm:max-w-[320px]
+              object-contain transition-transform duration-500
+              group-hover:scale-105 ${
+                isRTL ? "self-start" : "self-end"
               }`}
             />
           </div>
         </div>
 
-       {/* ===== Cordless Drill (Fixé pour RTL) ===== */}
-<div className="lg:col-span-2 bg-muted rounded-lg overflow-hidden group cursor-pointer">
-  <div
-    className={`relative h-[500px] flex items-center justify-between p-8 md:p-12 ${
-      isRTL ? "flex-row-reverse" : ""
-    }`}
-  >
-    {/* Texte */}
-    <div
-      className={`z-10 max-w-md ${
-        isRTL ? "text-right pe-6 -me-4" : "text-left ps-6 -ms-4"
-      }`}
-      dir={isRTL ? "rtl" : "ltr"}
-    >
-      <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-        {t("heroGrid.newItems")}
-      </p>
+        {/* ===== Cordless Drill ===== */}
+        <div className="lg:col-span-2 bg-muted rounded-lg overflow-hidden group cursor-pointer">
+          <div
+            className={`relative min-h-[360px] md:min-h-[420px] lg:h-[500px]
+            flex flex-col lg:flex-row items-center justify-between
+            p-6 md:p-8 lg:p-12 ${isRTL ? "lg:flex-row-reverse" : ""}`}
+          >
+            {/* Texte */}
+            <div
+              className={`z-10 max-w-full lg:max-w-md ${
+                isRTL ? "text-right lg:pe-6" : "text-left lg:ps-6"
+              }`}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
+              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                {t("heroGrid.newItems")}
+              </p>
 
-      <h3 className="text-3xl md:text-4xl font-bold mb-6">
-        {t("heroGrid.cordlessDrillTitle")}
-      </h3>
+              <h3 className="text-3xl md:text-4xl font-bold mb-6">
+                {t("heroGrid.cordlessDrillTitle")}
+              </h3>
 
-      <p className="text-muted-foreground mb-6 leading-relaxed break-words">
-        {t("heroGrid.cordlessDrillDescription")}
-      </p>
+              <p className="text-muted-foreground mb-6 leading-relaxed">
+                {t("heroGrid.cordlessDrillDescription")}
+              </p>
 
-      <Button
-        variant="link"
-        className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
-        onClick={() => navigate("/catalogue")}
-      >
-        {t("heroGrid.discoverCatalog")}
-        <span className="ml-2 inline-block transition-all">→</span>
-      </Button>
-    </div>
+              <Button
+                variant="link"
+                className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
+                onClick={() => navigate("/catalogue")}
+              >
+                {t("heroGrid.discoverCatalog")}
+                <span className="ml-2">→</span>
+              </Button>
+            </div>
 
-    {/* Image (utilise flex + order au lieu de absolute) */}
-    <img
-      src={circularSawImg}
-      alt="Cordless Drill"
-      className={`w-[50%] h-full object-contain transition-transform duration-500 group-hover:scale-105 ${
-        isRTL ? "order-first me-6" : "order-last ms-6"
-      }`}
-    />
-  </div>
-</div>
-
-   
+            {/* Image */}
+            <img
+              src={circularSawImg}
+              alt="Cordless Drill"
+              className={`w-full max-w-[280px] sm:max-w-[360px] lg:w-[50%]
+              h-auto lg:h-full object-contain transition-transform duration-500
+              group-hover:scale-105 ${
+                isRTL ? "lg:order-first lg:me-6" : "lg:order-last lg:ms-6"
+              }`}
+            />
+          </div>
+        </div>
 
       </div>
     </section>
