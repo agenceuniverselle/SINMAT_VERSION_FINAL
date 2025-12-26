@@ -14,35 +14,32 @@ class BlogPostController extends Controller
 
 
     public function store(Request $request)
-    {
-        // Log pour déboguer
-        Log::info('Données reçues:', $request->all());
+{
+    Log::info('Données reçues:', $request->all());
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'excerpt' => 'required|string',
-            'content' => 'required|string', // ← Important : string, pas "required" seul
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'category' => 'required|string|max:100',
-            'author' => 'required|string|max:100',
-            'read_time' => 'required|string|max:50',
-        ]);
+    $validated = $request->validate([
+        'title'     => 'required|string|max:255',
+        'excerpt'   => 'required|string',
+        'content'   => 'required|string',
+        'category'  => 'required|string|max:100',
+        'author'    => 'required|string|max:100',
+        'read_time' => 'required|integer|min:1', // ✅ FIX MAJEUR
+        'image'     => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+    ]);
 
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('blog_images', 'public');
-            $validated['image'] = $path;
-        }
-
-        $validated['published_at'] = now();
-
-        try {
-            $post = BlogPost::create($validated);
-            return response()->json($post, 201);
-        } catch (\Exception $e) {
-            Log::error('Erreur création article:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+    if ($request->hasFile('image')) {
+        $validated['image'] = $request
+            ->file('image')
+            ->store('blog_images', 'public');
     }
+
+    $validated['published_at'] = now();
+
+    $post = BlogPost::create($validated);
+
+    return response()->json($post, 201);
+}
+
 public function update(Request $request, BlogPost $blogPost)
 {
     Log::info('Données reçues pour update:', $request->all());
