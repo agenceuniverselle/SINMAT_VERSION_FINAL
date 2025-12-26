@@ -114,7 +114,7 @@ const handleSubmit = async () => {
       category: "",
       author: "",
       read_time: "",
-      image: null,
+     // image: null,
     });
     setCategorySuggestions([]);
   } catch {
