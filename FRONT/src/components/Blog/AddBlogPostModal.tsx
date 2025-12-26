@@ -184,12 +184,11 @@ Object.entries(form).forEach(([key, value]) => {
               <Label htmlFor="read_time">Temps de lecture</Label>
               <Input
   name="read_time"
-  type="number"
-  min={1}
   value={form.read_time}
   onChange={handleChange}
-  placeholder="Ex: 5"
+  placeholder="Ex: 5 min"
 />
+
 
             </div>
           </div>
