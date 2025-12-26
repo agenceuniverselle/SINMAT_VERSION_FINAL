@@ -23,7 +23,7 @@ class BlogPostController extends Controller
         'content'   => 'required|string',
         'category'  => 'required|string|max:100',
         'author'    => 'required|string|max:100',
-        'read_time' => 'required|integer|min:1',
+        'read_time' => 'required|string|max:50',
         'image'     => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
     ]);
 
