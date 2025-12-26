@@ -19,13 +19,5 @@ class BlogPost extends Model
     protected $casts = [
         'published_at' => 'datetime',
     ];
-
-    protected $appends = ['image_url'];
-
-    public function getImageUrlAttribute()
-    {
-        return $this->image
-            ? asset('storage/' . $this->image)
-            : null;
-    }
 }
+
