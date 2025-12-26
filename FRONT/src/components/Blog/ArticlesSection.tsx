@@ -17,36 +17,30 @@ interface Article {
 
 /** ✅ URLs dynamiques */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const APP_BASE_URL = import.meta.env.VITE_APP_BASE_URL;
 
 const ArticlesSection = () => {
   const { t } = useTranslation();
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/blog-posts`)
-      .then((res) => res.json())
-      .then((data) => {
-        const latest = data
-          .sort(
-            (a: Article, b: Article) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime()
-          )
-          .slice(0, 3)
-          .map((article: Article) => ({
-            ...article,
-            image: article.image?.startsWith("http")
-              ? article.image
-              : `${APP_BASE_URL}/storage/${article.image}`,
-          }));
+  fetch(`${API_BASE_URL}/api/blog-posts`)
+    .then((res) => res.json())
+    .then((data) => {
+      const latest = data
+        .sort(
+          (a: Article, b: Article) =>
+            new Date(b.created_at).getTime() -
+            new Date(a.created_at).getTime()
+        )
+        .slice(0, 3);
 
-        setArticles(latest);
-      })
-      .catch((err) => {
-        console.error("Erreur lors du chargement des articles :", err);
-      });
-  }, []);
+      setArticles(latest);
+    })
+    .catch((err) => {
+      console.error("Erreur lors du chargement des articles :", err);
+    });
+}, []);
+
 
   return (
     <section className="py-16 bg-background">
@@ -80,6 +74,13 @@ const ArticlesSection = () => {
               month: "long",
               year: "numeric",
             });
+      const imageUrl =
+    article.image && article.image !== ""
+      ? article.image.startsWith("http")
+        ? article.image
+        : `https://sinmat.ma/storage/${article.image}`
+      : "/placeholder.png";
+
 
             return (
               <Card
@@ -87,11 +88,11 @@ const ArticlesSection = () => {
                 className="group overflow-hidden border hover:shadow-xl transition-all flex flex-col"
               >
                 <div className="relative overflow-hidden h-56">
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
+                     <img
+          src={imageUrl}
+          alt={article.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
                   <div className="absolute top-4 left-4">
                     <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">
                       {article.category}
