@@ -79,18 +79,13 @@ export const AddBlogPostModal = ({
     setForm((prev) => ({ ...prev, content: value }));
   };
 
- const handleSubmit = async () => {
+const handleSubmit = async () => {
   setLoading(true);
   const formData = new FormData();
   
   Object.entries(form).forEach(([key, value]) => {
     if (value !== null && value !== undefined) {
-      // ✅ Convertir read_time en nombre
-      if (key === 'read_time') {
-        formData.append(key, String(Number(value)));
-      } else {
-        formData.append(key, value as any);
-      }
+      formData.append(key, value as any); // ✅ Pas de conversion
     }
   });
 
