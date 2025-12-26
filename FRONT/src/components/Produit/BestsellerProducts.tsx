@@ -37,6 +37,11 @@ const BestsellerProducts = () => {
 
   const { add: addToWishlist } = useWishlist();
   const { add: addToCart } = useCart();
+const buildImageUrl = (img?: string | null) => {
+  if (!img) return "/no-image.png";
+  if (img.startsWith("http")) return img;
+  return `${STORAGE_BASE_URL}/storage/${img}`;
+};
 
   const handleAddToCart = (productId: number) => {
     addToCart(productId);
@@ -64,10 +69,10 @@ const BestsellerProducts = () => {
         category: p.category ?? null,
         price: Number(p.sale_price),
         oldPrice: p.purchase_price ? Number(p.purchase_price) : undefined,
-        images:
-          p.images?.map(
-            (img: string) => `${STORAGE_BASE_URL}/${img}`
-          ) ?? [],
+        images: Array.isArray(p.images)
+  ? p.images.map((img: string) => buildImageUrl(img))
+  : [],
+
       }));
 
       setProducts(mapped);
