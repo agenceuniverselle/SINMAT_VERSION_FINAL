@@ -65,8 +65,10 @@ export function RentalModal({ product, open, onOpenChange }: RentalModalProps) {
   if (!product) return null;
 
  const imageUrl =
-  (product as any).images?.[0]
-    ? `https://sinmat.ma/storage/${(product as any).images[0]}`
+  product.image && product.image !== ""
+    ? product.image.startsWith("http")
+      ? product.image
+      : `https://sinmat.ma/storage/${product.image}`
     : "/placeholder.png";
 
 
