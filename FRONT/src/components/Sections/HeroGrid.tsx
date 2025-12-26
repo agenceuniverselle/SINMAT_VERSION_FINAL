@@ -15,55 +15,58 @@ const HeroGrid = () => {
     <section className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* ===== Featured Circular Saw ===== */}
-        <div className="lg:col-span-2 bg-muted rounded-lg overflow-hidden group cursor-pointer">
-          <div
-            className={`relative min-h-[360px] md:min-h-[420px] lg:h-[500px]
-            flex flex-col lg:flex-row items-center justify-between
-            p-6 md:p-8 lg:p-12 ${isRTL ? "lg:flex-row-reverse" : ""}`}
-          >
-            {/* TEXTE */}
-            <div
-              className={`z-10 max-w-full lg:max-w-md ${
-                isRTL ? "text-right lg:pe-6" : "text-left lg:ps-6"
-              }`}
-              dir={isRTL ? "rtl" : "ltr"}
-            >
-              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                {t("heroGrid.specialOffer")}
-              </p>
+       {/* ===== Featured Circular Saw ===== */}
+<div className="lg:col-span-2 bg-muted rounded-lg overflow-hidden group cursor-pointer">
+  <div
+    className={`relative min-h-[360px] md:min-h-[420px] lg:h-[500px]
+    flex flex-col lg:flex-row items-center justify-between
+    p-6 md:p-8 lg:p-12 ${isRTL ? "lg:flex-row-reverse" : ""}`}
+  >
+    {/* TEXTE */}
+    <div
+      className={`z-10 max-w-full lg:max-w-md flex flex-col ${
+        isRTL ? "text-right lg:pe-6" : "text-left lg:ps-6"
+      }`}
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+        {t("heroGrid.specialOffer")}
+      </p>
 
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
-                {t("heroGrid.circularSawTitle")}
-              </h2>
+      <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+        {t("heroGrid.circularSawTitle")}
+      </h2>
 
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                {t("heroGrid.circularSawDescription")}
-              </p>
+      {/* TEXTE APRÈS IMAGE (MOBILE) */}
+      <div className="order-3 lg:order-none">
+        <p className="text-muted-foreground mb-6 leading-relaxed">
+          {t("heroGrid.circularSawDescription")}
+        </p>
 
-              {/* ✅ ESPACEMENT MOBILE */}
-              <Button
-                variant="link"
-                className="text-foreground text-base md:text-lg p-0 h-auto font-medium mb-6 md:mb-0"
-                onClick={() => navigate("/catalogue")}
-              >
-                {t("heroGrid.discoverCatalog")}
-                <span className="ml-2">→</span>
-              </Button>
-            </div>
+        <Button
+          variant="link"
+          className="text-foreground text-base md:text-lg p-0 h-auto font-medium"
+          onClick={() => navigate("/catalogue")}
+        >
+          {t("heroGrid.discoverCatalog")}
+          <span className="ml-2">→</span>
+        </Button>
+      </div>
+    </div>
 
-            {/* IMAGE */}
-            <img
-              src={lawnMowerImg}
-              alt="Scie circulaire"
-              className={`w-full max-w-[280px] sm:max-w-[360px] lg:w-[60%]
-              h-auto lg:h-full object-contain transition-transform duration-500
-              group-hover:scale-105 mt-4 md:mt-0 ${
-                isRTL ? "lg:order-first lg:me-6" : "lg:order-last lg:ms-6"
-              }`}
-            />
-          </div>
-        </div>
+    {/* IMAGE – APRÈS TITRE EN MOBILE */}
+    <img
+      src={lawnMowerImg}
+      alt="Scie circulaire"
+      className={`order-2 lg:order-none
+      w-full max-w-[280px] sm:max-w-[360px] lg:w-[60%]
+      h-auto lg:h-full object-contain transition-transform duration-500
+      group-hover:scale-105 mt-4 md:mt-0 ${
+        isRTL ? "lg:order-first lg:me-6" : "lg:order-last lg:ms-6"
+      }`}
+    />
+  </div>
+</div>
 
         {/* ===== Safety Equipment ===== */}
         <div className="bg-muted rounded-lg overflow-hidden group cursor-pointer">
