@@ -37,16 +37,17 @@ const BestsellerProducts = () => {
 
   const { add: addToWishlist } = useWishlist();
   const { add: addToCart } = useCart();
-const buildImageUrl = (img?: string | null) => {
-  if (!img) return "/no-image.png";
-  if (img.startsWith("http")) return img;
-  return `${STORAGE_BASE_URL}/storage/${img}`;
-};
+
 
   const handleAddToCart = (productId: number) => {
     addToCart(productId);
     toast.success(t("bestseller.addToCartSuccess"));
   };
+const buildImageUrl = (img?: string | null) => {
+  if (!img) return "/no-image.png";
+  if (img.startsWith("http")) return img;
+  return `https://sinmat.ma/storage/${img}`;
+};
 
   const handleAddToWishlist = (productId: number) => {
     addToWishlist(productId);
