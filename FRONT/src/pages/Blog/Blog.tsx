@@ -134,7 +134,7 @@ const Blog = () => {
       </section>
 
       {/* ================= CATEGORIES ================= */}
-      <section className="pt-2 md:pt-6 pb-12 bg-card border-b">
+      <section className="pt-1 md:pt-6 pb-10 bg-card border-b">
 
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
