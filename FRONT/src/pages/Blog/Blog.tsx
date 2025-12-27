@@ -16,6 +16,7 @@ import {
   BookOpen,
   Package,
   Calculator,
+  Search,
 } from "lucide-react";
 
 import { BlogCard, BlogArticle } from "@/components/Blog/BlogCard";
@@ -29,8 +30,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Input } from "@/components/ui/input";
 
-/* ✅ API dynamique */
+/* ================= API ================= */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Blog = () => {
@@ -44,12 +46,10 @@ const Blog = () => {
 
   const articlesPerPage = 6;
 
-  /* 🔍 Search depuis URL + sidebar */
+  /* 🔍 Search (URL + input) */
   const searchTerm =
     searchQuery ||
-    new URLSearchParams(location.search)
-      .get("search")
-      ?.toLowerCase() ||
+    new URLSearchParams(location.search).get("search")?.toLowerCase() ||
     "";
 
   /* ---------------- CATEGORIES ---------------- */
@@ -65,7 +65,7 @@ const Blog = () => {
     []
   );
 
-  /* ---------------- FETCH ARTICLES ---------------- */
+  /* ---------------- FETCH ---------------- */
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/blog-posts`)
       .then((res) => res.json())
@@ -97,7 +97,6 @@ const Blog = () => {
     startIndex + articlesPerPage
   );
 
-  /* Reset page on filter change */
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedCategory]);
@@ -108,22 +107,33 @@ const Blog = () => {
       <Header />
       <Navigation />
 
-      {/* HERO */}
-      <section className="bg-gradient-to-br from-dark to-slate py-16 md:py-24">
+      {/* ================= HERO ================= */}
+      <section className="bg-gradient-to-br from-dark to-slate py-14 md:py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl -mt-20 md:text-5xl font-bold text-dark-foreground mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold text-dark-foreground mb-4">
             {t("blog.title")}
           </h1>
-          <p className="text-xl text-dark-foreground/80 max-w-2xl mx-auto">
+          <p className="text-base md:text-xl text-dark-foreground/80 max-w-2xl mx-auto mb-6">
             {t("blog.subtitle")}
           </p>
+
+          {/* 🔍 SEARCH (VISIBLE MOBILE & DESKTOP) */}
+          <div className="max-w-xl mx-auto relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t("blog.searchPlaceholder")}
+              className="pl-10"
+            />
+          </div>
         </div>
       </section>
 
-      {/* CATEGORIES */}
-      <section className="-mt-20 pt-4 pb-12 bg-card border-b">
+      {/* ================= CATEGORIES ================= */}
+      <section className="pt-8 pb-12 bg-card border-b">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {blogCategories.map(({ key, icon: Icon }) => {
               const label = t(`blog.categories.${key}`);
               const isActive = selectedCategory === label;
@@ -134,14 +144,15 @@ const Blog = () => {
                   onClick={() =>
                     setSelectedCategory(isActive ? null : label)
                   }
-                  className={`flex flex-col items-center gap-3 p-4 rounded-lg border transition-all hover:border-primary hover:bg-primary/5 ${
+                  className={`flex flex-col items-center gap-3 p-4 rounded-lg border transition-all
+                  hover:border-primary hover:bg-primary/5 ${
                     isActive
                       ? "border-primary bg-primary/10"
                       : "border-border"
                   }`}
                 >
                   <Icon
-                    className={`h-8 w-8 ${
+                    className={`h-7 w-7 ${
                       isActive
                         ? "text-primary"
                         : "text-muted-foreground"
@@ -161,7 +172,7 @@ const Blog = () => {
         </div>
       </section>
 
-      {/* ARTICLES + SIDEBAR */}
+      {/* ================= ARTICLES ================= */}
       <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-[1fr_350px] gap-8">
@@ -172,7 +183,7 @@ const Blog = () => {
                   {t("blog.noResults")}
                 </p>
               ) : (
-                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
                   {currentArticles.map((article) => (
                     <BlogCard key={article.id} article={article} />
                   ))}
@@ -227,16 +238,18 @@ const Blog = () => {
               )}
             </div>
 
-            {/* SIDEBAR */}
-            <BlogSidebar
-              latestArticles={articles}
-              onSearch={setSearchQuery}
-              onCategoryClick={(cat) =>
-                setSelectedCategory(
-                  cat === selectedCategory ? null : cat
-                )
-              }
-            />
+            {/* SIDEBAR (DESKTOP ONLY) */}
+            <div className="hidden lg:block">
+              <BlogSidebar
+                latestArticles={articles}
+                onSearch={setSearchQuery}
+                onCategoryClick={(cat) =>
+                  setSelectedCategory(
+                    cat === selectedCategory ? null : cat
+                  )
+                }
+              />
+            </div>
           </div>
         </div>
       </section>
