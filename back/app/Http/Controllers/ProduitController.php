@@ -119,9 +119,10 @@ public function update(Request $request, $id)
         foreach ($request->gallery as $img) {
 
             // 🔥 SI URL COMPLÈTE → on enlève http://localhost:8000/storage/
-            if (str_starts_with($img, 'http')) {
-                $img = str_replace(asset('storage') . '/', '', $img);
-            }
+          if (strpos($img, 'http') === 0) {
+    $img = str_replace(asset('storage') . '/', '', $img);
+}
+
 
             $currentImages[] = $img;
         }
