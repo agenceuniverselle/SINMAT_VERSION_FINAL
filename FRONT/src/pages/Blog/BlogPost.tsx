@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BlogCard, BlogArticle } from "@/components/Blog/BlogCard";
 
-/* ================= API ================= */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function BlogPost() {
@@ -60,10 +59,7 @@ export default function BlogPost() {
         const allData = await allRes.json();
 
         const relatedArticles: BlogArticle[] = allData
-          .filter(
-            (a: any) =>
-              a.id.toString() !== id && a.category === data.category
-          )
+          .filter((a: any) => a.id.toString() !== id && a.category === data.category)
           .slice(0, 3)
           .map((a: any) => ({
             id: a.id.toString(),
@@ -100,7 +96,9 @@ export default function BlogPost() {
         await navigator.clipboard.writeText(url);
         alert(t("blog.copiedLink"));
       }
-    } catch {}
+    } catch {
+      // ignore
+    }
   };
 
   if (loading) {
@@ -113,11 +111,9 @@ export default function BlogPost() {
 
   if (!article) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-center px-4">
+      <div className="min-h-screen flex items-center justify-center text-center">
         <div>
-          <h1 className="text-2xl font-bold mb-4">
-            {t("blog.notFound")}
-          </h1>
+          <h1 className="text-2xl font-bold mb-4">{t("blog.notFound")}</h1>
           <Button asChild>
             <Link to="/blog">{t("blog.backToList")}</Link>
           </Button>
@@ -126,10 +122,11 @@ export default function BlogPost() {
     );
   }
 
-  const formattedDate = new Date(article.created_at).toLocaleDateString(
-    "fr-FR",
-    { day: "numeric", month: "long", year: "numeric" }
-  );
+  const formattedDate = new Date(article.created_at).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -137,11 +134,7 @@ export default function BlogPost() {
       <Header />
       <Navigation />
 
-      {/* ✅ FIX MOBILE HEADER OVERLAP */}
-      <div className="block lg:hidden h-[180px]" />
-
-      {/* BACK BUTTON */}
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4 py-6">
         <Button variant="ghost" asChild>
           <Link to="/blog" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
@@ -150,47 +143,46 @@ export default function BlogPost() {
         </Button>
       </div>
 
-      {/* HERO IMAGE */}
-      <div className="container mx-auto px-4 mb-10">
-        <div className="relative h-[220px] sm:h-[300px] md:h-[400px] rounded-lg overflow-hidden">
+      <div className="container mx-auto px-4 mb-8">
+        <div className="relative h-[400px] rounded-lg overflow-hidden">
           <img
             src={article.image}
             alt={article.title}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">
+          <Badge className="absolute top-6 left-6 bg-primary text-primary-foreground">
             {article.category}
           </Badge>
         </div>
       </div>
 
-      {/* CONTENT */}
       <article className="container mx-auto px-4 pb-16">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-            {article.title}
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{article.title}</h1>
 
-          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mb-8 pb-8 border-b">
+          <div className="flex flex-wrap items-center gap-6 mb-8 pb-8 border-b">
             <div className="flex items-center gap-2 text-muted-foreground">
               <User className="h-4 w-4" />
               <span className="text-sm">{article.author}</span>
             </div>
+
             <div className="flex items-center gap-2 text-muted-foreground">
               <Calendar className="h-4 w-4" />
               <span className="text-sm">{formattedDate}</span>
             </div>
+
             <div className="flex items-center gap-2 text-muted-foreground">
               <Clock className="h-4 w-4" />
               <span className="text-sm">
                 {article.read_time} {t("blog.minutes")}
               </span>
             </div>
+
             <Button
               variant="outline"
               size="sm"
-              className="sm:ml-auto"
+              className="ml-auto"
               onClick={handleShare}
             >
               <Share2 className="h-4 w-4 mr-2" />
@@ -199,18 +191,23 @@ export default function BlogPost() {
           </div>
 
           <div
-            className="prose prose-base sm:prose-lg max-w-none"
+            className="prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
 
+          {/* ✅ Search input shown only on mobile before cards */}
+          <div className="block md:hidden mt-10 mb-8">
+            <input
+              type="text"
+              placeholder={t("blog.searchPlaceholder") || "Rechercher un produit, une catégorie"}
+              className="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
           <Card className="mt-12 bg-primary/5 border-primary/20">
-            <CardContent className="p-6 sm:p-8 text-center">
-              <h3 className="text-xl sm:text-2xl font-bold mb-3">
-                {t("blog.cta.title")}
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                {t("blog.cta.subtitle")}
-              </p>
+            <CardContent className="p-8 text-center">
+              <h3 className="text-2xl font-bold mb-3">{t("blog.cta.title")}</h3>
+              <p className="text-muted-foreground mb-6">{t("blog.cta.subtitle")}</p>
               <Button size="lg" asChild>
                 <Link to="/Contact">{t("blog.cta.button")}</Link>
               </Button>
@@ -219,10 +216,8 @@ export default function BlogPost() {
 
           {related.length > 0 && (
             <div className="mt-16">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-8">
-                {t("blog.related")}
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <h2 className="text-3xl font-bold mb-8">{t("blog.related")}</h2>
+              <div className="grid md:grid-cols-3 gap-6">
                 {related.map((a) => (
                   <BlogCard key={a.id} article={a} />
                 ))}
