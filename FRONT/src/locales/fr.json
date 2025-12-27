@@ -273,6 +273,7 @@
 "blog": {
   "title": "Blog & Conseils BTP",
   "subtitle": "Retrouvez nos guides, conseils et actualités du secteur de la construction au Maroc",
+  "searchPlaceholder": "Rechercher un article ou un mot-clé...",
 
   "loading": "Chargement de l'article...",
   "notFound": "Article non trouvé",
