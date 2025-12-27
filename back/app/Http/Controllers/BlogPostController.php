@@ -61,7 +61,8 @@ public function update(Request $request, BlogPost $blogPost)
             \Storage::disk('public')->delete($blogPost->image);
         }
 
-$path = $request->file('image')->store('blog_images');
+$path = $request->file('image')->store('blog_images', 'public');
+
         $validated['image'] = $path;
     }
 
