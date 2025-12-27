@@ -103,6 +103,11 @@ export default function EditLocationCategoryModal({
       setLoading(false);
     }
   };
+const resolveIconUrl = (icon: string) => {
+  if (!icon) return "";
+  if (icon.startsWith("http")) return icon;
+  return `${API_BASE_URL}/storage/${icon}`;
+};
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -116,10 +121,11 @@ export default function EditLocationCategoryModal({
           {form.icon && !removeIcon && (
             <div className="relative w-32 h-32 border rounded-md overflow-hidden group">
               <img
-                src={`${STORAGE_URL}/${form.icon}`}
-                alt="Icône actuelle"
-                className="w-full h-full object-contain"
-              />
+  src={resolveIconUrl(form.icon)}
+  alt="Icône actuelle"
+  className="w-full h-full object-contain"
+/>
+
 
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
                 <Button
