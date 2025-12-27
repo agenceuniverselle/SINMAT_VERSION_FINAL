@@ -64,13 +64,14 @@ const HeroGrid = () => {
     {/* IMAGE DESKTOP SEULEMENT */}
     <div className="hidden lg:block">
       <img
-        src={lawnMowerImg}
-        alt="Scie circulaire"
-        className={`w-[60%] h-full object-contain transition-transform duration-500
-        group-hover:scale-105 ${
-          isRTL ? "me-6" : "ms-6"
-        }`}
-      />
+  src={lawnMowerImg}
+  alt="Scie circulaire"
+  className={`w-[75%] lg:w-[80%] h-full object-contain
+  transition-transform duration-500 group-hover:scale-105 ${
+    isRTL ? "me-6" : "ms-6"
+  }`}
+/>
+
     </div>
   </div>
 </div>
