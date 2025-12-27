@@ -108,7 +108,8 @@ const Blog = () => {
       <Navigation />
 
       {/* ================= HERO ================= */}
-      <section className="bg-gradient-to-br from-dark to-slate py-14 md:py-20">
+     <section className="bg-gradient-to-br from-dark to-slate py-8 md:py-16">
+
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-3xl md:text-5xl font-bold text-dark-foreground mb-4">
             {t("blog.title")}
