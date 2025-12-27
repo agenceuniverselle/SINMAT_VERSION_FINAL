@@ -100,9 +100,7 @@ export default function BlogPost() {
         await navigator.clipboard.writeText(url);
         alert(t("blog.copiedLink"));
       }
-    } catch {
-      // ignore
-    }
+    } catch {}
   };
 
   if (loading) {
@@ -134,11 +132,13 @@ export default function BlogPost() {
   );
 
   return (
-    /* 🔑 FIX GLOBAL HEADER HEIGHT */
-    <div className="min-h-screen bg-background pt-[72px] sm:pt-[88px] lg:pt-0">
+    <div className="min-h-screen bg-background">
       <TopBar />
       <Header />
       <Navigation />
+
+      {/* ✅ FIX MOBILE HEADER OVERLAP */}
+      <div className="block lg:hidden h-[180px]" />
 
       {/* BACK BUTTON */}
       <div className="container mx-auto px-4 py-4">
@@ -151,7 +151,7 @@ export default function BlogPost() {
       </div>
 
       {/* HERO IMAGE */}
-      <div className="container mx-auto px-4 mt-6 sm:mt-8 lg:mt-12 mb-10">
+      <div className="container mx-auto px-4 mb-10">
         <div className="relative h-[220px] sm:h-[300px] md:h-[400px] rounded-lg overflow-hidden">
           <img
             src={article.image}
@@ -159,7 +159,7 @@ export default function BlogPost() {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <Badge className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-primary text-primary-foreground">
+          <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">
             {article.category}
           </Badge>
         </div>
@@ -168,28 +168,25 @@ export default function BlogPost() {
       {/* CONTENT */}
       <article className="container mx-auto px-4 pb-16">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mt-4 mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
             {article.title}
           </h1>
 
-          <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-4 sm:gap-6 mb-8 pb-8 border-b">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mb-8 pb-8 border-b">
             <div className="flex items-center gap-2 text-muted-foreground">
               <User className="h-4 w-4" />
               <span className="text-sm">{article.author}</span>
             </div>
-
             <div className="flex items-center gap-2 text-muted-foreground">
               <Calendar className="h-4 w-4" />
               <span className="text-sm">{formattedDate}</span>
             </div>
-
             <div className="flex items-center gap-2 text-muted-foreground">
               <Clock className="h-4 w-4" />
               <span className="text-sm">
                 {article.read_time} {t("blog.minutes")}
               </span>
             </div>
-
             <Button
               variant="outline"
               size="sm"
@@ -202,7 +199,7 @@ export default function BlogPost() {
           </div>
 
           <div
-            className="prose prose-base sm:prose-lg max-w-none mt-6"
+            className="prose prose-base sm:prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
 
