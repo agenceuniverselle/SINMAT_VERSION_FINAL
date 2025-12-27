@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BlogCard, BlogArticle } from "@/components/Blog/BlogCard";
 
-/* ✅ API + Storage dynamiques */
+/* ================= API ================= */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function BlogPost() {
@@ -117,7 +117,9 @@ export default function BlogPost() {
     return (
       <div className="min-h-screen flex items-center justify-center text-center px-4">
         <div>
-          <h1 className="text-2xl font-bold mb-4">{t("blog.notFound")}</h1>
+          <h1 className="text-2xl font-bold mb-4">
+            {t("blog.notFound")}
+          </h1>
           <Button asChild>
             <Link to="/blog">{t("blog.backToList")}</Link>
           </Button>
@@ -128,11 +130,7 @@ export default function BlogPost() {
 
   const formattedDate = new Date(article.created_at).toLocaleDateString(
     "fr-FR",
-    {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }
+    { day: "numeric", month: "long", year: "numeric" }
   );
 
   return (
@@ -141,7 +139,7 @@ export default function BlogPost() {
       <Header />
       <Navigation />
 
-      {/* BACK */}
+      {/* BACK BUTTON */}
       <div className="container mx-auto px-4 py-4">
         <Button variant="ghost" asChild>
           <Link to="/blog" className="flex items-center gap-2">
@@ -152,7 +150,7 @@ export default function BlogPost() {
       </div>
 
       {/* HERO IMAGE */}
-      <div className="container mx-auto px-4 mb-8">
+      <div className="container mx-auto px-4 mt-6 sm:mt-8 lg:mt-12 mb-10">
         <div className="relative h-[220px] sm:h-[300px] md:h-[400px] rounded-lg overflow-hidden">
           <img
             src={article.image}
@@ -169,8 +167,7 @@ export default function BlogPost() {
       {/* CONTENT */}
       <article className="container mx-auto px-4 pb-16">
         <div className="max-w-4xl mx-auto">
-
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mt-4 mb-6">
             {article.title}
           </h1>
 
@@ -204,7 +201,7 @@ export default function BlogPost() {
           </div>
 
           <div
-            className="prose prose-sm sm:prose-lg max-w-none"
+            className="prose prose-base sm:prose-lg max-w-none mt-6"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
 
