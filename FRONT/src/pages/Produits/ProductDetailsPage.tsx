@@ -126,12 +126,12 @@ export default function ProductDetailsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {product.images?.length ? (
                 product.images.map((img, i) => (
-                  <img
-                    key={i}
-                    src={`${API_BASE_URL}/storage/${img}`}
-                    alt={product.name}
-                    className="w-full h-60 object-cover rounded-xl shadow-sm"
-                  />
+                <img
+  key={i}
+  src={img}
+  alt={product.name}
+  className="w-full h-60 object-cover rounded-xl shadow-sm"
+/>
                 ))
               ) : (
                 <div className="h-60 bg-gray-200 dark:bg-gray-800 rounded-xl flex items-center justify-center">
