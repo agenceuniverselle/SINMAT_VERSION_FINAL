@@ -38,6 +38,8 @@ const schema = z.object({
   salePrice: z.number(),
   quantity: z.number(),
   description: z.string().optional(),
+  status: z.enum(["promotion", "nouveaute"]).nullable().optional(),
+
 });
 
 type ProductForm = z.infer<typeof schema>;
@@ -113,6 +115,8 @@ export function EditProductModal({
         salePrice: Number(data.sale_price),
         quantity: Number(data.quantity),
         description: data.description ?? "",
+        status: data.status ?? null,
+
       });
 
       setExistingImages(Array.isArray(data.images) ? data.images : []);
@@ -260,6 +264,29 @@ export function EditProductModal({
                 <Label>Quantité *</Label>
                 <Input type="number" {...register("quantity", { valueAsNumber: true })} />
               </div>
+              <div>
+  <Label>Statut</Label>
+  <Controller
+    name="status"
+    control={control}
+    render={({ field }) => (
+      <Select
+        value={field.value ?? ""}
+        onValueChange={(v) => field.onChange(v || null)}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Aucun" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="">Aucun</SelectItem>
+          <SelectItem value="promotion">Promotion</SelectItem>
+          <SelectItem value="nouveaute">Nouveauté</SelectItem>
+        </SelectContent>
+      </Select>
+    )}
+  />
+</div>
+
             </div>
 
             <div>
