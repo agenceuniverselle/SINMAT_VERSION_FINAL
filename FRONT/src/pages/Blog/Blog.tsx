@@ -16,6 +16,7 @@ import {
   BookOpen,
   Package,
   Calculator,
+  Search,
 } from "lucide-react";
 
 import { BlogCard, BlogArticle } from "@/components/Blog/BlogCard";
@@ -45,7 +46,7 @@ const Blog = () => {
 
   const articlesPerPage = 6;
 
-  /* 🔍 Search */
+  /* 🔍 Search (URL + input) */
   const searchTerm =
     searchQuery ||
     new URLSearchParams(location.search).get("search")?.toLowerCase() ||
@@ -107,7 +108,7 @@ const Blog = () => {
       <Navigation />
 
       {/* ================= HERO ================= */}
-      <section className="bg-gradient-to-br from-dark to-slate py-16">
+      <section className="bg-gradient-to-br from-dark to-slate py-14 md:py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-3xl md:text-5xl font-bold text-dark-foreground mb-4">
             {t("blog.title")}
@@ -116,18 +117,62 @@ const Blog = () => {
             {t("blog.subtitle")}
           </p>
 
-          {/* 🔍 SEARCH CARD (AJOUTÉE ICI) */}
-          <div className="max-w-xl mx-auto">
+          {/* 🔍 SEARCH (VISIBLE MOBILE & DESKTOP) */}
+          <div className="max-w-xl mx-auto relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("blog.searchPlaceholder")}
+              className="pl-10"
             />
           </div>
         </div>
       </section>
 
-      {/* ================= ARTICLES + SIDEBAR ================= */}
+      {/* ================= CATEGORIES ================= */}
+      <section className="pt-8 pb-12 bg-card border-b">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {blogCategories.map(({ key, icon: Icon }) => {
+              const label = t(`blog.categories.${key}`);
+              const isActive = selectedCategory === label;
+
+              return (
+                <button
+                  key={key}
+                  onClick={() =>
+                    setSelectedCategory(isActive ? null : label)
+                  }
+                  className={`flex flex-col items-center gap-3 p-4 rounded-lg border transition-all
+                  hover:border-primary hover:bg-primary/5 ${
+                    isActive
+                      ? "border-primary bg-primary/10"
+                      : "border-border"
+                  }`}
+                >
+                  <Icon
+                    className={`h-7 w-7 ${
+                      isActive
+                        ? "text-primary"
+                        : "text-muted-foreground"
+                    }`}
+                  />
+                  <span
+                    className={`text-sm text-center font-medium ${
+                      isActive ? "text-primary" : ""
+                    }`}
+                  >
+                    {label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= ARTICLES ================= */}
       <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-[1fr_350px] gap-8">
@@ -205,48 +250,6 @@ const Blog = () => {
                 }
               />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ================= CATEGORIES (EN BAS) ================= */}
-      <section className="py-12 bg-card border-t">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {blogCategories.map(({ key, icon: Icon }) => {
-              const label = t(`blog.categories.${key}`);
-              const isActive = selectedCategory === label;
-
-              return (
-                <button
-                  key={key}
-                  onClick={() =>
-                    setSelectedCategory(isActive ? null : label)
-                  }
-                  className={`flex flex-col items-center gap-3 p-4 rounded-lg border transition-all
-                  hover:border-primary hover:bg-primary/5 ${
-                    isActive
-                      ? "border-primary bg-primary/10"
-                      : "border-border"
-                  }`}
-                >
-                  <Icon
-                    className={`h-7 w-7 ${
-                      isActive
-                        ? "text-primary"
-                        : "text-muted-foreground"
-                    }`}
-                  />
-                  <span
-                    className={`text-sm text-center font-medium ${
-                      isActive ? "text-primary" : ""
-                    }`}
-                  >
-                    {label}
-                  </span>
-                </button>
-              );
-            })}
           </div>
         </div>
       </section>
