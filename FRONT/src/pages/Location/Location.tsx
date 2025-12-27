@@ -9,11 +9,7 @@ import Header from "@/components/Nav/Header";
 import Navigation from "@/components/Nav/Navigation";
 import Footer from "@/components/Footer/Footer";
 
-import {
-  List,
-  Grid3x3,
-  BadgeCheck,
-} from "lucide-react";
+import { List, Grid3x3, BadgeCheck } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -68,7 +64,6 @@ const Location = () => {
   const [priceRange, setPriceRange] = useState([50, 500]);
   const [isPriceFilterApplied, setIsPriceFilterApplied] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortOption, setSortOption] = useState("default");
 
   const [selectedProduct, setSelectedProduct] =
     useState<LocationProduct | null>(null);
@@ -83,10 +78,7 @@ const Location = () => {
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/categories_location`)
       .then((res) => res.json())
-      .then(setCategories)
-      .catch(() =>
-        console.error("Erreur lors du chargement des catégories")
-      );
+      .then(setCategories);
 
     fetch(`${API_BASE_URL}/api/produits_location`)
       .then((res) => res.json())
@@ -102,9 +94,6 @@ const Location = () => {
             category_value: p.category?.value ?? "",
           }))
         )
-      )
-      .catch(() =>
-        console.error("Erreur lors du chargement des produits")
       );
   }, []);
 
@@ -126,19 +115,6 @@ const Location = () => {
     return matchCategory && matchPrice && matchSearch;
   });
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch (sortOption) {
-      case "price-asc":
-        return a.price_per_day - b.price_per_day;
-      case "price-desc":
-        return b.price_per_day - a.price_per_day;
-      case "name":
-        return a.name.localeCompare(b.name);
-      default:
-        return 0;
-    }
-  });
-
   /* ================= RENDER ================= */
   return (
     <div className="min-h-screen bg-background">
@@ -148,10 +124,10 @@ const Location = () => {
 
       {/* ================= PRODUITS ================= */}
       <section className="py-12">
-        <div className="container mx-auto flex gap-8">
+        <div className="container mx-auto flex flex-col lg:flex-row gap-8">
 
-          {/* SIDEBAR */}
-          <aside className="w-72 space-y-6">
+          {/* SIDEBAR DESKTOP */}
+          <aside className="hidden lg:block w-72 space-y-6">
             <Card>
               <CardContent className="p-6 space-y-4">
                 <h3 className="font-semibold">
@@ -207,9 +183,33 @@ const Location = () => {
             </Card>
           </aside>
 
+          {/* MOBILE FILTERS */}
+          <Accordion type="single" collapsible className="lg:hidden">
+            <AccordionItem value="filters">
+              <AccordionTrigger>
+                {t("location.categories")}
+              </AccordionTrigger>
+              <AccordionContent className="space-y-4">
+                {categories.map((cat) => (
+                  <label
+                    key={cat.id}
+                    className="flex items-center gap-2 text-sm"
+                  >
+                    <input
+                      type="radio"
+                      checked={selectedCategory === cat.value}
+                      onChange={() => setSelectedCategory(cat.value)}
+                    />
+                    {cat.label}
+                  </label>
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
           {/* PRODUITS */}
-          <div className="flex-1">
-            <div className="flex justify-between mb-6">
+          <div className="flex-1 max-w-7xl mx-auto">
+            <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
               <p className="text-muted-foreground">
                 {t("location.showing", {
                   count: filteredProducts.length,
@@ -237,11 +237,11 @@ const Location = () => {
             <div
               className={
                 viewMode === "grid"
-                  ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                   : "space-y-4"
               }
             >
-              {sortedProducts.map((p) => (
+              {filteredProducts.map((p) => (
                 <Card key={p.id}>
                   <img
                     src={
@@ -250,7 +250,7 @@ const Location = () => {
                         : "/images/placeholder.jpg"
                     }
                     alt={p.name}
-                    className="h-48 w-full object-cover"
+                    className="h-40 sm:h-48 md:h-52 w-full object-cover"
                   />
 
                   <CardContent className="p-4">
@@ -295,7 +295,7 @@ const Location = () => {
             {t("location.whyRentTitle")}
           </h2>
 
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {["certified", "delivery", "support", "pricing"].map((key) => (
               <div key={key} className="text-center">
                 <BadgeCheck className="mx-auto mb-3" />
@@ -307,90 +307,6 @@ const Location = () => {
                 </p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= FAQ & FORM ================= */}
-      <section className="py-16 bg-dark text-dark-foreground">
-        <div className="container mx-auto flex flex-col lg:flex-row gap-12">
-
-          {/* FORM */}
-          <div className="w-full lg:w-1/2 max-w-xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-4">
-              {t("location.quoteTitle")}
-            </h2>
-
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <form>
-                  <Label>{t("location.form.name")}</Label>
-                  <Input />
-
-                  <Label>{t("location.form.phone")}</Label>
-                  <Input />
-
-                  <Label>{t("location.form.site")}</Label>
-                  <Input />
-
-                  <Label>{t("location.form.equipment")}</Label>
-                  <Input />
-
-                  <Label>{t("location.form.duration")}</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue
-                        placeholder={t("location.form.selectDuration")}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1day">
-                        {t("location.durations.1day")}
-                      </SelectItem>
-                      <SelectItem value="3days">
-                        {t("location.durations.3days")}
-                      </SelectItem>
-                      <SelectItem value="1week">
-                        {t("location.durations.1week")}
-                      </SelectItem>
-                      <SelectItem value="1month">
-                        {t("location.durations.1month")}
-                      </SelectItem>
-                      <SelectItem value="custom">
-                        {t("location.durations.custom")}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Label>{t("location.form.message")}</Label>
-                  <Textarea rows={3} />
-
-                  <Button className="w-full mt-4">
-                    {t("location.form.send")}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* FAQ */}
-          <div className="w-full lg:w-1/2 max-w-xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-8">
-              {t("location.faqTitle")}
-            </h2>
-
-            <Accordion type="single" collapsible>
-              {[1, 2, 3, 4, 5].map((i) => (
-                <AccordionItem key={i} value={`item-${i}`}>
-                  <AccordionTrigger>
-                    {t(`location.faq.q${i}`)}
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    {t(`location.faq.a${i}`)}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
           </div>
         </div>
       </section>
