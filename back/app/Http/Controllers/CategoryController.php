@@ -66,6 +66,38 @@ class CategoryController extends Controller
 
         return response()->json($category->load('children'), 201);
     }
+public function update(Request $request, Category $category)
+{
+    $validator = Validator::make($request->all(), [
+        'name'        => 'required|string|max:100|unique:categories,name,' . $category->id,
+        'description' => 'nullable|string|max:500',
+        'icon'        => 'nullable|image|max:4096',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
+
+    // 🔁 Mise à jour icône si envoyée
+    if ($request->hasFile('icon')) {
+
+        // Supprimer ancienne icône
+        if ($category->icon && Storage::disk('public')->exists($category->icon)) {
+            Storage::disk('public')->delete($category->icon);
+        }
+
+        $category->icon = $request->file('icon')->store('icons', 'public');
+    }
+
+    // Mise à jour des champs
+    $category->update([
+        'name'        => $request->name,
+        'description' => $request->description,
+        'icon'        => $category->icon,
+    ]);
+
+    return response()->json($category);
+}
 
     public function destroy(Category $category)
     {
