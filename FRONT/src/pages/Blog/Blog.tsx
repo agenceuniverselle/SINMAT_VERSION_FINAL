@@ -43,6 +43,7 @@ const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showMobileCategories, setShowMobileCategories] = useState(false);
 
   const articlesPerPage = 6;
 
@@ -108,34 +109,75 @@ const Blog = () => {
       <Navigation />
 
       {/* ================= HERO ================= */}
-     <section className="bg-gradient-to-br from-dark to-slate py-8 md:py-16">
-
+      <section className="bg-gradient-to-br from-dark to-slate py-8 md:py-16">
         <div className="container mx-auto px-4 text-center">
-         <h1 className="text-3xl md:text-5xl font-bold text-dark-foreground mb-2">
+          <h1 className="text-3xl md:text-5xl font-bold text-dark-foreground mb-2">
             {t("blog.title")}
           </h1>
-<p className="text-base md:text-xl text-dark-foreground/80 max-w-2xl mx-auto mb-3">
 
+          <p className="text-base md:text-xl text-dark-foreground/80 max-w-2xl mx-auto mb-3">
             {t("blog.subtitle")}
           </p>
 
-          {/* 🔍 SEARCH (VISIBLE MOBILE & DESKTOP) */}
-          <div className="max-w-xl mx-auto relative mt-2">
+          {/* SEARCH + MOBILE FILTER */}
+          <div className="max-w-xl mx-auto mt-2 flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t("blog.searchPlaceholder")}
+                className="pl-10"
+              />
+            </div>
 
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("blog.searchPlaceholder")}
-              className="pl-10"
-            />
+            {/* MOBILE CATEGORIES BUTTON */}
+            <button
+              onClick={() => setShowMobileCategories((v) => !v)}
+              className="md:hidden flex items-center justify-center w-10 rounded-md border bg-background"
+              aria-label="Filtrer par catégorie"
+            >
+              ⋮
+            </button>
           </div>
         </div>
       </section>
 
-      {/* ================= CATEGORIES ================= */}
-      <section className="pt-1 md:pt-6 pb-10 bg-card border-b">
+      {/* ================= MOBILE CATEGORIES ================= */}
+      {showMobileCategories && (
+        <div className="md:hidden bg-card border-b">
+          <div className="container mx-auto px-4 py-3">
+            <ul className="flex flex-col gap-2">
+              {blogCategories.map(({ key }) => {
+                const label = t(`blog.categories.${key}`);
+                const isActive = selectedCategory === label;
 
+                return (
+                  <li key={key}>
+                    <button
+                      onClick={() => {
+                        setSelectedCategory(isActive ? null : label);
+                        setShowMobileCategories(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-md border text-sm
+                      ${
+                        isActive
+                          ? "bg-primary/10 border-primary text-primary"
+                          : "border-border"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/* ================= DESKTOP CATEGORIES ================= */}
+      <section className="hidden md:block pt-6 pb-10 bg-card border-b">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {blogCategories.map(({ key, icon: Icon }) => {
@@ -242,7 +284,7 @@ const Blog = () => {
               )}
             </div>
 
-            {/* SIDEBAR (DESKTOP ONLY) */}
+            {/* SIDEBAR DESKTOP */}
             <div className="hidden lg:block">
               <BlogSidebar
                 latestArticles={articles}
