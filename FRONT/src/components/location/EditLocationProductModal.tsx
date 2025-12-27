@@ -48,6 +48,11 @@ export const EditLocationProductModal = ({
     status: "disponible",
     remove_image: false,
   });
+const resolveImageUrl = (img?: string | null) => {
+  if (!img) return null;
+  if (img.startsWith("http")) return img;
+  return `${API_BASE_URL}/storage/${img}`;
+};
 
   // 🔽 Charger catégories
   useEffect(() => {
@@ -75,9 +80,8 @@ export const EditLocationProductModal = ({
             remove_image: false,
           });
 
-          setImageUrl(
-            data.image ? `${STORAGE_URL}/${data.image}` : null
-          );
+          setImageUrl(resolveImageUrl(data.image));
+
         })
         .catch(() =>
           toast.error("Erreur lors du chargement du produit")
