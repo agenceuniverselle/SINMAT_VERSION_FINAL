@@ -21,10 +21,13 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         {/* ===== TOP BAR ===== */}
         <div className="flex items-center justify-between h-14">
-          {/* Left */}
-          <CategoriesMenu />
 
-          {/* Desktop Links */}
+          {/* LEFT — Categories (DESKTOP ONLY) */}
+          <div className="hidden md:flex">
+            <CategoriesMenu />
+          </div>
+
+          {/* CENTER — Links (DESKTOP ONLY) */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
@@ -38,7 +41,7 @@ const Navigation = () => {
             ))}
           </div>
 
-          {/* Desktop Contact */}
+          {/* RIGHT — Contact (DESKTOP ONLY) */}
           <div className="hidden lg:flex items-center gap-6">
             <div className="flex items-center gap-2 text-sm">
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -57,7 +60,7 @@ const Navigation = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* MOBILE MENU BUTTON — RIGHT */}
           <button
             className="md:hidden p-2"
             onClick={() => setOpen(!open)}
