@@ -267,21 +267,24 @@ if (data.status) {
                 <Label>Quantité *</Label>
                 <Input type="number" {...register("quantity", { valueAsNumber: true })} />
               </div>
-              <div>
+            <div>
   <Label>Statut</Label>
   <Controller
     name="status"
     control={control}
     render={({ field }) => (
       <Select
-        value={field.value ?? ""}
-        onValueChange={(v) => field.onChange(v || null)}
+        value={field.value ?? "none"}
+        onValueChange={(v) =>
+          field.onChange(v === "none" ? null : v)
+        }
       >
         <SelectTrigger>
           <SelectValue placeholder="Aucun" />
         </SelectTrigger>
+
         <SelectContent>
-          <SelectItem value="">Aucun</SelectItem>
+          <SelectItem value="none">Aucun</SelectItem>
           <SelectItem value="promotion">Promotion</SelectItem>
           <SelectItem value="nouveaute">Nouveauté</SelectItem>
         </SelectContent>
@@ -289,6 +292,7 @@ if (data.status) {
     )}
   />
 </div>
+
 
             </div>
 
