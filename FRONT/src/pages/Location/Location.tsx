@@ -126,40 +126,16 @@ const Location = () => {
       <section className="py-12">
         <div className="container mx-auto flex flex-col lg:flex-row gap-8">
 
-          {/* SIDEBAR DESKTOP */}
-          <aside className="hidden lg:block w-72 space-y-6">
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <h3 className="font-semibold">
-                  {t("location.priceFilter")}
-                </h3>
-                <Slider
-                  value={priceRange}
-                  onValueChange={setPriceRange}
-                  min={0}
-                  max={1000}
-                  step={10}
-                />
-                <p className="text-sm text-muted-foreground">
-                  {t("location.priceLabel", {
-                    min: priceRange[0],
-                    max: priceRange[1],
-                  })}
-                </p>
-                <Button
-                  className="w-full"
-                  onClick={() => setIsPriceFilterApplied(true)}
-                >
-                  {t("location.applyFilters")}
-                </Button>
-              </CardContent>
-            </Card>
+          {/* SIDEBAR */}
+          <aside className="w-full lg:w-72 space-y-6 order-1 lg:order-none">
 
-            <Card>
+            {/* CATEGORIES */}
+            <Card className="order-1">
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-4">
                   {t("location.categories")}
                 </h3>
+
                 {categories.map((cat) => (
                   <label
                     key={cat.id}
@@ -173,6 +149,7 @@ const Location = () => {
                     {cat.label}
                   </label>
                 ))}
+
                 <button
                   onClick={() => setSelectedCategory(null)}
                   className="text-xs text-muted-foreground mt-3 hover:underline"
@@ -181,34 +158,41 @@ const Location = () => {
                 </button>
               </CardContent>
             </Card>
+
+            {/* PRICE FILTER — SOUS CATÉGORIES */}
+            <Card className="order-2">
+              <CardContent className="p-6 space-y-4">
+                <h3 className="font-semibold">
+                  {t("location.priceFilter")}
+                </h3>
+
+                <Slider
+                  value={priceRange}
+                  onValueChange={setPriceRange}
+                  min={0}
+                  max={1000}
+                  step={10}
+                />
+
+                <p className="text-sm text-muted-foreground">
+                  {t("location.priceLabel", {
+                    min: priceRange[0],
+                    max: priceRange[1],
+                  })}
+                </p>
+
+                <Button
+                  className="w-full"
+                  onClick={() => setIsPriceFilterApplied(true)}
+                >
+                  {t("location.applyFilters")}
+                </Button>
+              </CardContent>
+            </Card>
           </aside>
 
-          {/* MOBILE FILTERS */}
-          <Accordion type="single" collapsible className="lg:hidden">
-            <AccordionItem value="filters">
-              <AccordionTrigger>
-                {t("location.categories")}
-              </AccordionTrigger>
-              <AccordionContent className="space-y-4">
-                {categories.map((cat) => (
-                  <label
-                    key={cat.id}
-                    className="flex items-center gap-2 text-sm"
-                  >
-                    <input
-                      type="radio"
-                      checked={selectedCategory === cat.value}
-                      onChange={() => setSelectedCategory(cat.value)}
-                    />
-                    {cat.label}
-                  </label>
-                ))}
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-
           {/* PRODUITS */}
-          <div className="flex-1 max-w-7xl mx-auto">
+          <div className="flex-1 order-2 lg:order-none">
             <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
               <p className="text-muted-foreground">
                 {t("location.showing", {
@@ -284,29 +268,6 @@ const Location = () => {
                 </Card>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ================= AVANTAGES ================= */}
-      <section className="py-16 bg-gradient-to-br from-gray-600 to-black text-white">
-        <div className="container mx-auto">
-          <h2 className="text-3xl text-center font-bold mb-12">
-            {t("location.whyRentTitle")}
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {["certified", "delivery", "support", "pricing"].map((key) => (
-              <div key={key} className="text-center">
-                <BadgeCheck className="mx-auto mb-3" />
-                <h3 className="font-semibold">
-                  {t(`location.whyRent.${key}`)}
-                </h3>
-                <p className="text-sm opacity-80">
-                  {t(`location.whyRent.${key}Desc`)}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
