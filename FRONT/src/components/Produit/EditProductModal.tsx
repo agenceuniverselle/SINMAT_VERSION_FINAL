@@ -187,6 +187,9 @@ export function EditProductModal({
     formData.append("sale_price", String(data.salePrice));
     formData.append("quantity", String(data.quantity));
     formData.append("description", data.description || "");
+if (data.status) {
+  formData.append("status", data.status);
+}
 
     existingImages.forEach((img) => formData.append("gallery[]", img));
     newImages.forEach((img) => formData.append("images[]", img.file));
