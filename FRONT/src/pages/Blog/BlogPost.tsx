@@ -134,7 +134,8 @@ export default function BlogPost() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    /* 🔑 FIX GLOBAL HEADER HEIGHT */
+    <div className="min-h-screen bg-background pt-[72px] sm:pt-[88px] lg:pt-0">
       <TopBar />
       <Header />
       <Navigation />
