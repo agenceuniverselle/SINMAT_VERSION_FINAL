@@ -37,17 +37,23 @@ const CategoriesMenu = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="gap-2 text-foreground hover:bg-orange-500 hover:text-white transition-colors"
-        >
-          <Menu className="w-5 h-5" />
-          <span className="font-medium">
-            {t("navigation.browseCategories")}
-          </span>
-        </Button>
-      </DropdownMenuTrigger>
+     <DropdownMenuTrigger asChild>
+  <Button
+    variant="ghost"
+    className="
+      hidden md:flex
+      gap-2 text-foreground 
+      hover:bg-orange-500 hover:text-white 
+      transition-colors
+    "
+  >
+    <Menu className="w-5 h-5" />
+    <span className="font-medium">
+      {t("navigation.browseCategories")}
+    </span>
+  </Button>
+</DropdownMenuTrigger>
+
 
       <DropdownMenuContent
         className="w-[1000px] max-h-[600px] overflow-y-auto bg-background p-6 z-50"
