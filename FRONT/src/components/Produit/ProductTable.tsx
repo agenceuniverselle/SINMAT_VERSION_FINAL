@@ -69,10 +69,16 @@ export default function ProductTable() {
     if (!selectedProduct) return;
 
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/produits/${selectedProduct.id}`,
-        { method: "DELETE" }
-      );
+     const res = await fetch(
+  `${API_BASE_URL}/api/produits/${selectedProduct.id}`,
+  {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+    },
+  }
+);
+
 
       if (!res.ok) throw new Error();
 
