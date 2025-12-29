@@ -61,11 +61,12 @@ const Navigation = () => {
           </div>
 
           {/* MOBILE MENU BUTTON — RIGHT */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setOpen(!open)}
-            aria-label="Menu"
-          >
+        <button
+  className="md:hidden ml-auto p-2"
+  onClick={() => setOpen(!open)}
+  aria-label="Menu"
+>
+
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
