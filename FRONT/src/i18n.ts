@@ -5,6 +5,8 @@ import { initReactI18next } from "react-i18next";
 import fr from "./locales/fr.json";
 import ar from "./locales/ar.json";
 
+const savedLanguage = localStorage.getItem("language") || "fr";
+
 i18n
   .use(initReactI18next)
   .init({
@@ -12,7 +14,7 @@ i18n
       fr: { translation: fr },
       ar: { translation: ar },
     },
-    lng: "fr", // langue par défaut
+    lng: savedLanguage,          // ✅ langue persistée
     fallbackLng: "fr",
     interpolation: {
       escapeValue: false,
