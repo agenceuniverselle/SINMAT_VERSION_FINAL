@@ -156,6 +156,14 @@ const Shop = () => {
       toast.error(t("shop.errors.products"));
     }
   };
+useEffect(() => {
+  if (products.length > 0) {
+    const prices = products.map((p) => p.price);
+    const min = Math.floor(Math.min(...prices));
+    const max = Math.ceil(Math.max(...prices));
+    setPriceRange([min, max]);
+  }
+}, [products]);
 
   /* -------- FETCH CATEGORIES -------- */
   const fetchCategories = async () => {
@@ -192,49 +200,50 @@ const Shop = () => {
     fetchCategories();
   }, []);
 
-  /* -------- FILTERING -------- */
-  useEffect(() => {
-    if (!isCategoryTreeReady) return;
+/* -------- FILTERING -------- */
+useEffect(() => {
+  if (!isCategoryTreeReady) return;
 
-    let result = [...products];
+  let result = [...products];
 
-    const [min, max] = priceRange;
-    if (!(min === 0 && max === 0)) {
-      result = result.filter((p) => p.price >= min && p.price <= max);
-    }
+  const [min, max] = priceRange;
+  if (min !== max) {
+    result = result.filter((p) => p.price >= min && p.price <= max);
+  }
 
-    if (selectedCategories.length > 0) {
-      const allIds = selectedCategories.flatMap((id) => [
-        id,
-        ...getDescendantIds(id),
-      ]);
-      result = result.filter((p) => allIds.includes(p.categoryId));
-    }
+  if (selectedCategories.length > 0) {
+    const allIds = selectedCategories.flatMap((id) => [
+      id,
+      ...getDescendantIds(id),
+    ]);
+    result = result.filter((p) => allIds.includes(p.categoryId));
+  }
 
-    if (selectedStatuses.length > 0) {
-      result = result.filter((p) =>
-        selectedStatuses.includes(p.status ?? "")
-      );
-    }
+  if (selectedStatuses.length > 0) {
+    result = result.filter((p) =>
+      selectedStatuses.includes(p.status ?? "")
+    );
+  }
 
-    if (searchTerm) {
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchTerm) ||
-          p.category.toLowerCase().includes(searchTerm)
-      );
-    }
+  if (searchTerm) {
+    result = result.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchTerm) ||
+        p.category.toLowerCase().includes(searchTerm)
+    );
+  }
 
-    setFilteredProducts(result);
-  }, [
-    products,
-    priceRange,
-    selectedCategories,
-    selectedStatuses,
-    categoryTree,
-    isCategoryTreeReady,
-    searchTerm,
-  ]);
+  setFilteredProducts(result);
+}, [
+  products,
+  priceRange,
+  selectedCategories,
+  selectedStatuses,
+  categoryTree,
+  isCategoryTreeReady,
+  searchTerm,
+]);
+
 
   const displayedProducts =
     itemsPerPage === "all"
