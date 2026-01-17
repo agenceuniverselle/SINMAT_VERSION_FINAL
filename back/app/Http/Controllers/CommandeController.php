@@ -63,7 +63,7 @@ public function index()
     {
         $data = $request->validate([
             'name'                => 'required|string',
-            'email'               => 'required|email',
+            'email'               => 'nullable|email', 
             'phone'               => 'required|string',
             'address'             => 'nullable|string',
             'produits'            => 'required|array|min:1',
@@ -83,7 +83,7 @@ public function index()
         // 📝 Création de la commande
         $commande = Commande::create([
             'name'    => $data['name'],
-            'email'   => $data['email'],
+            'email'   => $data['email'] ?? null,
             'phone'   => $data['phone'],
             'address' => $data['address'],
             'status'  => 'en attente',
@@ -111,7 +111,7 @@ public function index()
 
     $data = $request->validate([
         'name'                => 'required|string',
-        'email'               => 'required|email',
+        'email'               => 'nullable|email',
         'phone'               => 'required|string',
         'address'             => 'nullable|string',
         'status'              => 'required|string|in:en attente,en cours,expédiée,livrée,annulée',
@@ -123,7 +123,7 @@ public function index()
     // 📝 Mettre à jour la commande
     $commande->update([
         'name'    => $data['name'],
-        'email'   => $data['email'],
+        'email'   => $data['email'] ?? null,
         'phone'   => $data['phone'],
         'address' => $data['address'],
         'status'  => $data['status'],
