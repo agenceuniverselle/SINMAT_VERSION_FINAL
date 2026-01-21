@@ -13,7 +13,7 @@ return new class extends Migration
 {
     Schema::create('rental_requests', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('product_id')->constrained('produits');
+        $table->foreignId('product_id')->constrained('location_products');
         $table->string('full_name');
         $table->string('phone');
         $table->string('city');
