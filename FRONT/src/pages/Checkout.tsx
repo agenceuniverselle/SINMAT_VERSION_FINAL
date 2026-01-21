@@ -35,13 +35,11 @@ export default function CheckoutPage() {
   });
 
   /* 🔐 Validation email */
-  const isValidEmail = (email: string) => {
-    if (!email) return true; // email facultatif
-    const allowedDomains = ["gmail.com", "entreprise.com"];
-    const parts = email.split("@");
-    if (parts.length !== 2) return false;
-    return allowedDomains.includes(parts[1].toLowerCase());
-  };
+ const isValidEmail = (email: string) => {
+  if (!email) return true; // email facultatif
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
 
   /* 📦 Charger produits du panier */
   useEffect(() => {
