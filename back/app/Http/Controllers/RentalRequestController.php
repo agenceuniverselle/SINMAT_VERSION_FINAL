@@ -29,7 +29,7 @@ class RentalRequestController extends Controller
   public function store(Request $request)
 {
     $data = $request->validate([
-        'product_id' => 'required|exists:produits_location,id',
+        'product_id' => 'required|exists:produits,id',
         'full_name' => 'required|string',
         'phone' => 'required|string',
         'city' => 'required|string',
