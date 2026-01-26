@@ -30,34 +30,52 @@ export const LoginModal = ({
   const { t, i18n } = useTranslation();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(""); // email OU téléphone
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // ================= LOGIN FUNCTION =================
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!username || !password) {
+      alert(t("loginModal.errors.invalid"));
+      return;
+    }
+
+    setLoading(true);
+
+    // 🔥 Détecter si c'est un email ou un téléphone
+    const isEmail = username.includes("@");
+
+    const payload = isEmail
+      ? { email: username, password }
+      : { phone: username, password };
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json",
         },
-        body: JSON.stringify({ email: username, password }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
 
       if (response.ok) {
+        // 🔐 Sauvegarde session
         sessionStorage.setItem("auth_token", data.token);
         sessionStorage.setItem("user", JSON.stringify(data.user));
 
+        // 🔥 Redirection intelligente selon rôle / email
         setTimeout(() => {
           if (data.redirect) {
             window.location.href = data.redirect;
           } else if (
             data.user?.email?.includes("@sinmat.ma") ||
-            (data.user?.email?.includes("admin") &&
-              data.user?.email?.includes("@gmail"))
+            data.user?.role === "admin"
           ) {
             window.location.href = "/dashboard-admin";
           } else {
@@ -71,11 +89,13 @@ export const LoginModal = ({
       console.error("Login failed:", error);
       alert(t("loginModal.errors.generic"));
     }
+
+    setLoading(false);
   };
 
+  // ================= GOOGLE LOGIN =================
   const handleSocialLogin = (provider: string) => {
     if (provider === "google") {
-      // On enlève /api pour l'auth social (Laravel)
       const baseUrl = API_BASE_URL.replace("/api", "");
       window.location.href = `${baseUrl}/auth/google`;
     }
@@ -94,7 +114,7 @@ export const LoginModal = ({
         </DialogHeader>
 
         <form onSubmit={handleLogin} className="space-y-4 mt-4">
-          {/* Username */}
+          {/* Username (Email ou Téléphone) */}
           <div className="space-y-2">
             <Label htmlFor="username">
               {t("loginModal.usernameLabel")}{" "}
@@ -103,6 +123,7 @@ export const LoginModal = ({
             <Input
               id="username"
               type="text"
+              placeholder="Email ou téléphone"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -138,8 +159,14 @@ export const LoginModal = ({
             </div>
           </div>
 
-          <Button type="submit" className="w-full font-semibold">
-            {t("loginModal.loginButton")}
+          <Button
+            type="submit"
+            className="w-full font-semibold"
+            disabled={loading}
+          >
+            {loading
+              ? t("loginModal.loading", "Connexion...", "جارٍ الدخول...")
+              : t("loginModal.loginButton")}
           </Button>
         </form>
 
@@ -150,21 +177,18 @@ export const LoginModal = ({
           </span>
         </div>
 
-    <Button
-  type="button"
-  variant="outline"
-  className="w-full flex items-center justify-center gap-3"
-  onClick={() => handleSocialLogin("google")}
->
-  <img
-    src={GoogleIcon}
-    alt="Google"
-    className="w-5 h-5"
-  />
-  <span className="font-medium">
-    {t("loginModal.loginWithGoogle")}
-  </span>
-</Button>
+        {/* Google Login */}
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full flex items-center justify-center gap-3"
+          onClick={() => handleSocialLogin("google")}
+        >
+          <img src={GoogleIcon} alt="Google" className="w-5 h-5" />
+          <span className="font-medium">
+            {t("loginModal.loginWithGoogle")}
+          </span>
+        </Button>
 
         <div className="text-center mt-6 pt-6 border-t">
           <button
