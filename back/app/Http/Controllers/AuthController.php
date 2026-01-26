@@ -38,29 +38,44 @@ class AuthController extends Controller
     ], 201);
 }
 
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
+public function login(Request $request)
+{
+    $request->validate([
+        'password' => 'required',
+        // email OU phone, un des deux suffit
+    ]);
 
+    // 🔥 Détecter si c'est un email ou un téléphone
+    if ($request->filled('email')) {
         $user = User::where('email', $request->email)->first();
+    } elseif ($request->filled('phone')) {
+        $user = User::where('phone', $request->phone)->first();
+    } else {
+        return response()->json([
+            'message' => 'Veuillez entrer un email ou un numéro de téléphone'
+        ], 422);
+    }
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
+    // Vérification utilisateur + mot de passe
+    if (! $user || ! Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'message' => 'Email / téléphone ou mot de passe incorrect'
+        ], 401);
+    }
 
-        $token = $user->createToken('api-token')->plainTextToken;
+    // Générer token
+    $token = $user->createToken('api-token')->plainTextToken;
 
-        // Vérifie si c'est l'admin
-        $isAdmin = $user->email === 'contact@sinmat.ma';
+    // Vérifie si c'est l'admin
+    $isAdmin = $user->email === 'contact@sinmat.ma';
 
-       return response()->json([
-    'token'   => $token,
-    'redirect' => $isAdmin ? '/dashboard-admin' : '/dashboard-client',
-    'user'    => $user, // 👈 ajouter cette ligne
-], 200);
+    return response()->json([
+        'token'    => $token,
+        'redirect' => $isAdmin ? '/dashboard-admin' : '/dashboard-client',
+        'user'     => $user,
+    ], 200);
+}
+
 
     }
     public function index()
