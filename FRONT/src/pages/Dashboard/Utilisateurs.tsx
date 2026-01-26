@@ -25,8 +25,9 @@ import { Switch } from "@/components/ui/switch";
 import { Plus, Edit, Trash, Shield } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
 
-/* ================= API ================= */
-const API = import.meta.env.VITE_API_BASE_URL;
+/* ================= API (CORRIGÉ) ================= */
+// 🔴 API Laravel sous /api
+const API = "https://sinmat.ma/api";
 
 /* ================= TYPES ================= */
 type Permission = {
@@ -63,35 +64,39 @@ export default function Utilisateurs() {
     confirm: "",
   });
 
-  /* 🔴 STATES MANQUANTS (CAUSE DU CRASH) */
-  const [editingPermission, setEditingPermission] = useState<Permission | null>(null);
-  const [deletingPermission, setDeletingPermission] = useState<Permission | null>(null);
-
-  const [editingCategory, setEditingCategory] = useState<string | null>(null);
-  const [newCategoryName, setNewCategoryName] = useState("");
-  const [deletingCategory, setDeletingCategory] = useState<string | null>(null);
-
-  const [newPermission, setNewPermission] = useState({
-    name: "",
-    code: "",
-    category: "",
-  });
-
   /* ================= FETCH ================= */
+
   const fetchUsers = async () => {
-    const res = await fetch(`${API}/users`);
-    setUsers(await res.json());
+    try {
+      const res = await fetch(`${API}/users`);
+      const data = await res.json();
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur chargement utilisateurs");
+    }
   };
 
   const fetchPermissions = async () => {
-    const res = await fetch(`${API}/permissions`);
-    setPermissions(await res.json());
+    try {
+      const res = await fetch(`${API}/permissions`);
+      const data = await res.json();
+      setPermissions(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur chargement permissions");
+    }
   };
 
   const fetchUserPermissions = async (userId: number) => {
-    const res = await fetch(`${API}/users/${userId}/permissions`);
-    const data = await res.json();
-    setUserPermissions(data.map((p: any) => p.id));
+    try {
+      const res = await fetch(`${API}/users/${userId}/permissions`);
+      const data = await res.json();
+      setUserPermissions(data.map((p: any) => p.id));
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur chargement permissions utilisateur");
+    }
   };
 
   useEffect(() => {
@@ -180,7 +185,7 @@ export default function Utilisateurs() {
     }
   };
 
-  /* ================= TOGGLE PERMISSION USER ================= */
+  /* ================= TOGGLE PERMISSION ================= */
   const togglePermission = async (permissionId: number, enabled: boolean) => {
     try {
       await fetch(`${API}/users/${selectedUser.id}/permissions`, {
@@ -196,17 +201,6 @@ export default function Utilisateurs() {
       toast.error("Erreur permission");
     }
   };
-
-  /* ================= GROUP PERMISSIONS ================= */
-  const permissionsByCategory = permissions.reduce(
-    (acc: Record<string, Permission[]>, p) => {
-      const cat = p.category || "Autres";
-      if (!acc[cat]) acc[cat] = [];
-      acc[cat].push(p);
-      return acc;
-    },
-    {}
-  );
 
   /* ================= RENDER ================= */
   return (
@@ -268,11 +262,7 @@ export default function Utilisateurs() {
             <TableBody>
               {users.map((u) => (
                 <TableRow key={u.id}>
-                  <TableCell>
-                    <Link to={`/utilisateurs/${u.id}`} className="text-blue-600 hover:underline">
-                      {u.name}
-                    </Link>
-                  </TableCell>
+                  <TableCell>{u.name}</TableCell>
                   <TableCell>{u.email}</TableCell>
                   <TableCell>
                     {new Date(u.created_at).toLocaleDateString("fr-FR")}
@@ -307,7 +297,7 @@ export default function Utilisateurs() {
         </CardContent>
       </Card>
 
-      {/* DIALOG PERMISSIONS USER */}
+      {/* DIALOG PERMISSIONS */}
       <Dialog open={openPermissionDialog} onOpenChange={setOpenPermissionDialog}>
         <DialogContent>
           <DialogHeader>
