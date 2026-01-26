@@ -9,34 +9,50 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-   public function register(Request $request)
+ public function register(Request $request)
 {
     $request->validate(
         [
-            'username' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,name',
             'phone'    => 'required|string|max:20|unique:users,phone',
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
         ],
         [
-            'email.unique' => 'Cet email est déjà utilisé.',
-            'phone.unique' => 'Ce numéro de téléphone est déjà utilisé.',
+            'username.unique' => 'Ce nom est déjà utilisé.',
+            'email.unique'    => 'Cet email est déjà utilisé.',
+            'phone.unique'    => 'Ce numéro de téléphone est déjà utilisé.',
         ]
     );
 
-    // Proceed if no validation errors
-    $user = User::create([
-        'name'     => $request->username,
-        'email'    => $request->email,
-        'phone'    => $request->phone,
-        'password' => Hash::make($request->password),
-    ]);
+    try {
+        $user = User::create([
+            'name'     => $request->username,
+            'email'    => $request->email,
+            'phone'    => $request->phone,
+            'password' => Hash::make($request->password),
+        ]);
 
-    return response()->json([
-        'token' => $user->createToken('api-token')->plainTextToken,
-        'user'  => $user,
-    ], 201);
+        // 🔥 Auto login après inscription
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        // Admin ou client
+        $isAdmin = $user->email === 'contact@sinmat.ma';
+
+        return response()->json([
+            'token'    => $token,
+            'redirect' => $isAdmin ? '/dashboard-admin' : '/dashboard-client',
+            'user'     => $user,
+        ], 201);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Erreur serveur lors de la création du compte',
+            'error'   => $e->getMessage(),   // 🔥 très utile pour debug
+        ], 500);
+    }
 }
+
 
 public function login(Request $request)
 {
