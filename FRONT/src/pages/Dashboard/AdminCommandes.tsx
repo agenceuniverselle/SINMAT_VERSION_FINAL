@@ -90,6 +90,28 @@ export default function AdminCommandes() {
     }
   };
 
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/commandes/${editOrder.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editOrder),
+      });
+
+      if (!res.ok) throw new Error();
+
+      toast.success("Commande mise à jour !");
+      setIsEditOpen(false);
+      fetchOrders();
+    } catch {
+      toast.error("Erreur lors de la mise à jour");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Commandes des ventes</h1>
@@ -112,14 +134,10 @@ export default function AdminCommandes() {
             <TableBody>
               {orders.map((order) => (
                 <TableRow key={order.id}>
-                  <TableCell className="font-medium">
-                    {order.name}
-                  </TableCell>
+                  <TableCell className="font-medium">{order.name}</TableCell>
 
                   <TableCell className="text-sm text-muted-foreground">
-                    <div className="font-medium text-black">
-                      {order.phone}
-                    </div>
+                    <div className="font-medium text-black">{order.phone}</div>
                     <div>{order.email}</div>
                     <div className="text-xs">{order.address}</div>
                   </TableCell>
@@ -136,7 +154,6 @@ export default function AdminCommandes() {
 
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      {/* 👁️ Détails */}
                       <Button
                         variant="ghost"
                         size="icon"
@@ -148,7 +165,6 @@ export default function AdminCommandes() {
                         <Eye className="w-4 h-4 text-blue-600" />
                       </Button>
 
-                      {/* ✏️ Modifier */}
                       <Button
                         variant="ghost"
                         size="icon"
@@ -160,7 +176,6 @@ export default function AdminCommandes() {
                         <Edit className="w-4 h-4 text-yellow-500" />
                       </Button>
 
-                      {/* 🗑️ Supprimer */}
                       <Button
                         variant="ghost"
                         size="icon"
@@ -241,6 +256,82 @@ export default function AdminCommandes() {
               Supprimer
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ✏️ MODAL ÉDITION */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Modifier la commande</DialogTitle>
+            <DialogDescription>
+              Modifier les infos de <strong>{editOrder?.name}</strong>
+            </DialogDescription>
+          </DialogHeader>
+
+          {editOrder && (
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label>Nom</label>
+                  <input
+                    type="text"
+                    className="w-full border p-2"
+                    value={editOrder.name}
+                    onChange={(e) =>
+                      setEditOrder({ ...editOrder, name: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label>Téléphone</label>
+                  <input
+                    type="text"
+                    className="w-full border p-2"
+                    value={editOrder.phone}
+                    onChange={(e) =>
+                      setEditOrder({ ...editOrder, phone: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label>Adresse</label>
+                  <input
+                    type="text"
+                    className="w-full border p-2"
+                    value={editOrder.address}
+                    onChange={(e) =>
+                      setEditOrder({ ...editOrder, address: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label>Statut</label>
+                  <Select
+                    value={editOrder.status}
+                    onValueChange={(value) =>
+                      setEditOrder({ ...editOrder, status: value })
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Statut" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUSES.map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <Button type="submit">Enregistrer</Button>
+              </div>
+            </form>
+          )}
         </DialogContent>
       </Dialog>
     </div>
