@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-/* ✅ API centralisée */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function AdminLocations() {
@@ -280,9 +279,10 @@ export default function AdminLocations() {
           </DialogHeader>
 
           {selectedLocation && (
-            <form onSubmit={handleEditSubmit} className="space-y-4">
+            <form onSubmit={handleEditSubmit} className="space-y-3">
               <input
                 className="border w-full px-3 py-2 rounded"
+                placeholder="Nom"
                 value={selectedLocation.full_name}
                 onChange={(e) =>
                   setSelectedLocation({
@@ -291,8 +291,10 @@ export default function AdminLocations() {
                   })
                 }
               />
+
               <input
                 className="border w-full px-3 py-2 rounded"
+                placeholder="Téléphone"
                 value={selectedLocation.phone}
                 onChange={(e) =>
                   setSelectedLocation({
@@ -301,8 +303,10 @@ export default function AdminLocations() {
                   })
                 }
               />
+
               <input
                 className="border w-full px-3 py-2 rounded"
+                placeholder="Adresse"
                 value={selectedLocation.address}
                 onChange={(e) =>
                   setSelectedLocation({
@@ -311,6 +315,57 @@ export default function AdminLocations() {
                   })
                 }
               />
+
+              <input
+                type="date"
+                className="border w-full px-3 py-2 rounded"
+                value={selectedLocation.rental_start}
+                onChange={(e) =>
+                  setSelectedLocation({
+                    ...selectedLocation,
+                    rental_start: e.target.value,
+                  })
+                }
+              />
+
+              <input
+                type="date"
+                className="border w-full px-3 py-2 rounded"
+                value={selectedLocation.rental_end}
+                onChange={(e) =>
+                  setSelectedLocation({
+                    ...selectedLocation,
+                    rental_end: e.target.value,
+                  })
+                }
+              />
+
+              <input
+                type="date"
+                className="border w-full px-3 py-2 rounded"
+                value={selectedLocation.delivery_date}
+                onChange={(e) =>
+                  setSelectedLocation({
+                    ...selectedLocation,
+                    delivery_date: e.target.value,
+                  })
+                }
+              />
+
+              <select
+                className="border w-full px-3 py-2 rounded"
+                value={selectedLocation.delivery_time}
+                onChange={(e) =>
+                  setSelectedLocation({
+                    ...selectedLocation,
+                    delivery_time: e.target.value,
+                  })
+                }
+              >
+                <option value="morning">Matin (08h - 12h)</option>
+                <option value="afternoon">Après-midi (14h - 18h)</option>
+                <option value="evening">Soir (18h - 20h)</option>
+              </select>
 
               <Button type="submit" className="w-full">
                 Enregistrer
