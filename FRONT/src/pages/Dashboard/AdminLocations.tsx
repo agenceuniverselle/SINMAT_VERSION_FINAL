@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -36,13 +35,18 @@ export default function AdminLocations() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  /** ✅ FORM DATA POUR L’ÉDITION */
-  const [formData, setFormData] = useState<any>({
-    full_name: "",
-    phone: "",
-    address: "",
-    notes: "",
-  });
+  const formatDeliveryTime = (time: string) => {
+    switch (time) {
+      case "morning":
+        return "Matin (08h - 12h)";
+      case "afternoon":
+        return "Après-midi (14h - 18h)";
+      case "evening":
+        return "Soir (18h - 20h)";
+      default:
+        return time;
+    }
+  };
 
   const fetchLocations = async () => {
     try {
@@ -50,8 +54,8 @@ export default function AdminLocations() {
       if (!res.ok) throw new Error();
       const data = await res.json();
       setLocations(data);
-    } catch {
-      toast.error("Erreur chargement locations");
+    } catch (err) {
+      console.error("Erreur chargement locations :", err);
     }
   };
 
@@ -59,17 +63,74 @@ export default function AdminLocations() {
     fetchLocations();
   }, []);
 
-  /** 🔁 Initialiser le formulaire quand on clique sur EDIT */
-  useEffect(() => {
-    if (selectedLocation) {
-      setFormData({
-        full_name: selectedLocation.full_name || "",
-        phone: selectedLocation.phone || "",
-        address: selectedLocation.address || "",
-        notes: selectedLocation.notes || "",
-      });
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedLocation) return;
+
+    const {
+      full_name,
+      phone,
+      city,
+      address,
+      notes,
+      delivery_date,
+      delivery_time,
+      rental_start,
+      rental_end,
+      price_per_day,
+      delivery_fee,
+      days_count,
+      total_price,
+    } = selectedLocation;
+
+    const updateData = {
+      full_name,
+      phone,
+      city,
+      address,
+      notes,
+      delivery_date,
+      delivery_time,
+      rental_start,
+      rental_end,
+      price_per_day,
+      delivery_fee,
+      days_count,
+      total_price,
+    };
+
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/rental-requests/${selectedLocation.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updateData),
+        }
+      );
+
+      if (!res.ok) throw new Error();
+      toast.success("Demande mise à jour !");
+      setIsEditOpen(false);
+      fetchLocations();
+    } catch {
+      toast.error("Erreur lors de la mise à jour");
     }
-  }, [selectedLocation]);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await fetch(
+        `${API_BASE_URL}/api/rental-requests/${selectedLocation.id}`,
+        { method: "DELETE" }
+      );
+      toast.success("Demande supprimée");
+      setIsDeleteOpen(false);
+      fetchLocations();
+    } catch {
+      toast.error("Erreur lors de la suppression");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -86,11 +147,11 @@ export default function AdminLocations() {
                 <TableHead>Client</TableHead>
                 <TableHead>Matériel</TableHead>
                 <TableHead>Période</TableHead>
+                <TableHead>Livraison</TableHead>
                 <TableHead>Total</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
-
             <TableBody>
               {locations.map((loc) => (
                 <TableRow key={loc.id}>
@@ -108,11 +169,29 @@ export default function AdminLocations() {
                   </TableCell>
 
                   <TableCell>
-                    {loc.rental_start} → {loc.rental_end}
+                    <div>
+                      Du <strong>{loc.rental_start}</strong> au{" "}
+                      <strong>{loc.rental_end}</strong>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {loc.days_count} jour(s)
+                    </div>
                   </TableCell>
 
                   <TableCell>
-                    <strong>{loc.total_price} MAD</strong>
+                    {loc.delivery_date} — {formatDeliveryTime(loc.delivery_time)}
+                    <div className="text-sm text-muted-foreground">
+                      {loc.address}
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="font-semibold text-primary">
+                      {loc.total_price} MAD
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      ({loc.price_per_day} MAD/jour + {loc.delivery_fee} MAD)
+                    </div>
                   </TableCell>
 
                   <TableCell className="text-right">
@@ -160,17 +239,34 @@ export default function AdminLocations() {
 
       {/* 👁️ VIEW */}
       <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Détails location</DialogTitle>
+            <DialogTitle>Détails de la location</DialogTitle>
           </DialogHeader>
 
           {selectedLocation && (
-            <div className="space-y-2 text-sm">
-              <p><strong>Client :</strong> {selectedLocation.full_name}</p>
-              <p><strong>Téléphone :</strong> {selectedLocation.phone}</p>
-              <p><strong>Adresse :</strong> {selectedLocation.address}</p>
-              <p><strong>Notes :</strong> {selectedLocation.notes || "-"}</p>
+            <div className="space-y-3 text-sm">
+              <p>
+                <strong>Client :</strong> {selectedLocation.full_name} —{" "}
+                {selectedLocation.phone}
+              </p>
+              <p>
+                <strong>Matériel :</strong> {selectedLocation.produit?.title}
+              </p>
+              <p>
+                <strong>Période :</strong> {selectedLocation.rental_start} →{" "}
+                {selectedLocation.rental_end}
+              </p>
+              <p>
+                <strong>Livraison :</strong> {selectedLocation.delivery_date} à{" "}
+                {formatDeliveryTime(selectedLocation.delivery_time)}
+              </p>
+              <p>
+                <strong>Adresse :</strong> {selectedLocation.address}
+              </p>
+              <p>
+                <strong>Notes :</strong> {selectedLocation.notes || "-"}
+              </p>
             </div>
           )}
         </DialogContent>
@@ -178,82 +274,55 @@ export default function AdminLocations() {
 
       {/* ✏️ EDIT */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Modifier la demande</DialogTitle>
           </DialogHeader>
 
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
+          {selectedLocation && (
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <input
+                className="border w-full px-3 py-2 rounded"
+                value={selectedLocation.full_name}
+                onChange={(e) =>
+                  setSelectedLocation({
+                    ...selectedLocation,
+                    full_name: e.target.value,
+                  })
+                }
+              />
+              <input
+                className="border w-full px-3 py-2 rounded"
+                value={selectedLocation.phone}
+                onChange={(e) =>
+                  setSelectedLocation({
+                    ...selectedLocation,
+                    phone: e.target.value,
+                  })
+                }
+              />
+              <input
+                className="border w-full px-3 py-2 rounded"
+                value={selectedLocation.address}
+                onChange={(e) =>
+                  setSelectedLocation({
+                    ...selectedLocation,
+                    address: e.target.value,
+                  })
+                }
+              />
 
-              try {
-                const res = await fetch(
-                  `${API_BASE_URL}/api/rental-requests/${selectedLocation.id}`,
-                  {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData),
-                  }
-                );
-
-                if (!res.ok) throw new Error();
-
-                toast.success("Demande mise à jour");
-                setIsEditOpen(false);
-                fetchLocations();
-              } catch {
-                toast.error("Erreur mise à jour");
-              }
-            }}
-            className="space-y-4"
-          >
-            <input
-              className="border w-full px-3 py-2 rounded"
-              placeholder="Nom complet"
-              value={formData.full_name}
-              onChange={(e) =>
-                setFormData({ ...formData, full_name: e.target.value })
-              }
-            />
-
-            <input
-              className="border w-full px-3 py-2 rounded"
-              placeholder="Téléphone"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-            />
-
-            <input
-              className="border w-full px-3 py-2 rounded"
-              placeholder="Adresse"
-              value={formData.address}
-              onChange={(e) =>
-                setFormData({ ...formData, address: e.target.value })
-              }
-            />
-
-            <textarea
-              className="border w-full px-3 py-2 rounded"
-              placeholder="Notes"
-              value={formData.notes}
-              onChange={(e) =>
-                setFormData({ ...formData, notes: e.target.value })
-              }
-            />
-
-            <Button type="submit" className="w-full">
-              Enregistrer
-            </Button>
-          </form>
+              <Button type="submit" className="w-full">
+                Enregistrer
+              </Button>
+            </form>
+          )}
         </DialogContent>
       </Dialog>
 
       {/* 🗑️ DELETE */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>Supprimer la demande ?</DialogTitle>
           </DialogHeader>
@@ -262,17 +331,7 @@ export default function AdminLocations() {
             <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
               Annuler
             </Button>
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                await fetch(
-                  `${API_BASE_URL}/api/rental-requests/${selectedLocation.id}`,
-                  { method: "DELETE" }
-                );
-                setIsDeleteOpen(false);
-                fetchLocations();
-              }}
-            >
+            <Button variant="destructive" onClick={handleDelete}>
               Supprimer
             </Button>
           </div>
