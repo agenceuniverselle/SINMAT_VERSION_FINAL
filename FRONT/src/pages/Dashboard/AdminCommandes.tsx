@@ -90,28 +90,6 @@ export default function AdminCommandes() {
     }
   };
 
-  /** FORM DATA pour gérer les champs d’édition sans override complet d’order */
-  const [formData, setFormData] = useState<any>({
-    name: "",
-    phone: "",
-    email: "",
-    address: "",
-    status: "",
-  });
-
-  // initialiser formData quand editOrder change
-  useEffect(() => {
-    if (editOrder) {
-      setFormData({
-        name: editOrder.name || "",
-        phone: editOrder.phone || "",
-        email: editOrder.email || "",
-        address: editOrder.address || "",
-        status: editOrder.status || STATUSES[0],
-      });
-    }
-  }, [editOrder]);
-
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -121,7 +99,7 @@ export default function AdminCommandes() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(editOrder),
       });
 
       if (!res.ok) throw new Error();
@@ -228,28 +206,32 @@ export default function AdminCommandes() {
           </DialogHeader>
 
           {orderDetails && (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Produit</TableHead>
-                  <TableHead>Prix</TableHead>
-                  <TableHead>Qté</TableHead>
-                  <TableHead>Total</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orderDetails.produits.map((p: any) => (
-                  <TableRow key={p.id}>
-                    <TableCell>{p.name}</TableCell>
-                    <TableCell>{Number(p.sale_price).toFixed(2)} MAD</TableCell>
-                    <TableCell>{p.quantity}</TableCell>
-                    <TableCell>
-                      {(p.sale_price * p.quantity).toFixed(2)} MAD
-                    </TableCell>
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Produit</TableHead>
+                    <TableHead>Prix</TableHead>
+                    <TableHead>Qté</TableHead>
+                    <TableHead>Total</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {orderDetails.produits.map((p: any) => (
+                    <TableRow key={p.id}>
+                      <TableCell>{p.name}</TableCell>
+                      <TableCell>
+                        {Number(p.sale_price).toFixed(2)} MAD
+                      </TableCell>
+                      <TableCell>{p.quantity}</TableCell>
+                      <TableCell>
+                        {(p.sale_price * p.quantity).toFixed(2)} MAD
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </>
           )}
         </DialogContent>
       </Dialog>
@@ -290,66 +272,45 @@ export default function AdminCommandes() {
           {editOrder && (
             <form onSubmit={handleEditSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                {/* 📌 NOM */}
                 <div>
                   <label>Nom</label>
                   <input
                     type="text"
                     className="w-full border p-2"
-                    value={formData.name}
+                    value={editOrder.name}
                     onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
+                      setEditOrder({ ...editOrder, name: e.target.value })
                     }
                   />
                 </div>
-
-                {/* 📌 TÉLÉPHONE */}
                 <div>
                   <label>Téléphone</label>
                   <input
                     type="text"
                     className="w-full border p-2"
-                    value={formData.phone}
+                    value={editOrder.phone}
                     onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
+                      setEditOrder({ ...editOrder, phone: e.target.value })
                     }
                   />
                 </div>
-
-                {/* 📌 EMAIL */}
-                <div>
-                  <label>Email</label>
-                  <input
-                    type="text"
-                    className="w-full border p-2"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                  />
-                </div>
-
-                {/* 📌 ADRESSE */}
                 <div>
                   <label>Adresse</label>
                   <input
                     type="text"
                     className="w-full border p-2"
-                    value={formData.address}
+                    value={editOrder.address}
                     onChange={(e) =>
-                      setFormData({ ...formData, address: e.target.value })
+                      setEditOrder({ ...editOrder, address: e.target.value })
                     }
                   />
                 </div>
-
-                {/* 📌 STATUT */}
                 <div>
                   <label>Statut</label>
                   <Select
-                    value={formData.status}
+                    value={editOrder.status}
                     onValueChange={(value) =>
-                      setFormData({ ...formData, status: value })
+                      setEditOrder({ ...editOrder, status: value })
                     }
                   >
                     <SelectTrigger className="w-full">
@@ -364,7 +325,6 @@ export default function AdminCommandes() {
                     </SelectContent>
                   </Select>
                 </div>
-
               </div>
 
               <div className="flex justify-end">
@@ -374,7 +334,6 @@ export default function AdminCommandes() {
           )}
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }
