@@ -272,108 +272,127 @@ export default function AdminLocations() {
       </Dialog>
 
       {/* ✏️ EDIT */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Modifier la demande</DialogTitle>
-          </DialogHeader>
+     <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+  <DialogContent className="max-w-md">
+    <DialogHeader>
+      <DialogTitle>Modifier la demande</DialogTitle>
+    </DialogHeader>
 
-          {selectedLocation && (
-            <form onSubmit={handleEditSubmit} className="space-y-3">
-              <input
-                className="border w-full px-3 py-2 rounded"
-                placeholder="Nom"
-                value={selectedLocation.full_name}
-                onChange={(e) =>
-                  setSelectedLocation({
-                    ...selectedLocation,
-                    full_name: e.target.value,
-                  })
-                }
-              />
+    {selectedLocation && (
+      <form onSubmit={handleEditSubmit} className="space-y-4 text-sm">
+        <div>
+          <label className="block mb-1 font-medium">Nom complet</label>
+          <input
+            className="border w-full px-3 py-2 rounded"
+            value={selectedLocation.full_name}
+            onChange={(e) =>
+              setSelectedLocation({
+                ...selectedLocation,
+                full_name: e.target.value,
+              })
+            }
+          />
+        </div>
 
-              <input
-                className="border w-full px-3 py-2 rounded"
-                placeholder="Téléphone"
-                value={selectedLocation.phone}
-                onChange={(e) =>
-                  setSelectedLocation({
-                    ...selectedLocation,
-                    phone: e.target.value,
-                  })
-                }
-              />
+        <div>
+          <label className="block mb-1 font-medium">Téléphone</label>
+          <input
+            className="border w-full px-3 py-2 rounded"
+            value={selectedLocation.phone}
+            onChange={(e) =>
+              setSelectedLocation({
+                ...selectedLocation,
+                phone: e.target.value,
+              })
+            }
+          />
+        </div>
 
-              <input
-                className="border w-full px-3 py-2 rounded"
-                placeholder="Adresse"
-                value={selectedLocation.address}
-                onChange={(e) =>
-                  setSelectedLocation({
-                    ...selectedLocation,
-                    address: e.target.value,
-                  })
-                }
-              />
+        <div>
+          <label className="block mb-1 font-medium">Adresse</label>
+          <input
+            className="border w-full px-3 py-2 rounded"
+            value={selectedLocation.address}
+            onChange={(e) =>
+              setSelectedLocation({
+                ...selectedLocation,
+                address: e.target.value,
+              })
+            }
+          />
+        </div>
 
-              <input
-                type="date"
-                className="border w-full px-3 py-2 rounded"
-                value={selectedLocation.rental_start}
-                onChange={(e) =>
-                  setSelectedLocation({
-                    ...selectedLocation,
-                    rental_start: e.target.value,
-                  })
-                }
-              />
+        <div>
+          <label className="block mb-1 font-medium">Date de début</label>
+          <input
+            type="date"
+            className="border w-full px-3 py-2 rounded"
+            value={selectedLocation.rental_start}
+            onChange={(e) =>
+              setSelectedLocation({
+                ...selectedLocation,
+                rental_start: e.target.value,
+              })
+            }
+          />
+        </div>
 
-              <input
-                type="date"
-                className="border w-full px-3 py-2 rounded"
-                value={selectedLocation.rental_end}
-                onChange={(e) =>
-                  setSelectedLocation({
-                    ...selectedLocation,
-                    rental_end: e.target.value,
-                  })
-                }
-              />
+        <div>
+          <label className="block mb-1 font-medium">Date de fin</label>
+          <input
+            type="date"
+            className="border w-full px-3 py-2 rounded"
+            value={selectedLocation.rental_end}
+            onChange={(e) =>
+              setSelectedLocation({
+                ...selectedLocation,
+                rental_end: e.target.value,
+              })
+            }
+          />
+        </div>
 
-              <input
-                type="date"
-                className="border w-full px-3 py-2 rounded"
-                value={selectedLocation.delivery_date}
-                onChange={(e) =>
-                  setSelectedLocation({
-                    ...selectedLocation,
-                    delivery_date: e.target.value,
-                  })
-                }
-              />
+        <div>
+          <label className="block mb-1 font-medium">Date de livraison</label>
+          <input
+            type="date"
+            className="border w-full px-3 py-2 rounded"
+            value={selectedLocation.delivery_date}
+            onChange={(e) =>
+              setSelectedLocation({
+                ...selectedLocation,
+                delivery_date: e.target.value,
+              })
+            }
+          />
+        </div>
 
-              <select
-                className="border w-full px-3 py-2 rounded"
-                value={selectedLocation.delivery_time}
-                onChange={(e) =>
-                  setSelectedLocation({
-                    ...selectedLocation,
-                    delivery_time: e.target.value,
-                  })
-                }
-              >
-                <option value="morning">Matin (08h - 12h)</option>
-                <option value="afternoon">Après-midi (14h - 18h)</option>
-                <option value="evening">Soir (18h - 20h)</option>
-              </select>
+        <div>
+          <label className="block mb-1 font-medium">Heure de livraison</label>
+          <select
+            className="border w-full px-3 py-2 rounded"
+            value={selectedLocation.delivery_time}
+            onChange={(e) =>
+              setSelectedLocation({
+                ...selectedLocation,
+                delivery_time: e.target.value,
+              })
+            }
+          >
+            <option value="morning">Matin (08h - 12h)</option>
+            <option value="afternoon">Après-midi (14h - 18h)</option>
+            <option value="evening">Soir (18h - 20h)</option>
+          </select>
+        </div>
 
-              <Button type="submit" className="w-full">
-                Enregistrer
-              </Button>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
+        <Button type="submit" className="w-full">
+          Enregistrer
+        </Button>
+      </form>
+    )}
+  </DialogContent>
+</Dialog>
+
 
       {/* 🗑️ DELETE */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
