@@ -59,7 +59,7 @@ export default function LocationProductsPage() {
 
     try {
       await fetch(
-        `${API_BASE_URL}/api/location_products/${selectedProduct.id}`,
+        `${API_BASE_URL}/api/produits_location/${selectedProduct.id}`,
         { method: "DELETE" }
       );
 
