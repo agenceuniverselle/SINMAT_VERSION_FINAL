@@ -102,20 +102,24 @@ class LocationProductController extends Controller
 
     return response()->json($product);
 }
-    public function destroy($id)
-    {
-        $product = LocationProduct::find($id);
-
-        if (!$product) {
-            return response()->json(['message' => 'Produit non trouvé'], 404);
-        }
-
-        if ($product->image) {
-            Storage::disk('public')->delete($product->image);
-        }
-
-        $product->delete();
-
-        return response()->json(['message' => 'Produit supprimé']);
+   public function destroy($id)
+{
+    $product = LocationProduct::find($id);
+    
+    if (!$product) {
+        return response()->json(['message' => 'Produit non trouvé'], 404);
     }
+
+    // ✅ Supprime d'abord les demandes de location liées
+    \App\Models\RentalRequest::where('product_id', $id)->delete();
+
+    // Supprime l'image
+    if ($product->image) {
+        Storage::disk('public')->delete($product->image);
+    }
+
+    $product->delete();
+
+    return response()->json(['message' => 'Produit supprimé']);
+}
 }
