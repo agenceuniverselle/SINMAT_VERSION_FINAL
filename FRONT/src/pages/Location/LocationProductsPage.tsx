@@ -39,7 +39,7 @@ export default function LocationProductsPage() {
   /* ================= FETCH ================= */
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/location_products`);
+      const res = await fetch(`${API_BASE_URL}/api/produits_location`);
       const data = await res.json();
       setProducts(data);
     } catch {
